@@ -27,7 +27,7 @@
             <Mesa :mesaInfo="mesa" ></Mesa>
         </template>
     </div>
-    
+  
     <!-- Modal del boton para aniadir mesa -->
     <AñadirMesa modalId="modal2"></AñadirMesa>
 </template>

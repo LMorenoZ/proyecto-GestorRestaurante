@@ -9,7 +9,7 @@ export const useOrdenesStore = defineStore('ordenesStore', {
     getters: { // Propiedades computadas, no cambian el valor del estado, siempre retornan algo
         cantidadOrdenes(state) {
             return state.ordenes.length;
-        } 
+        }
     },
     actions: {  // metodos que mutan el valor del estado
         async traerOrdenes() {

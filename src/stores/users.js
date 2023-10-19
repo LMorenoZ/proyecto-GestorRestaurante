@@ -7,6 +7,11 @@ export const useUserStore = defineStore('users', {
     state: () => ({
         userData: null
     }), 
+    getters: {
+        esAdmin(state) {
+            return state.userData?.email === 'admin@test.com';
+        }
+    },
     actions: {
         async loginUser(email, password) {
             try {
