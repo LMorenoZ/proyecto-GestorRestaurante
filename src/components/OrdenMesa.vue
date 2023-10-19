@@ -13,6 +13,9 @@
 
     // instanciando las stores
     const ordenesStore = useOrdenesStore();
+
+    //importando otros modulos
+    import { USDollar, horaFormateada } from '../utilidades';
     //---------------------------------------------
 
     // variables reactivas
@@ -53,6 +56,9 @@
     const modificarOrden = async (orden) => {   
         const ordenActualizada = orden;
         ordenActualizada.estado = estadoOrden.value;
+        ordenActualizada.pago = costoTotal();
+        console.log(ordenActualizada.pago );
+
         
         ordenesStore.actualizarOrden(ordenActualizada);
         colorOrden.value = ordenActual.value.estado; 
@@ -61,12 +67,8 @@
 
 
     // Propiedades computadas
-    const costoTotal = computed(() => {  // calcula el total a pagar 
+    const costoTotal = () => {  // calcula el total a pagar 
         let total = 0;
-        let USDollar = new Intl.NumberFormat('en-US', {  // Para formatear el precio en dolares
-            style: 'currency',
-            currency: 'USD',
-        });
 
         total += props.orden.queso * 0.5;
         total += props.orden.revueltas * 0.5;
@@ -75,19 +77,8 @@
         total += props.orden.refresco * 1;
         total += props.orden.chocolate * 1;
 
-        return USDollar.format(total);
-    });
-
-    const fecha = computed(() => { // Devuelve la fecha de la orden en una apariencia que puede ser entendida
-        let hora = "";
-        hora = props.orden.fecha.toDate().toLocaleString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
-        return hora;
-    });
+        return total;
+    };
 </script>
 
 <template>
@@ -100,7 +91,7 @@
         </div>
         <ul class="list-group list-group-flush">
             <p class="fst-italic fw-bold text-light text-end" style="font-size: 0.7rem;">Id órden: {{ orden.id }}</p>
-            <p class="fst-italic fw-bold text-light text-end" style="font-size: 0.7rem;">Fecha: {{ fecha }}</p>
+            <p class="fst-italic fw-bold text-light text-end" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fecha.toDate()) }}</p>
             <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`" v-if="orden.queso">
                 Queso: 
                 <span class="badge bg-primary rounded-pill">{{ orden.queso }}</span>
@@ -126,7 +117,7 @@
                 <span class="badge bg-primary rounded-pill">{{ orden.chocolate }}</span>
             </li>
             <li :class="`list-group-item bg-${colorOrden} text-light`">
-                Total: {{ costoTotal }} 
+                Total: {{ USDollar.format(costoTotal()) }} 
             </li>
         </ul>
         <div class="card-footer text-light mt-auto">
@@ -148,5 +139,5 @@
         </div>
     </div>
     
-    <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :totalPagar="costoTotal"></Ticket>
+    <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :totalPagar="USDollar.format(costoTotal())"></Ticket>
 </template>

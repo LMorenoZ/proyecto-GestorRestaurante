@@ -33,7 +33,8 @@
             refresco: refresco.value,
             chocolate: chocolate.value,
             estado: 'preparacion',
-            mesaNum: props.mesaNum
+            mesaNum: props.mesaNum,
+            pago: 0
         };
 
         ordenesStore.agregarOrden(orden);

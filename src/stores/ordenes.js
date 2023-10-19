@@ -46,10 +46,12 @@ export const useOrdenesStore = defineStore('ordenesStore', {
                 if (!docSnap.exists()) {
                     throw new Error("No existe el documento");
                 }
-
+                
                 await updateDoc(docRef, {
-                    estado: ordenModificada.estado
+                    estado: ordenModificada.estado,
+                    pago: ordenModificada.pago
                 });
+
                 this.traerOrdenes();
             } catch(error) {
                 console.log(error);

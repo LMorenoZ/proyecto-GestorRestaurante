@@ -49,20 +49,24 @@
             </div>
         </div>
         <div class="tab-pane fade" id="ordenesCompletadas" role="tabpanel" aria-labelledby="ordenesCompletadas-tab">
-            <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
-                <OrdenMesa 
-                    v-if="orden.estado === 'completada'"
-                    :orden="orden"
-                />
-            </template> 
+            <div class="d-flex flex-wrap">
+                <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
+                    <OrdenMesa 
+                        v-if="orden.estado === 'completada'"
+                        :orden="orden"
+                    />
+                </template> 
+            </div>
         </div>
         <div class="tab-pane fade" id="ordenesCanceladas" role="tabpanel" aria-labelledby="ordenesCanceladas-tab">
-            <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
-                <OrdenMesa 
-                    v-if="orden.estado === 'cancelada'"
-                    :orden="orden"
-                />
-            </template> 
+            <div class="d-flex flex-wrap">
+                <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
+                    <OrdenMesa 
+                        v-if="orden.estado === 'cancelada'"
+                        :orden="orden"
+                    />
+                </template> 
+            </div>
         </div>
     </div>
 </template>
