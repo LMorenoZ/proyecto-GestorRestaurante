@@ -7,19 +7,20 @@
 
     // instanciando ordenes
     const ordenesStore = useOrdenesStore();
+    //-------------------------------------------
 </script>
 
 <template>
     <!-- Seleccion de tabs -->  
     <ul class="nav nav-tabs" id="ordenesTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="ordenesActivas-tab" data-bs-toggle="tab" data-bs-target="#ordenesActivas" type="button" role="tab" aria-controls="ordenesActivas" aria-selected="true">Ordenes activas</button>
+            <button class="nav-link active" id="ordenesActivas-tab" data-bs-toggle="tab" data-bs-target="#ordenesActivas" type="button" role="tab" aria-controls="ordenesActivas" aria-selected="true">Ordenes activas <span class="badge text-bg-success">{{ ordenesStore.ordenesActivas }}</span></button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ordenesCompletadas-tab" data-bs-toggle="tab" data-bs-target="#ordenesCompletadas" type="button" role="tab" aria-controls="ordenesCompletadas" aria-selected="false">Ordenes completadas</button>
+            <button class="nav-link" id="ordenesCompletadas-tab" data-bs-toggle="tab" data-bs-target="#ordenesCompletadas" type="button" role="tab" aria-controls="ordenesCompletadas" aria-selected="false">Ordenes completadas <span class="badge text-bg-primary">{{ ordenesStore.ordenesCompletadas}}</span></button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ordenesCanceladas-tab" data-bs-toggle="tab" data-bs-target="#ordenesCanceladas" type="button" role="tab" aria-controls="ordenesCanceladas" aria-selected="false">Ordenes canceladas</button>
+            <button class="nav-link" id="ordenesCanceladas-tab" data-bs-toggle="tab" data-bs-target="#ordenesCanceladas" type="button" role="tab" aria-controls="ordenesCanceladas" aria-selected="false">Ordenes canceladas <span class="badge text-bg-danger">{{ ordenesStore.ordenesCanceladas }}</span></button>
         </li>
     </ul>
 
@@ -27,18 +28,19 @@
     <div class="tab-content" id="ordenesTabContent">
         <div class="tab-pane fade show active" id="ordenesActivas" role="tabpanel" aria-labelledby="ordenesActivas-tab">
             <!-- Primero mostrar ordenes retrasadas -->
-            <h3>Retrasadas</h3>
+            <h3>Retrasadas (<span class="fw-bold">{{ ordenesStore.ordenesTardadas }}</span>)</h3>
             <div class="d-flex flex-wrap">
                 <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
                     <OrdenMesa 
-                        v-if="orden.estado === 'retrasada'"
+                        v-if="orden.estado === 'tardada'"
                         :orden="orden"
                     />
                 </template> 
+                <div v-if="ordenesStore.ordenesTardadas == 0">No hay órdenes retrasadas</div>
             </div>
             <hr>
             <!-- Luego mostrar ordenes activas pero no prioritarias -->
-            <h3>En curso</h3>
+            <h3>En curso (<span class="fw-bold">{{ ordenesStore.ordenesPreparacion }}</span>)</h3>
             <div class="d-flex flex-wrap">
                 <template v-for="orden in ordenesStore.ordenes" :key="orden.id">
                     <OrdenMesa 
@@ -46,6 +48,7 @@
                         :orden="orden"
                     />
                 </template> 
+                <div v-if="ordenesStore.ordenesPreparacion == 0">No hay órdenes en preparación</div>
             </div>
         </div>
         <div class="tab-pane fade" id="ordenesCompletadas" role="tabpanel" aria-labelledby="ordenesCompletadas-tab">
@@ -56,6 +59,7 @@
                         :orden="orden"
                     />
                 </template> 
+                <div v-if="ordenesStore.ordenesCompletadas == 0">No hay órdenes completadas</div>
             </div>
         </div>
         <div class="tab-pane fade" id="ordenesCanceladas" role="tabpanel" aria-labelledby="ordenesCanceladas-tab">
@@ -66,6 +70,7 @@
                         :orden="orden"
                     />
                 </template> 
+                <div v-if="ordenesStore.ordenesCanceladas == 0">No hay órdenes canceladas</div>
             </div>
         </div>
     </div>

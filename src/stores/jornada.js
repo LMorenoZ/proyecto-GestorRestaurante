@@ -36,6 +36,15 @@ export const useJornadaStore = defineStore('jornada', {
             }
         },
         async terminarJornada() {
+            //validacion para que no se pueda terminar la jornada con ordenes aun pendientes
+            const ordenesStore = useOrdenesStore(); 
+            const hayPendientes = ordenesStore.ordenes 
+                .some(orden => (orden.estado === 'preparacion') || (orden.estado === 'tardada'));
+            if (hayPendientes) {
+                console.log("No puede terminar la jornada con ordenes aun en curso");
+                return;
+            }
+            
             try {
                 // indicando que la jornada ha acabado
                 const docRefJornada = doc(db, 'jornada', 'estadoId');
@@ -45,11 +54,14 @@ export const useJornadaStore = defineStore('jornada', {
                 this.jornadaActiva = false;
 
                 /******  generando el resumen de todas las ordenes de la jornada, para el historial de ordenes  ****/
-                const ordenesStore = useOrdenesStore();
-                if (ordenesStore.cantidadOrdenes == 0) {
+                  
+
+                // validaciones 
+                if (ordenesStore.cantidadOrdenes == 0) { 
                     console.log("No se aniadir al historial porque no se realizo ninguna orden");
                     return;
                 }
+
                 const ordenesCompletadasTemp = ordenesStore.ordenes.filter(orden => orden.estado === 'completada');
                 const ordenesCanceladasTemp = ordenesStore.ordenes.filter(orden => orden.estado === 'cancelada');
                 

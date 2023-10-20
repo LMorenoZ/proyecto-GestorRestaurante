@@ -5,13 +5,16 @@
     // stores de pinia
     import { useOrdenesStore } from '../stores/ordenes.js';
     import { useJornadaStore } from '../stores/jornada';
+    import { useMesasStore } from '../stores/mesas';
 
-    // props
-    const props = defineProps(['modalId', 'mesaNum']);
+    // props y emits
+    const props = defineProps(['modalId', 'mesaNum', 'mesaInfo']);
+    const emits = defineEmits(['cambiarEstado']);
 
     // instancia de las stores
     const ordenesStore = useOrdenesStore();
     const jornadaStore = useJornadaStore();
+    const mesasStore = useMesasStore();
     //-----------------------------------------------------------
 
 
@@ -38,6 +41,9 @@
         };
 
         ordenesStore.agregarOrden(orden);
+        props.mesaInfo.estado = 'ocupada';
+        mesasStore.modMesa(props.mesaInfo);
+        emits('cambiarEstado', props.mesaInfo, props.mesaInfo.estado);  // la funcion recibe 2 argumentos
     };  
 </script>
 

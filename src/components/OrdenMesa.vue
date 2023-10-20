@@ -37,7 +37,7 @@
                 estadoDescri.value = "Orden completada"
                 break;
 
-            case 'retrasada': 
+            case 'tardada': 
                 colorOrden.value = 'warning';
                 estadoDescri.value = "Orden retrasada. Priorizar.";
                 break;
@@ -126,7 +126,7 @@
             <select class="form-select form-select-sm" v-model="estadoOrden">
                 <option disabled value="">Seleccione una</option>
                 <option value="preparacion">En preparacion</option>
-                <option value="retrasada">Orden retrasada</option>
+                <option value="tardada">Orden retrasada</option>
                 <option value="completada">Completada</option>
                 <option value="cancelada">Cancelada</option>
             </select>

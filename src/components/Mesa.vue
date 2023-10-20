@@ -26,18 +26,18 @@
     import mesaNegro from '../assets/mesas/mesaNegro.svg';
 
    // variables reactivas
-   let estadoMesa = props.mesaInfo.estado;
-    // metodos
-    const cambiarEstado = async () => {
-        const mesaModificada = props.mesaInfo;
-        mesaModificada.estado = estadoMesa;
+   let estadoMesa = ref(props.mesaInfo.estado);
 
-        mesasStore.modMesa(mesaModificada);
+    // metodos
+    const cambiarEstado = async (mesa, estado) => {
+        mesa.estado = estado;
+        mesasStore.modMesa(mesa);
+        mesaImg(mesa);
     }
 
-    const mesaImg = () => {   // cambia la imagen de la mesa segun el estado
+    const mesaImg = mesaEstado => {   // cambia la imagen de la mesa segun el estado
         let imagen;
-        switch(estadoMesa) {
+        switch(mesaEstado.estado) {
             case 'libre':
                 imagen = mesaLibre;
                 break;
@@ -71,13 +71,13 @@
                 @click="mesasStore.borrarMesa(mesaInfo.id)">X</button>
         </div>
         <img 
-            :src="mesaImg()" 
+            :src="mesaImg(mesaInfo)" 
             :data-bs-toggle="mesaInfo.estado != 'dañada' ? 'modal' : ''"
             :data-bs-target="`#modal${mesaInfo.id}`"
         >
         <p v-if="mesaInfo.estado !== 'dañada'">{{ mesaInfo.asientos }} asientos</p>
         <p v-else>Mesa dañada</p>
-        <button class="btn btn-sm bg-secondary text-light" @click="cambiarEstado">Cambiar estado</button>
+        <button class="btn btn-sm bg-secondary text-light" @click="cambiarEstado(mesaInfo, estadoMesa)">Cambiar estado</button>
         <select class="form-select form-select-sm" v-model="estadoMesa">
             <option disabled value="">Cambiar estado</option>
             <option value="libre">Libre</option>
@@ -89,5 +89,5 @@
     </div>
 
     <!-- Modal para elegir la comida -->
-    <ElegirPupusas :modalId="`modal${mesaInfo.id}`" :mesaNum="mesaInfo.mesaNum"></ElegirPupusas>
+    <ElegirPupusas :modalId="`modal${mesaInfo.id}`" :mesaNum="mesaInfo.mesaNum" :mesaInfo="mesaInfo" @cambiarEstado="cambiarEstado"></ElegirPupusas>
 </template>
