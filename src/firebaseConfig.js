@@ -14,8 +14,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);  
 const auth = getAuth();
 const db = getFirestore();
 
-export { auth, db };
+const creacionUsuariosApp = initializeApp(firebaseConfig, "CreacionUsuarios");  // para crear usuarios sin logearse 
+const authCreacion = getAuth(creacionUsuariosApp);
+
+export { auth, db, creacionUsuariosApp, authCreacion};

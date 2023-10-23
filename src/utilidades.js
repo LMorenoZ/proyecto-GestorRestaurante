@@ -7,6 +7,19 @@ export const fechaFormateada = fecha => {
     return fechaFormateada;
 }
 
+// formatear fecha en la forma 'dd/mm/aaaa'
+export const fechaFormateadaCorta = fecha => {
+    const padTo2Digits = num => {
+        return num.toString().padStart(2, '0');
+      }
+
+    return [
+        padTo2Digits(fecha.getDate()),
+        padTo2Digits(fecha.getMonth() + 1),
+        fecha.getFullYear()
+      ].join('/');
+};
+
 // formatea un argumento en fecha y devuelve el valor legible de la hora con formato AM / PM de 12 horas
 export const horaFormateada = fecha => { // el argumento debe ser de tipo Date
     let hora = fecha.toLocaleString([], {
@@ -23,6 +36,7 @@ export const nombreUsuario = usuarioEmail => {
     let emailLength = usuarioEmail.length;
     let lengthBorrar = 9; // tamanio del string '@test.com'
     let nombre = usuarioEmail.slice(0, emailLength - lengthBorrar);
+    nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1);
     return nombre;
 }
 

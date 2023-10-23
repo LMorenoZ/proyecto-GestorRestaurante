@@ -9,6 +9,8 @@ import Home from './views/HomeView.vue';
 import Ordenes from './views/OrdenesView.vue';
 import Mesas from './views/MesasView.vue';
 import Administracion from './views/AdministracionView.vue'; 
+import AdminEmpleados from './views/AdminViews/AdminEmpleadosView.vue';
+import AdminInformes from './views/AdminViews/AdminInformesView.vue';
 
 
 // middlewares para realizar comprobaciones de sesion
@@ -46,7 +48,9 @@ const sesionAdmin = async (to, from, next) => {   // solo podra entrar el admin
 const routes = [
     {
         path: '/',
-        component: Home,
+        components: {
+            default: Home,
+        },
         beforeEnter: existeSesion
     },
     {
@@ -60,8 +64,19 @@ const routes = [
         beforeEnter: comprobarSesion
     },
     {
-        path: '/administracion',
-        component: Administracion,
+        path: '/administracion/',
+        redirect: { path: "/administracion/empleados" },
+        components: {
+            default: Administracion
+        },
+        children: [
+            { path: 'empleados', 
+                components: {seccionAdmin: AdminEmpleados}
+            },
+            { path: 'informes', 
+                components: {seccionAdmin: AdminInformes}
+            },
+        ],
         beforeEnter: sesionAdmin
     }
 ];
