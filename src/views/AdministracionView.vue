@@ -9,7 +9,7 @@
         <div class="col-sm-12 col-md-3">
             <SideBar />
         </div>
-        <div class="col-sm-12 col-md-9" >
+        <div class="col-sm-12 col-md-9 " >
             <router-view name="seccionAdmin"></router-view>
         </div>
     </div>
