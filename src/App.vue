@@ -27,14 +27,10 @@
   });
 </script>
 
-<template>
-  <div class="container d-flex flex-column min-vh-100">
-    <Navbar v-if="userStore.userData"></Navbar>
+<template >
+  <Navbar v-if="userStore.userData"></Navbar>
+  <div class="container d-flex flex-column p-4" style="min-height: 80vh;">
     <router-view></router-view>
-    <Footer class="mt-auto mb-0" v-if="userStore.userData"></Footer>
   </div>
+  <Footer class="mt-auto mb-0" v-if="userStore.userData"></Footer>
 </template>
-
-<style>
-
-</style>

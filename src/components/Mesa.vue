@@ -67,8 +67,10 @@
     <div class="card m-3" style="width: 18rem;">
         <div class="d-flex justify-content-between">
             <p class="fw-bold">Mesa {{ mesaInfo.mesaNum }}</p>
-            <button class="btn btn-danger" v-if="puedeEliminar"
-                @click="mesasStore.borrarMesa(mesaInfo.id)">X</button>
+            <div class="btn btn-danger rounded-pill" v-if="puedeEliminar"
+                @click="mesasStore.borrarMesa(mesaInfo.id)">
+                <i class="bi bi-x fs-4"></i>
+            </div>
         </div>
         <img 
             :src="mesaImg(mesaInfo)" 

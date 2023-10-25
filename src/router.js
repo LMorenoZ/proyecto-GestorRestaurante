@@ -83,7 +83,7 @@ const routes = [
 
 const router = createRouter({
     routes,
-    linkActiveClass: 'fw-bold',
+    linkActiveClass: 'fw-bolder',
     history: createWebHistory(import.meta.env.BASE_URL)
 });
 
