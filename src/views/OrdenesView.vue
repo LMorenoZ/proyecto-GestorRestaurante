@@ -1,40 +1,48 @@
 <script setup>
-    // librerias de vue
-    import { computed } from 'vue';
+// librerias de vue
+import { computed } from 'vue';
 
-    // importando componentes de ui
-    import OrdenMesa from '../components/OrdenMesa.vue';
-    import TabsOrdenes from '../components/TabsOrdenes.vue';
+// importando componentes de ui
+import OrdenMesa from '../components/OrdenMesa.vue';
+import TabsOrdenes from '../components/TabsOrdenes.vue';
+import ModalConfirmacion from '../components/ModalConfirmacion.vue';
 
-    // importando stores de pinia
-    import { useUserStore } from '../stores/users';
-    import { useJornadaStore } from '../stores/jornada';
+// importando stores de pinia
+import { useUserStore } from '../stores/users';
+import { useJornadaStore } from '../stores/jornada';
 
-    // instanciando stores
-    const userStore = useUserStore();
-    const jornadaStore = useJornadaStore()
-    //-----------------------------------------------
+// instanciando stores
+const userStore = useUserStore();
+const jornadaStore = useJornadaStore()
 
-    
+// metodos de utilidades
+import { fechaFormateada, horaFormateada } from '../utilidades';
+//-----------------------------------------------
+const fechaDeHoy = fechaFormateada(new Date());
+const horaActual = horaFormateada(new Date());
 
 </script>
 
 <template>
     <h1>Órdenes</h1>
-    <button 
-        class="btn btn-secondary col-sm-8 col-md-3 ml-auto" 
-        v-if="userStore.esAdmin && jornadaStore.jornadaValor"
-        @click="jornadaStore.terminarJornada"
-    >Terminar jornada</button>
+    <button class="btn btn-secondary col-sm-8 col-md-3 ml-auto" data-bs-toggle="modal" data-bs-target="#modalCerrarJornada"
+        v-if="userStore.esAdmin && jornadaStore.jornadaValor">
+        Terminar jornada
+    </button>
+    <ModalConfirmacion id="modalCerrarJornada" titulo="Cerrar jornada"
+        :cuerpo="`¿Terminar jornada laboral para este día ${fechaDeHoy} a las ${horaActual} ?`" textoBoton="Terminar"
+        @accion="jornadaStore.terminarJornada" color="warning"/>
     <div class="row">
         <TabsOrdenes v-if="jornadaStore.jornadaValor" />
         <div v-else>
             <p>No ha empezado la jornada todavia</p>
-            <button class="btn btn-success col-sm-8 col-md-3" 
-                v-if="userStore.esAdmin && !jornadaStore.jornadaValor"
-                @click="jornadaStore.empezarJornada"
-            >Empezar jornada</button>
+            <button class="btn btn-success col-sm-8 col-md-3" data-bs-toggle="modal" data-bs-target="#modalIniciarJornada"
+                v-if="userStore.esAdmin && !jornadaStore.jornadaValor">
+                Empezar jornada
+            </button>
+            <ModalConfirmacion id="modalIniciarJornada" titulo="Iniciar jornada"
+                :cuerpo="`¿Empezar jornada laboral para este día ${fechaDeHoy} a las ${horaActual} ?`"
+                textoBoton="Empezar día" @accion="jornadaStore.empezarJornada" color="success"/>
         </div>
-        
     </div>
 </template>

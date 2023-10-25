@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc } from 'firebase/firestore/lite';
 import { db } from '../firebaseConfig';
 import { useOrdenesStore } from './ordenes';
+import { useMensajesStore } from './mensajes';
+import { fechaFormateada, fechaFormateadaCorta, horaFormateada } from '../utilidades';
 
 export const useJornadaStore = defineStore('jornada', {
     state: () => ({
@@ -14,13 +16,21 @@ export const useJornadaStore = defineStore('jornada', {
     },  
     actions: {
         async empezarJornada() {
+            const mensajesStore = useMensajesStore();
             try {
                 const docRef = doc(db, 'jornada', 'estadoId');
                 await updateDoc(docRef, {
                     jornadaActiva: true
                 });
                 this.jornadaActiva = true; 
-                console.log("Se inicio la jornada");
+
+                mensajesStore.crearMensaje({
+                    titulo: 'Nueva jornada', 
+                    texto: `Jornada iniciada el ${fechaFormateada(new Date())} a las ${horaFormateada(new Date())} `, 
+                    color: 'success', 
+                    id: 'mensajeIniciarJornada',
+                    autoEliminar: true
+                });
             } catch (error) {
                 console.log(error);
             }
@@ -29,19 +39,26 @@ export const useJornadaStore = defineStore('jornada', {
             try {
                 const docRef = doc(db, "jornada", "estadoId");
                 const docSnap = await getDoc(docRef);
-                console.log(docSnap.data().jornadaActiva ? 'Jornada activa' : 'Jornada cerrada');
                 this.jornadaActiva = docSnap.data().jornadaActiva;
             } catch (error) {
                 console.log(error);
             }
         },
         async terminarJornada() {
+            const mensajesStore = useMensajesStore();
+
             //validacion para que no se pueda terminar la jornada con ordenes aun pendientes
             const ordenesStore = useOrdenesStore(); 
             const hayPendientes = ordenesStore.ordenes 
                 .some(orden => (orden.estado === 'preparacion') || (orden.estado === 'tardada'));
             if (hayPendientes) {
-                console.log("No puede terminar la jornada con ordenes aun en curso");
+                mensajesStore.crearMensaje({
+                    titulo: 'Advertencia', 
+                    texto: 'No puede cerrar la jornada con órdenes activas', 
+                    color: 'warning', 
+                    id: 'mensajeTratarCerrarJornada',
+                    autoEliminar: true
+                });
                 return;
             }
             
@@ -58,7 +75,13 @@ export const useJornadaStore = defineStore('jornada', {
 
                 // validaciones 
                 if (ordenesStore.cantidadOrdenes == 0) { 
-                    console.log("No se aniadir al historial porque no se realizo ninguna orden");
+                    mensajesStore.crearMensaje({
+                        titulo: 'Jornada finalizada', 
+                        texto: 'No se añade al historial porque no se realizó ninguna orden', 
+                        color: 'success', 
+                        id: 'jornadaFinalizadaNoCreada',
+                        autoEliminar: true
+                    });
                     return;
                 }
 
@@ -90,15 +113,21 @@ export const useJornadaStore = defineStore('jornada', {
                 });
                 ordenesCanceladasTemp.forEach(ordenCancelada => objJornada.gananciasPerdidas += ordenCancelada.pago);
 
-                console.log(objJornada);
                 // crear la entrada en el historial de ordenes
-                const docRefHistorial = await addDoc(collection(db, 'historialOrdenes'), objJornada);
-                console.log("Jornada completada y aniadida al historial con el id " + docRefHistorial.id);
+                await addDoc(collection(db, 'historialOrdenes'), objJornada);
+
+                mensajesStore.crearMensaje({
+                    titulo: 'Añadida al historial', 
+                    texto: `Jornada con fecha ${fechaFormateadaCorta(new Date())} completada exitosamente y añadida al historial`, 
+                    color: 'success', 
+                    id: 'mensajeJornadaCerrada',
+                    autoEliminar: true
+                });
+
                 
                 // se procede a borrar las ordenes en la db
                 ordenesStore.ordenes.forEach(async orden => {
                     await deleteDoc(doc(db, "orden", orden.id));
-                    console.log(orden.id + ' borrada');
                 });
 
                 ordenesStore.$reset(); // se resetea la store de las ordenes

@@ -57,8 +57,6 @@
         const ordenActualizada = orden;
         ordenActualizada.estado = estadoOrden.value;
         ordenActualizada.pago = costoTotal();
-        console.log(ordenActualizada.pago );
-
         
         ordenesStore.actualizarOrden(ordenActualizada);
         colorOrden.value = ordenActual.value.estado; 

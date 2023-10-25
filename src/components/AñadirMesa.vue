@@ -1,6 +1,6 @@
 <script setup>
     // librerias
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
 
     // stores
     import { useMesasStore } from '../stores/mesas';
@@ -28,10 +28,13 @@
         numeroMesa.value = 0;
         asientos.value = 0;        
     };
+
+    // Metodo computado que determina si se puede crear nuevas mesas
+    const puedeAñadir = computed(() => (numeroMesa.value > 0) && (asientos.value > 0) );
 </script>
 
 <template>
-    <div class="modal fade" id="crearMesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
@@ -52,7 +55,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="añadirMesa">Añadir mesa</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="añadirMesa" :disabled="!puedeAñadir">Añadir mesa</button>
             </div>
             </div>
         </div>

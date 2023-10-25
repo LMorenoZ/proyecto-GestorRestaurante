@@ -10,6 +10,9 @@ import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc,
 // base de datos
 import { db } from '../../firebaseConfig';
 
+// stores
+import { useMensajesStore } from '../../stores/mensajes';
+
 // utilidades
 import { fechaFormateada, nombreUsuario } from '../../utilidades';
 
@@ -17,6 +20,8 @@ import { fechaFormateada, nombreUsuario } from '../../utilidades';
 import JornadaInfo from '../../components/Informes/JornadaInfo.vue';
 import ResumenPeriodo from '../../components/Informes/ResumenPeriodo.vue';
 
+// inicializando stores
+const mensajesStore = useMensajesStore();
 
 // variables reactivas
 const historialOrdenes = ref([]);
@@ -24,10 +29,10 @@ const historialOrdenes = ref([]);
 // vue datepicker
 const date = ref(null);
 onMounted(() => {
-    filtrarPorFechas();
     const fechaHasta = new Date();
     const fechaDesde = new Date(new Date().setDate(fechaHasta.getDate() - 7));
     date.value = [fechaDesde, fechaHasta];
+    filtrarPorFechas();
 })
 
 // metodos de base de datos
@@ -37,7 +42,13 @@ const filtrarPorFechas = async () => {
 
     // se establece la query correspondiente al valor de las fechas introducidas
     if (date.value == null || date.value[1] == null) { 
-        console.log("Debe ingresar ambas fechas para poder filtrar");
+        mensajesStore.crearMensaje({
+            titulo: 'Información',
+            texto: 'Debe ingresar un rango de fechas válido para poder filtrar por período',
+            color: 'warning',
+            id: 'intentarFiltrar',
+            autoEliminar: true
+        });
         q = collection(db, 'historialOrdenes'); // consulta por todas las entradas en el historial
     } else {
         const fechaDesde = Timestamp.fromDate(date.value[0]);  // convierte los tipo Date en Timestamp de Firestore
@@ -67,6 +78,7 @@ const filtrarPorFechas = async () => {
         // se ordena el historial por fecha, de mas reciente a mas antiguo
         historialOrdenes.value = historialTemp.toSorted((date1, date2) => date2.jornadaFecha - date1.jornadaFecha);
     } catch (error) {
+        mensajesStore.crearError('errorTraerHistorial', 'No se puede mostrar el historial');
         console.log(error);
     }
 };

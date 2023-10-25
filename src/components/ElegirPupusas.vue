@@ -1,6 +1,6 @@
 <script setup>
     // librerias
-    import { ref } from 'vue';
+    import { ref, computed} from 'vue';
 
     // stores de pinia
     import { useOrdenesStore } from '../stores/ordenes.js';
@@ -20,11 +20,27 @@
 
     // Seguimiento de la orden
     const pupusasQueso = ref(0);
-    const pupusasRevueltas= ref(0);
+    const pupusasRevueltas = ref(0);
     const pupusasChicharron = ref(0);
     const gaseosa = ref(0);
     const refresco = ref(0);
     const chocolate = ref(0);
+
+    // metodo computado para determinar si se puede ordenar
+    const puedeOrdenar = computed(() => {
+        if(
+            pupusasQueso.value > 0 ||
+            pupusasRevueltas.value > 0 ||
+            pupusasChicharron.value > 0 ||
+            gaseosa.value > 0 ||
+            refresco.value > 0 ||
+            chocolate.value > 0
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    });
 
     // Metodo para realizar la orden para la mesa
     const ordenar = () => {
@@ -82,7 +98,11 @@
                         <label for="chocolate" class="form-label">Chocolate</label>
                         <input type="number" class="form-control" id="chocolate" aria-describedby="chocolate" v-model="chocolate">
                     </div>      
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Ordenar</button>
+                    <button type="submit" 
+                        class="btn btn-primary" 
+                        data-bs-dismiss="modal" 
+                        :disabled="!puedeOrdenar"
+                    >Ordenar</button>
                 </form>
             </div>
 

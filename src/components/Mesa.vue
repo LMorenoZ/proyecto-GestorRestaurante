@@ -19,10 +19,9 @@
 
 
     // imagenes de las mesas que se importan de los assets
-    import mesaLibre from '../assets/mesas/mesaLibre.svg';
-    import mesaDañada from '../assets/mesas/mesaDañada.svg';
-    import mesaOcupada from '../assets/mesas/mesaOcupada.svg';
-    import mesaDesocupada from '../assets/mesas/mesaDesocupada.svg';
+    import mesaLibre from '../assets/mesas/mesaAzul.svg';
+    import mesaDesocupada from '../assets/mesas/mesaNaranja.svg';
+    import mesaOcupada from '../assets/mesas/mesaRoja.svg';
     import mesaNegro from '../assets/mesas/mesaNegro.svg';
 
    // variables reactivas
@@ -40,9 +39,6 @@
         switch(mesaEstado.estado) {
             case 'libre':
                 imagen = mesaLibre;
-                break;
-            case 'dañada':
-                imagen = mesaDañada;
                 break;
             case 'desocupada':
                 imagen = mesaDesocupada;
@@ -74,18 +70,16 @@
         </div>
         <img 
             :src="mesaImg(mesaInfo)" 
-            :data-bs-toggle="mesaInfo.estado != 'dañada' ? 'modal' : ''"
+            :data-bs-toggle="mesaInfo.estado != 'ocupada' ? 'modal' : ''"
             :data-bs-target="`#modal${mesaInfo.id}`"
         >
-        <p v-if="mesaInfo.estado !== 'dañada'">{{ mesaInfo.asientos }} asientos</p>
-        <p v-else>Mesa dañada</p>
+        <p>{{ mesaInfo.asientos }} asientos</p>
         <button class="btn btn-sm bg-secondary text-light" @click="cambiarEstado(mesaInfo, estadoMesa)">Cambiar estado</button>
         <select class="form-select form-select-sm" v-model="estadoMesa">
             <option disabled value="">Cambiar estado</option>
             <option value="libre">Libre</option>
             <option value="ocupada">Ocupada</option>
             <option value="desocupada">Desocupada</option>
-            <option value="dañada">Dañada</option>
         </select>
 
     </div>

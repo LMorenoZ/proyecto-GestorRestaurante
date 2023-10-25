@@ -29,5 +29,5 @@
     </div>
   
     <!-- Modal del boton para aniadir mesa -->
-    <AñadirMesa modalId="modal2"></AñadirMesa>
+    <AñadirMesa modalId="crearMesa"></AñadirMesa>
 </template>

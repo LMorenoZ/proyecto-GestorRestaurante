@@ -12,6 +12,7 @@
   // componentes de interfaz
   import Navbar from './components/Navbar.vue';
   import Footer from './components/Footer.vue';
+  import AlertaContenedor from './components/Alertas/AlertasContenedor.vue';
 
   // se instancias todas las stores
   const mesasStore = useMesasStore();
@@ -29,6 +30,7 @@
 
 <template >
   <Navbar v-if="userStore.userData"></Navbar>
+  <AlertaContenedor v-if="userStore.userData" />
   <div class="container d-flex flex-column p-4" style="min-height: 80vh;">
     <router-view></router-view>
   </div>

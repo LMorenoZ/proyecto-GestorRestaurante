@@ -2,10 +2,15 @@
     import { ref } from 'vue';
 
     import { useUserStore } from '../../stores/users';
+    import { useMensajesStore } from '../../stores/mensajes';
 
     import { nombreUsuario, fechaFormateadaCorta } from '../../utilidades';
 
+    // componentes de ui
+    import ModalConfirmacion from '../../components/ModalConfirmacion.vue';
+
     const userStore = useUserStore();
+    const mensajesStore = useMensajesStore();
 
     // constantes reactivas 
     const email = ref('empleado2@test.com');
@@ -18,7 +23,13 @@
     const crearUsuario = async () => {
         // validacion de inputs
         if (email.value === '' || pass.value === '' || pass.value.length < 6 || puestoEmpleado.value === '') {
-            alert("No ha llenado los campos");
+            mensajesStore.crearMensaje({
+                titulo: 'Llene los campos',
+                texto: 'No puede crear un nuevo empleado sin todos sus datos. La contraseña debe contener mínimo 6 caracteres',
+                color: 'warning',
+                id: 'usuarioNoCreadoCampos',
+                autoEliminar: true
+            });
             return
         }
 
@@ -55,7 +66,7 @@
                 <input type="text" id="passUsuario" placeholder="pass" class="form-control" v-model.trim="pass">
             </div>
             <div class="input-group mb-3">
-                <span class="input-group-text fw-bold" id="puestoUsuario">Puexto del empleado:</span>
+                <span class="input-group-text fw-bold" id="puestoUsuario">Puesto del empleado:</span>
                 <select class="form-select" id="puestoUsuario" v-model.trim="puestoEmpleado">
                     <option disabled value="">Elija uno</option>
                     <option>Caja</option>
@@ -75,7 +86,7 @@
     <!-- Lista de empleados -->
     <div class="my-4" v-if="userStore.listaEmpleados.length > 0" style="overflow: scroll; height: 70vh">
         <h3 class="fs-3">Lista de empleados:</h3>
-        <table class="table table-hover">
+        <table class="table table-hover ">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -97,10 +108,25 @@
                     <td>{{empleado.puesto}}</td>
                     <td>{{empleado.password}}</td>
                     <td>{{fechaFormateadaCorta(empleado.creation.toDate())}}</td>
-                    <td>
-                        <button class="btn btn-sm fs-4" @click="borrarEmpleado(empleado)" :disabled="botonBorrarDesactivado">
-                            <span class="badge bg-danger rounded-pill ">X</span>
+                    <td >
+                        <button 
+                            class="btn btn-sm fs-4" 
+                            data-bs-toggle="modal" data-bs-target="#modalBorrarEmpleado"
+                            :disabled="botonBorrarDesactivado"
+                        >
+                            <span class="badge bg-danger rounded-pill ">
+                                <i class="bi bi-x fs-5"></i>
+                            </span>
                         </button>
+                        <ModalConfirmacion
+                            id="modalBorrarEmpleado"
+                            :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
+                            :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
+                            texto-boton="Eliminar empleado"
+                            color="danger"
+                            @accion="borrarEmpleado"
+                            :param="empleado"
+                        />
                     </td>
                 </tr>
             </tbody>

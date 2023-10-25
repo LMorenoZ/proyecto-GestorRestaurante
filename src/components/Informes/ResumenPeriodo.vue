@@ -18,8 +18,12 @@ const rangoFormateado = computed(() => {
     let desde = props.rango[0];
     let hasta = props.rango[1];
 
+    if (hasta !== null) {  // en caso de que no se envie el segundo parametro de la fecha
+        rangoConFormato = fechaFormateadaCorta(desde) + ' hasta el ' + fechaFormateadaCorta(hasta);
+    } else {
+        rangoConFormato = 'historial'
+    }
 
-    rangoConFormato = fechaFormateadaCorta(desde) + ' hasta el ' + fechaFormateadaCorta(hasta);
 
     return rangoConFormato;
 });

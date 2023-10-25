@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc } from 'firebase/firestore/lite';
 import { db } from '../firebaseConfig';
+import { useMensajesStore } from './mensajes';
 
 export const useOrdenesStore = defineStore('ordenesStore', {
     state: () => ({
@@ -28,6 +29,7 @@ export const useOrdenesStore = defineStore('ordenesStore', {
     },
     actions: {  // metodos que mutan el valor del estado
         async traerOrdenes() {
+            const mensajesStore = useMensajesStore();   
             try {
                 const q = query(collection(db, 'orden'), orderBy("fecha", "desc"));
                 const querySnapshot = await getDocs(q);
@@ -37,23 +39,37 @@ export const useOrdenesStore = defineStore('ordenesStore', {
                     this.ordenes.push({...orden.data(), id: orden.id})
                 });
             } catch (error) {
-                console.log(error)
+                mensajesStore.crearError(
+                    'noSePudoTraerOrdenes',
+                    `No se pueden mostrar las órdenes`
+                );
+                console.log(error);
             }
         },
         async agregarOrden(orden) {
+            const mensajesStore = useMensajesStore();
             const ordenNueva = orden;
             ordenNueva.fecha = Timestamp.now();
-            console.log(orden);
             try {
                 await addDoc(collection(db, 'orden'), ordenNueva);
-
+                mensajesStore.crearMensaje({
+                    titulo: 'Órden añadida', 
+                    texto: `Órden de mesa ${orden.mesaNum} aceptada y movida a etapa de preparación`, 
+                    color: 'success', 
+                    id: 'mensajeOrdenCreada',
+                    autoEliminar: true
+                });
                 this.traerOrdenes();
             } catch(error) {
+                mensajesStore.crearError(
+                    'ordenNoSeCrea',
+                    `No se pudo crear la órden`, 
+                );
                 console.log(error);
             }
         },
         async actualizarOrden(ordenModificada) {
-
+            const mensajesStore = useMensajesStore();
             try {
                 const docRef = doc(db, 'orden', ordenModificada.id);
                 const docSnap = await getDoc(docRef);
@@ -68,7 +84,19 @@ export const useOrdenesStore = defineStore('ordenesStore', {
                 });
 
                 this.traerOrdenes();
+
+                mensajesStore.crearMensaje({
+                    titulo: 'Órden actualizada', 
+                    texto: `Órden de la mesa ${ordenModificada.mesaNum} movida a estado ${ordenModificada.estado}`, 
+                    color: 'success', 
+                    id: `mensajeOrdenModificada${ordenModificada.id}`,
+                    autoEliminar: true
+                });
             } catch(error) {
+                mensajesStore.crearError(
+                    'noSePudoActualizarOrden',
+                    `La órden no se pudo actualizar`, 
+                );
                 console.log(error);
             }
         }

@@ -9,6 +9,9 @@ import { useJornadaStore } from '../stores/jornada';
 // importando otros modulos
 import { fechaFormateada, nombreUsuario } from '../utilidades';
 
+// importando componentes de ui
+import ModalConfirmacion from './ModalConfirmacion.vue';
+
 // instanciando las stores
 const userStore = useUserStore();
 const jornadaStore = useJornadaStore();
@@ -22,41 +25,6 @@ const fechaHoy = computed(() => {
 </script>
 
 <template>
-  <!-- <nav class="navbar  bg-primary navbar-expand-lg  ">
-      <div class="container-fluid  ">
-        <div class="flex-grow-1">
-          <a class="navbar-brand text-light">Sistema pupuseria</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-        </div>
-        <div class="collapse navbar-collapse " id="navbarTogglerDemo02">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item ">
-              <span class="nav-link text-light">Bienvenido {{nombreUsuario(userStore.userData.email)}}</span>
-            </li>
-            <li class="nav-item ">
-              <span class="nav-link text-light" v-if="jornadaStore.jornadaValor">Jornada activa en {{fechaHoy}}</span>
-            </li>
-            <li class="nav-item ">
-              <router-link class="nav-link text-light fw-light" to="/mesas">Mesas</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link text-light" to="/ordenes">Ordenes</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link text-light" to="/administracion" v-if="userStore.userData.email === 'admin@test.com'">Administración</router-link>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link text-light" @click="userStore.logoutUser()">Salir</button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav> -->
-
-
-
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg bg-info" data-bs-theme="dark">
     <div class="container">
@@ -94,10 +62,23 @@ const fechaHoy = computed(() => {
             </li>
           </ul>
           <!-- Login/ Sign up -->
+          <span class="nav-link" v-if="jornadaStore.jornadaValor">Jornada activa en {{fechaHoy}}</span>
           <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3">
-            <span class="nav-link" v-if="jornadaStore.jornadaValor">Jornada activa en {{fechaHoy}}</span>
-            <a href="#salir" class="text-white text-decoration-none px-3 py-1 rounded-4"
-              style="background-color: #f94ca4;" @click="userStore.logoutUser()">Salir</a>
+            <button 
+              class="btn text-white text-decoration-none px-3 py-1 rounded-4"
+              style="background-color: #f94ca4;"  
+              data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+            >
+              Salir
+            </button>
+              <ModalConfirmacion 
+                id="modalCerrarSesion"
+                titulo="Cerrar sesión"
+                cuerpo="¿Está seguro que desea cerrar sesión?"
+                color="primary"
+                @accion="userStore.logoutUser()"
+                texto-boton="Cerrar sesión"
+              />
           </div>
         </div>
       </div>

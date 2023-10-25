@@ -19,25 +19,43 @@
     // metodos
     const ingresar = async (correo, contra) => {
         await userStore.loginUser(correo, contra);
-        router.push('/mesas');
+        router.push('/mesas');        
     }
 </script>
 
 <template>
-    <div class="col-sm-12 col-md-6 col-lg-4 mx-auto mt-3 h-100  mt-auto mb-auto" v-if="!userStore.userData">
-        <h1>Debe ingresar sesion</h1>
+    <div class="d-flex flex-column align-items-center justify-content-center  login-div" v-if="!userStore.userData">
+        <div class="bg-info rounded p-4 col-sm-12 col-lg-6 div-fondo">
+            <h1 class="text-light">Debe ingresar sesion</h1>
 
 
-        <form @submit.prevent="ingresar(email, pass)">
-            <div class="mb-3">
-                <label for="inputEmail" class="form-label">Ingrese email:</label>
-                <input type="email" class="form-control" id="inputEmail" v-model="email">
-            </div>
-            <div class="mb-3">
-                <label for="inputPass" class="form-label">Contraseña:</label>
-                <input type="password" class="form-control" id="inputPass" v-model="pass">
-            </div>
-            <button type="submit" class="btn btn-success ml-auto">Ingresar sesión</button>
-        </form>
+            <form @submit.prevent="ingresar(email, pass)">
+                <div class="d-flex flex-column">
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Ingrese email:</label>
+                        <input type="email" class="form-control" id="inputEmail" v-model="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPass" class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="inputPass" v-model="pass">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success btn-submit">Ingresar sesión</button>
+            </form>
+        </div>
     </div>
 </template>
+
+<style>
+    .login-div {
+        height: 90vh;
+    }
+
+    .btn-submit {
+        margin-left: 22vw;
+    }
+
+    .div-fondo {
+        height: 40vh;
+    }
+</style>
