@@ -33,19 +33,21 @@ const modificarCantidad = operacion => {
         cantidadTotalElemento.value += cantidadAniadirElemento.value;
         cantidadAniadirElemento.value = 0;
     } else if (operacion == 'restar') {
+        
         // comprobacion para que el valor resultante no se menor que cero
         let cantidadDisminuida = ingredienteModificado.cantidad -= cantidadRestarElemento.value;
-        if (cantidadDisminuida < 0) {
+        if (cantidadDisminuida <= 0) {
             cantidadDisminuida = 0;
             cantidadTotalElemento.value = 0; // el valor menor de la cantidad siempre sera 0
         } else {
-            cantidadTotalElemento.value -= cantidadRestarElemento.value;
-            
+            cantidadTotalElemento.value = cantidadDisminuida;
         }
+
         ingredienteModificado.cantidad = cantidadDisminuida;
         cantidadRestarElemento.value = 0;
+    } else if (operacion == 'establecer') {
+        ingredienteModificado.cantidad = cantidadTotalElemento.value;
     }
-
     bodegaStore.modificarIngrediente(ingredienteModificado);
 };
 </script>
@@ -58,7 +60,28 @@ const modificarCantidad = operacion => {
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <h5 class="card-title">{{ ingrediente.nombre }} - {{ cantidadTotalElemento }} {{ hayMedida() }}</h5>
+                    <h5 class="card-title">{{ ingrediente.nombre }}: {{ ingrediente.cantidad }} {{ hayMedida() }}</h5>
+
+                    <!-- Establecer cantidad -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text fw-bolder">Establecer</span>
+                        <input type="number" class="form-control fw-bold text-success" placeholder="Cantidad"
+                            v-model="cantidadTotalElemento">
+                        <button 
+                            class="btn btn-warning btn-sm" 
+                            data-bs-toggle="modal" :data-bs-target="`#modalSetCantidad${ingrediente.nombre}`"
+                            :disabled="cantidadTotalElemento == ingrediente.cantidad"
+                        >Establecer cantidad</button>
+                        <ModalConfirmacion
+                            :id="`modalSetCantidad${ingrediente.nombre}`"
+                            titulo="Establecer cantidad"
+                            :cuerpo="`¿Está seguro que desea poner la cantidad de ${ingrediente.nombre} en ${cantidadTotalElemento} ${hayMedida()}?`"
+                            color="primary"
+                            @accion="modificarCantidad('establecer')"
+                            texto-boton="Establecer"
+                        />
+                    </div>
+
                     <!-- Aniadir cantidad -->
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bolder">Añadir</span>
@@ -98,7 +121,7 @@ const modificarCantidad = operacion => {
                             texto-boton="Disminuir"
                         />
                     </div>
-                    <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                    <!-- <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p> -->
                 </div>
             </div>
         </div>

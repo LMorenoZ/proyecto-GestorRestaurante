@@ -33,6 +33,10 @@ export const useBodegaStore = defineStore('bodega', {
                     cantidad: ingredienteMod.cantidad
                 });
 
+                // modificando el valor en el array del estado
+                let indexIngrediente = this.ingredientes.findIndex(i => i.id === ingredienteMod.id);
+                this.ingredientes.splice(indexIngrediente, 1, ingredienteMod);
+
                 mensajesStore.crearMensaje({
                     titulo: 'Ingrediente modificado', 
                     texto: `La cantidad de ${ingredienteMod.nombre.toLowerCase()} se actualizó correctamente`, 

@@ -6,6 +6,7 @@
     import { useOrdenesStore } from '../stores/ordenes.js';
     import { useJornadaStore } from '../stores/jornada';
     import { useMesasStore } from '../stores/mesas';
+    import { useBodegaStore } from '../stores/bodega';
 
     // props y emits
     const props = defineProps(['modalId', 'mesaNum', 'mesaInfo']);
@@ -15,6 +16,7 @@
     const ordenesStore = useOrdenesStore();
     const jornadaStore = useJornadaStore();
     const mesasStore = useMesasStore();
+    const bodegaStore = useBodegaStore();
     //-----------------------------------------------------------
 
 

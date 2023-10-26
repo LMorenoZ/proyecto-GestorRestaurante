@@ -28,12 +28,12 @@
     const cambiarColor = color => {
         switch (color) {
             case 'preparacion': 
-                colorOrden.value = 'success';
+                colorOrden.value = 'info';
                 estadoDescri.value = "Orden en curso"
                 break;
 
             case 'completada': 
-                colorOrden.value = 'primary';
+                colorOrden.value = 'warning-subtle';
                 estadoDescri.value = "Orden completada"
                 break;
 
@@ -83,13 +83,12 @@
     <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;">
         <div class="card-header d-flex justify-content-between fw-bold">
             <p>Órden mesa {{ orden.mesaNum }}</p>
-            <div class="badge bg-scondary text-wrap" style="width: 6rem;">
+            <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
                 {{estadoDescri}}
             </div>
         </div>
         <ul class="list-group list-group-flush">
-            <p class="fst-italic fw-bold text-light text-end" style="font-size: 0.7rem;">Id órden: {{ orden.id }}</p>
-            <p class="fst-italic fw-bold text-light text-end" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fecha.toDate()) }}</p>
+            <p class="fst-italic fw-bold text-end mt-1" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fecha.toDate()) }}</p>
             <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`" v-if="orden.queso">
                 Queso: 
                 <span class="badge bg-primary rounded-pill">{{ orden.queso }}</span>
@@ -114,11 +113,11 @@
                 Chocolate: 
                 <span class="badge bg-primary rounded-pill">{{ orden.chocolate }}</span>
             </li>
-            <li :class="`list-group-item bg-${colorOrden} text-light`">
+            <li :class="`list-group-item bg-${colorOrden}`">
                 Total: {{ USDollar.format(costoTotal()) }} 
             </li>
         </ul>
-        <div class="card-footer text-light mt-auto">
+        <div class="card-footer mt-auto">
             <p>Cambiar estado:</p>
             
             <select class="form-select form-select-sm" v-model="estadoOrden">

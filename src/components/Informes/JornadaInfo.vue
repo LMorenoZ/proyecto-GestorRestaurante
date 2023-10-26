@@ -40,57 +40,57 @@ const bebidasVendidas = computed(() => {
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="table-danger">
                     <th>Fecha</th>
                     <td>{{ fechaFormateadaCorta(jornada.jornadaFecha) }}</td>
                 </tr>
-                <tr>
-                    <th>Órdenes totales</th>
-                    <td>{{ jornada.ordenesCompletadas }}</td>
-                </tr>
-                <tr>
-                    <th>Órdenes canceladas</th>
-                    <td>{{ jornada.ordenesCanceladas }}</td>
-                </tr>
-                <tr>
-                    <th>Ganancias totales</th>
-                    <td>{{ USDollar.format(jornada.gananciasTotales) }}</td>
-                </tr>
-                <tr>
-                    <th>Ganancias perdidas</th>
-                    <td>{{ USDollar.format(jornada.gananciasPerdidas) }}</td>
-                </tr>
-                <tr>
+                <tr class="table-info   ">
                     <th>Pupusas de queso</th>
                     <td>{{ jornada.quesoTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-info">
                     <th>Pupusas revueltas</th>
                     <td>{{ jornada.revueltasTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-info">
                     <th>Pupusas de chicharrón</th>
                     <td>{{ jornada.chicharronTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-info">
                     <th>Total pupusas vendidas</th>
-                    <td>{{ pupusasVendidas }}</td>
+                    <td class="fw-bold">{{ pupusasVendidas }}</td>
                 </tr>
-                <tr>
+                <tr class="table-warning">
                     <th>Gaseosas</th>
                     <td>{{ jornada.gaseosaTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-warning">
                     <th>Refrescos</th>
                     <td>{{ jornada.refrescoTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-warning">
                     <th>Chocolates</th>
                     <td>{{ jornada.chocolateTot }}</td>
                 </tr>
-                <tr>
+                <tr class="table-warning">
                     <th>Total bebidas vendidas</th>
-                    <td> {{ bebidasVendidas }}</td>
+                    <td class="fw-bold"> {{ bebidasVendidas }}</td>
+                </tr>
+                <tr class="table-primary">
+                    <th>Órdenes completadas</th>
+                    <td>{{ jornada.ordenesCompletadas }}</td>
+                </tr>
+                <tr class="table-primary">
+                    <th>Órdenes canceladas</th>
+                    <td>{{ jornada.ordenesCanceladas }}</td>
+                </tr>
+                <tr class="table-success">
+                    <th>Ganancias totales</th>
+                    <td class="fw-bold text-success">{{ USDollar.format(jornada.gananciasTotales) }}</td>
+                </tr>
+                <tr class="table-success">
+                    <th>Ganancias perdidas</th>
+                    <td class="text-danger">{{ USDollar.format(jornada.gananciasPerdidas) }}</td>
                 </tr>
             </tbody>
         </table>

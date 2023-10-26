@@ -9,6 +9,7 @@
   import { useUserStore } from './stores/users';
   import { useJornadaStore } from './stores/jornada';
   import { useBodegaStore } from './stores/bodega';
+  import { useHistorialStore } from './stores/historial';
 
   // componentes de interfaz
   import Navbar from './components/Navbar.vue';
@@ -21,6 +22,7 @@
   const userStore = useUserStore();
   const jornadaStore = useJornadaStore();
   const bodegaStore = useBodegaStore();
+  const historialStore = useHistorialStore();
 
   // Trae los datos de la db solo cuando se hayan cargado todos los elementos de la vista
   onMounted(() => {
@@ -28,6 +30,12 @@
     ordenesStore.traerOrdenes();
     jornadaStore.estadoJornada();
     bodegaStore.traerIngredientes();
+    
+    // Para traer el historial de ordenes
+    const fechaHasta = new Date();
+    const fechaDesde = new Date(new Date().setDate(fechaHasta.getDate() - 7));
+    let rango = [fechaDesde, fechaHasta];
+    historialStore.filtrarPorFechas(rango, fechaDesde, fechaHasta);
   });
 </script>
 
