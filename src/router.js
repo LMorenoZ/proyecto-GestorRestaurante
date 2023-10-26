@@ -11,6 +11,7 @@ import Mesas from './views/MesasView.vue';
 import Administracion from './views/AdministracionView.vue'; 
 import AdminEmpleados from './views/AdminViews/AdminEmpleadosView.vue';
 import AdminInformes from './views/AdminViews/AdminInformesView.vue';
+import AdminBodega from './views/AdminViews/AdminBodegaView.vue';
 
 
 // middlewares para realizar comprobaciones de sesion
@@ -76,6 +77,9 @@ const routes = [
             { path: 'informes', 
                 components: {seccionAdmin: AdminInformes}
             },
+            { path: 'bodega', 
+                components: {seccionAdmin: AdminBodega}
+            }
         ],
         beforeEnter: sesionAdmin
     }

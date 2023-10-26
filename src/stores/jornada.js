@@ -32,15 +32,18 @@ export const useJornadaStore = defineStore('jornada', {
                     autoEliminar: true
                 });
             } catch (error) {
+                mensajesStore.crearError('noInicioJornada', 'No se pudo iniciar la jornada');
                 console.log(error);
             }
         }, 
         async estadoJornada() {
+            const mensajesStore = useMensajesStore();
             try {
                 const docRef = doc(db, "jornada", "estadoId");
                 const docSnap = await getDoc(docRef);
                 this.jornadaActiva = docSnap.data().jornadaActiva;
             } catch (error) {
+                mensajesStore.crearError('noComprobacionJornada', 'No se pudo comprobar el estado de la jornada');
                 console.log(error);
             }
         },
@@ -132,6 +135,7 @@ export const useJornadaStore = defineStore('jornada', {
 
                 ordenesStore.$reset(); // se resetea la store de las ordenes
             } catch (error) {
+                mensajesStore.crearError('noTerminoJornada', 'No se pudo terminar la jornada');
                 console.log(error);
             }
         }

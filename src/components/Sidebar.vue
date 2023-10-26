@@ -14,8 +14,12 @@
             </li>
             <li class="">
                 <router-link  class="nav-link link-dark" to="informes">
-                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#informes"></use></svg>
                     Informes
+                </router-link>
+                <router-link  class="nav-link link-dark" to="bodega">
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#bodega"></use></svg>
+                    Bodega
                 </router-link>
             </li>
         </ul>

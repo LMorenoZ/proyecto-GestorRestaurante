@@ -8,6 +8,7 @@
   import { useOrdenesStore } from './stores/ordenes';
   import { useUserStore } from './stores/users';
   import { useJornadaStore } from './stores/jornada';
+  import { useBodegaStore } from './stores/bodega';
 
   // componentes de interfaz
   import Navbar from './components/Navbar.vue';
@@ -19,12 +20,14 @@
   const ordenesStore = useOrdenesStore();
   const userStore = useUserStore();
   const jornadaStore = useJornadaStore();
+  const bodegaStore = useBodegaStore();
 
   // Trae los datos de la db solo cuando se hayan cargado todos los elementos de la vista
   onMounted(() => {
     mesasStore.traerMesas();
     ordenesStore.traerOrdenes();
     jornadaStore.estadoJornada();
+    bodegaStore.traerIngredientes();
   });
 </script>
 
