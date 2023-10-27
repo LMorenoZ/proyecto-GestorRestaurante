@@ -3,10 +3,9 @@
 const props = defineProps(['ordenInfo', 'modalId', 'totalPagar']);
 
 // para imprimir el ticket
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
-import pdfMake from 'pdfmake';
-pdfMake.addVirtualFileSystem(pdfFonts);
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import pdfMake from "pdfmake/build/pdfmake.js";
+import pdfFonts from '../vfs_fonts';
+pdfMake.vfs = pdfFonts;
 
 const exportPDF = () => {
 
@@ -37,6 +36,8 @@ const exportPDF = () => {
     }
 
     const Pdftest = () => {
+        // datos de la tabla a imprimir:
+
         let externalDataRetrievedFromServer = [];
 
         if (props.ordenInfo.queso > 0)
@@ -57,6 +58,7 @@ const exportPDF = () => {
                 { text: `Ticket para la mesa ${props.ordenInfo.mesaNum}`, style: 'header' },
                 table(externalDataRetrievedFromServer, ['Producto', 'Precio', 'Cantidad'])
             ],
+
             styles: {
                 header: {
                     fontSize: 18,
@@ -65,6 +67,17 @@ const exportPDF = () => {
                 }
             }
         }
+
+        // fuentes para la tipografia del pdf
+        pdfMake.fonts = {
+            Roboto: {
+                normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+                bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+                italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+                bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+            }
+        };
+
         pdfMake.createPdf(dd).open();
     }
 

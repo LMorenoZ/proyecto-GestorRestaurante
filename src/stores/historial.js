@@ -9,8 +9,6 @@ export const useHistorialStore = defineStore('historial', {
     }),
     actions: {
         async filtrarPorFechas (dateRango, dateDesde, dateHasta) {
-            // if (this.historialOrdenes.length > 0) { return; }  // no ejecuta el codigo si ya se ha recuperado la informacion
-
             const mensajesStore = useMensajesStore();
 
             let q; // query 
@@ -18,8 +16,8 @@ export const useHistorialStore = defineStore('historial', {
             // se establece la query correspondiente al valor de las fechas introducidas
             if (dateRango == null) {
                 mensajesStore.crearMensaje({
-                    titulo: 'Información',
-                    texto: 'Debe ingresar un rango de fechas válido para poder filtrar por período',
+                    titulo: 'Se muestra todo el historial',
+                    texto: 'Debe ingresar un rango de fechas válido para poder filtrar por período específico',
                     color: 'warning',
                     id: 'intentarFiltrar',
                     autoEliminar: true

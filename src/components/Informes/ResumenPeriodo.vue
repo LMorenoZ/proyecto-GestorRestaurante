@@ -3,9 +3,17 @@
 import { onMounted, ref, computed } from 'vue';
 
 
+// para imprimir el informe
+import pdfMake from "pdfmake/build/pdfmake.js";
+import pdfFonts from '../../vfs_fonts';
+
+// componentes de ui
 import TablaResumen from './TablaResumen.vue';
 
 const props = defineProps(['id', 'rango', 'totales']);
+
+// pdfmake y vfonts para dar tipografia al documento pdf
+pdfMake.vfs = pdfFonts;
 
 // utilidades
 import { USDollar, fechaFormateadaCorta } from '../../utilidades';
@@ -20,9 +28,9 @@ const rangoFormateado = computed(() => {
     let hasta = props.rango[1];
 
     if (hasta !== null) {  // en caso de que no se envie el segundo parametro de la fecha
-        rangoConFormato = fechaFormateadaCorta(desde) + ' hasta el ' + fechaFormateadaCorta(hasta);
+        rangoConFormato = 'del período ' + fechaFormateadaCorta(desde) + ' - ' + fechaFormateadaCorta(hasta);
     } else {
-        rangoConFormato = 'historial'
+        rangoConFormato = 'del día ' + fechaFormateadaCorta(desde);
     }
 
 
@@ -67,6 +75,108 @@ const objDinero = computed(() => {
     return arrayObj;
 });
 
+// codigo para generar el documento para imprimir
+const exportPDFInforme = () => {
+
+const buildTableBody = (data, columns, encabezado, footer) => {
+    let body = [];
+    body.push(encabezado);
+    data.forEach(row => {
+        let dataRow = [];
+        columns.forEach(column => {
+            dataRow.push(row[column].toString());
+        })
+        body.push(dataRow);
+    });
+    if (footer) {
+        // footer de la tabla
+        body.push(footer);
+    }
+    return body;
+}
+
+const table = (data, columns, encabezado, footer = null) => {
+    return {
+        layout: 'lightHorizontalLines', // optional
+        style: 'table',
+        table: {
+            headerRows: 1,
+            widths: ['*', '*'],
+            body: buildTableBody(data, columns, encabezado, footer)
+        }
+    };
+}
+
+const Pdftest = () => {
+    // datos de la tabla de productos vendidos:
+    let externalDataRetrievedFromServer = [];
+        externalDataRetrievedFromServer.push({ Producto: 'Pupusas de queso', Ventas: props?.totales.quesoTotales });
+        externalDataRetrievedFromServer.push({ Producto: 'Pupusas revueltas', Ventas: props?.totales.revueltasTotales });
+        externalDataRetrievedFromServer.push({ Producto: 'Pupusas de chicharrón', Ventas: props?.totales.chicharronTotales });
+        externalDataRetrievedFromServer.push({ Producto: 'Gaseosas', Ventas: props?.totales.gaseosaTotales });
+        externalDataRetrievedFromServer.push({ Producto: 'Refrescos', Ventas: props?.totales.refrescoTotales });
+        externalDataRetrievedFromServer.push({ Producto: 'Chocolate caliente', Ventas: props?.totales.chocolateTotales });
+
+    let ordenesTabla = [];
+        ordenesTabla.push({ Resultado: 'Órdenes completadas', Orden: props?.totales.completadasTotales});
+        ordenesTabla.push({ Resultado: 'Órdenes canceladas', Orden: props?.totales.canceladasTotales});
+    // calculo de ordenes totales
+    let ordenesTotales = props?.totales.completadasTotales + props?.totales.canceladasTotales;
+
+    // array de la tabla de dinero
+    let tablaDinero = [];
+        tablaDinero.push({ Dinero: 'Ganancias', Total: USDollar.format(props.totales.gananciasTotales) });
+        tablaDinero.push({ Dinero: 'Pérdidas', Total: USDollar.format(props.totales.perdidasTotales) });
+    
+
+    let dd = {
+        content: [
+            { text: `Informe de ventas y actividades ${rangoFormateado.value}`, style: 'header' },
+            // tabla de ventas
+            table(externalDataRetrievedFromServer, 
+                ['Producto', 'Ventas'], 
+                [{ text: 'Producto', bold: true },  { text: 'Cantidad de ventas', bold: true }]
+            ),
+            // tabla de ordenes
+            table(ordenesTabla,  // cuerpo de la tabla
+                ['Resultado', 'Orden'],   // columnas de la tabla
+                [{ text: 'Tipo de órden', bold: true },  { text: 'Resultado', bold: true }],  // encabezado de la tabla
+                [{ text: 'Órdenes totales', bold: true },  { text: ordenesTotales, bold: true }],  // footer de la tabla
+            ),
+            // tabla de dinero
+            table(tablaDinero, 
+                ['Dinero', 'Total'],   // encabezado de la tabla
+                [{ text: 'Dinero', bold: true },  { text: 'Total', bold: true }],  // encabezado de la tabl
+            ),
+        ],
+
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 5, 0, 10]
+            },
+            table: {
+                margin: [0, 5, 0, 15]
+            }
+        }
+    }
+
+    // fuentes para la tipografia del pdf
+    pdfMake.fonts = {
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        }
+    };
+
+    pdfMake.createPdf(dd).open();
+}
+
+Pdftest();
+}
 </script>
 
 <template>
@@ -74,7 +184,7 @@ const objDinero = computed(() => {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5">Resumen del {{ rangoFormateado }}</h1>
+                    <h1 class="modal-title fs-5">Resumen {{ rangoFormateado }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
@@ -106,7 +216,7 @@ const objDinero = computed(() => {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary">Imprimir</button>
+                    <button type="button" class="btn btn-primary" @click="exportPDFInforme">Imprimir</button>
                 </div>
             </div>
     </div>

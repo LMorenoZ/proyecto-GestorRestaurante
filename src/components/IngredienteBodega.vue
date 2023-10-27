@@ -50,13 +50,56 @@ const modificarCantidad = operacion => {
     }
     bodegaStore.modificarIngrediente(ingredienteModificado);
 };
+
+
+    // importando las imagenes para los ingredientes:
+    import masa from '../assets/bodega/masa.jpg';
+    import queso from '../assets/bodega/queso.jpg';
+    import frijol from '../assets/bodega/frijol.png';
+    import chicharron from '../assets/bodega/chicharron.jpg';
+    import gaseosas from '../assets/bodega/gaseosas.jpg';
+    import frescos from '../assets/bodega/frescos.jpg';
+    import chocolate from '../assets/bodega/chocolate.jpg';
+
+    const imagenIngrediente = () => {
+        let imagen;
+
+        switch(props.ingrediente.nombre) {
+            case 'Masa':
+                imagen = masa;
+                break;
+            case 'Queso':
+                imagen = queso;
+                break;
+            case 'Frijoles':
+                imagen = frijol;
+                break;
+            case 'Chicharrón':
+                imagen = chicharron;
+                break;
+            case 'Gaseosas':
+                imagen = gaseosas;
+                break;
+            case 'Frescos':
+                imagen = frescos;
+                break;
+            case 'Chocolate':
+                imagen = chocolate;
+                break;
+            default:
+                break;
+        }
+
+        return imagen;
+    }
+
 </script>
 
 <template>
     <div class="card bg-info mb-3" style="max-width: 540px;">
         <div class="row g-0">
             <div class="col-md-4">
-                <img :src="ingrediente.imagen" class="img-fluid rounded-start">
+                <img :src="imagenIngrediente()" class="img-fluid rounded-start">
             </div>
             <div class="col-md-8">
                 <div class="card-body">

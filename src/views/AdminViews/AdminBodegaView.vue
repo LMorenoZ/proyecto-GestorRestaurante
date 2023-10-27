@@ -7,7 +7,6 @@
 
     // instanciando stores
     const bodegaStore = useBodegaStore();
-    
 </script>
 
 <template>

@@ -15,7 +15,7 @@ export const useBodegaStore = defineStore('bodega', {
             if (this.ingredientes.length > 0) {  // no ejecuta el codigo si ya se ha llamado previamente
                 return;
             }
-
+            
             try {
                 const q = query(collection(db, 'ingredientes'));
                 const querySnapshot = await getDocs(q);
