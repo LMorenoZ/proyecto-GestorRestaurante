@@ -2,12 +2,18 @@
 // librerias y metodos de vue
 import { onMounted, ref, computed } from 'vue';
 
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
 import TablaResumen from './TablaResumen.vue';
 
 const props = defineProps(['id', 'rango', 'totales']);
 
 // utilidades
 import { USDollar, fechaFormateadaCorta } from '../../utilidades';
+
+// para generar pdfs
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 // metodos 
 const rangoFormateado = computed(() => {
@@ -53,7 +59,7 @@ const objOrdenes = computed(() => {
         { nombre: 'Finalizadas', valor: props?.totales.completadasTotales },
         { nombre: 'Canceladas', valor: props?.totales.canceladasTotales }
     ]
-    
+
     return arrayObj;
 });
 
@@ -62,7 +68,7 @@ const objDinero = computed(() => {
         { nombre: 'Ganancias', valor: USDollar.format(props.totales.gananciasTotales) },
         { nombre: 'Pérdidas', valor: USDollar.format(props.totales.perdidasTotales) }
     ]
-    
+
     return arrayObj;
 });
 
@@ -79,21 +85,25 @@ const objDinero = computed(() => {
                 <div class="modal-body p-3">
 
                     <div class="container-fluid">
-                        <p class="fs-5"> <span class="fw-bold">Jornadas en el período:</span>  {{ totales.diasTotales }}</p>
+                        <p class="fs-5"> <span class="fw-bold">Jornadas en el período:</span> {{ totales.diasTotales }}</p>
                         <div class="row">
                             <div class="col">
-                                <TablaResumen encabezado1="Pupusas" encabezado2="Cantidad vendidas" color="warning" :lista="objPupusas" :total="true" />
+                                <TablaResumen encabezado1="Pupusas" encabezado2="Cantidad vendidas" color="warning"
+                                    :lista="objPupusas" :total="true" />
                             </div>
                             <div class="col">
-                                <TablaResumen encabezado1="Bebidas" encabezado2="Cantidad vendidas" color="danger" :lista="objBebidas" />
+                                <TablaResumen encabezado1="Bebidas" encabezado2="Cantidad vendidas" color="danger"
+                                    :lista="objBebidas" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <TablaResumen encabezado1="Órdenes" encabezado2="Realizadas" color="dark" :lista="objOrdenes" />
+                                <TablaResumen encabezado1="Órdenes" encabezado2="Realizadas" color="dark"
+                                    :lista="objOrdenes" />
                             </div>
                             <div class="col">
-                                <TablaResumen encabezado1="Dinero" encabezado2="Calculado" color="success" :lista="objDinero" />
+                                <TablaResumen encabezado1="Dinero" encabezado2="Calculado" color="success"
+                                    :lista="objDinero" />
                             </div>
                         </div>
                     </div>
@@ -104,6 +114,5 @@ const objDinero = computed(() => {
                     <button type="button" class="btn btn-primary">Imprimir</button>
                 </div>
             </div>
-        </div>
     </div>
-</template>
+</div></template>

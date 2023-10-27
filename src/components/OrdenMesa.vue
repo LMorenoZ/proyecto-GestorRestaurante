@@ -131,7 +131,7 @@
                 <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" :data-bs-target="`#ticketModal${orden.id}`">
                     Ver ticket
                 </button>
-                <button class="btn btn-sm btn-primary" @click="modificarOrden(ordenActual)">Actualizar</button>
+                <button class="btn btn-sm btn-primary" @click="modificarOrden(ordenActual)" :disabled="orden.estado === estadoOrden" >Actualizar</button>
             </div>
         </div>
     </div>
