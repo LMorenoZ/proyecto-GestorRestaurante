@@ -4,4 +4,5 @@ import Login from '../components/Login.vue';
 
 <template class="row align-items-center ">
     <Login />
+    
 </template>

@@ -34,7 +34,7 @@ const bebidasVendidas = computed(() => {
     <div class="table-responsive">
         <table class="table">
             <thead>
-                <tr>
+                <tr class="table-secondary">
                     <th scope="col">Campo</th>
                     <th scope="col">Valor</th>
                 </tr>

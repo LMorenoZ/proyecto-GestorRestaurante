@@ -40,8 +40,9 @@ export const useHistorialStore = defineStore('historial', {
                     fechaDesde = Timestamp.fromDate(new Date(dateDesde.setHours(0, 0, 0)));  // setea la fecha a las 0 horas
                     fechaHasta = Timestamp.fromDate((new Date(dateDesde.valueOf())).addDays(1));  // agrega 24 horas
                 } else {
-                    fechaDesde = Timestamp.fromDate(dateDesde);
-                    fechaHasta = Timestamp.fromDate(dateHasta.addDays(1));
+                    fechaDesde = Timestamp.fromDate(new Date(dateDesde.setHours(0, 0, 0)));
+                    fechaHasta = Timestamp.fromDate(new Date(dateHasta.setHours(23, 59, 59)));
+                    // fechaHasta = Timestamp.fromDate(dateHasta.addDays(1));
                 }
                 q = query(collection(db, 'historialOrdenes'),    // la consulta filtrara por las fechas introducidas
                     where('jornadaFecha', '>=', fechaDesde),

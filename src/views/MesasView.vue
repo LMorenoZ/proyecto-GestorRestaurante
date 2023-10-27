@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <h1>Local</h1> <br>
+    <h1>Disposición de mesas</h1> <br>
     <button 
         class="btn btn-success ml-2 col-sm-10 col-md-2" 
         data-bs-toggle="modal" data-bs-target="#crearMesa" 

@@ -65,7 +65,7 @@ const modificarCantidad = operacion => {
                     <!-- Establecer cantidad -->
                     <div class="input-group mb-3">
                         <span class="input-group-text fw-bolder">Establecer</span>
-                        <input type="number" class="form-control fw-bold text-success" placeholder="Cantidad"
+                        <input type="number" class="form-control fw-bold" placeholder="Cantidad"
                             v-model="cantidadTotalElemento">
                         <button 
                             class="btn btn-warning btn-sm" 
@@ -75,7 +75,7 @@ const modificarCantidad = operacion => {
                         <ModalConfirmacion
                             :id="`modalSetCantidad${ingrediente.nombre}`"
                             titulo="Establecer cantidad"
-                            :cuerpo="`¿Está seguro que desea poner la cantidad de ${ingrediente.nombre} en ${cantidadTotalElemento} ${hayMedida()}?`"
+                            :cuerpo="`¿Está seguro que desea poner la cantidad de ${ingrediente.nombre.toLowerCase()} en ${cantidadTotalElemento} ${hayMedida()}?`"
                             color="primary"
                             @accion="modificarCantidad('establecer')"
                             texto-boton="Establecer"

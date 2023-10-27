@@ -38,7 +38,11 @@ onMounted(() => {
 
 
 const filtrar = () => {
-    historialStore.filtrarPorFechas(date.value, date.value[0], date.value[1]);
+    if (date.value === null) {
+        historialStore.filtrarPorFechas(null);
+    } else {
+        historialStore.filtrarPorFechas(date.value, date.value[0], date.value[1]);
+    }
 };
 
 // metodos convencionales

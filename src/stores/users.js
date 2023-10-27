@@ -32,7 +32,8 @@ export const useUserStore = defineStore('users', {
                     autoEliminar: true
                 });
             } catch (error) {
-                alert(error);
+                console.log(error);
+                throw new Error(error);
             }
         },
         async logoutUser() {
