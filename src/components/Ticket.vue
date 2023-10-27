@@ -5,7 +5,8 @@ const props = defineProps(['ordenInfo', 'modalId', 'totalPagar']);
 // para imprimir el ticket
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import pdfMake from 'pdfmake';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.addVirtualFileSystem(pdfFonts);
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const exportPDF = () => {
 
