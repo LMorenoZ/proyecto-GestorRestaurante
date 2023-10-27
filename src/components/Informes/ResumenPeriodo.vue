@@ -2,8 +2,6 @@
 // librerias y metodos de vue
 import { onMounted, ref, computed } from 'vue';
 
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 
 import TablaResumen from './TablaResumen.vue';
 
@@ -11,9 +9,6 @@ const props = defineProps(['id', 'rango', 'totales']);
 
 // utilidades
 import { USDollar, fechaFormateadaCorta } from '../../utilidades';
-
-// para generar pdfs
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 // metodos 
 const rangoFormateado = computed(() => {
