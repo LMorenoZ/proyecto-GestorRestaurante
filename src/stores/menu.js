@@ -6,7 +6,7 @@ import { useMensajesStore } from './mensajes';
 
 export const useMenuStore = defineStore('menu', {
     state: () => ({
-        menu: []
+        menu: [],
     }),
     actions: {
         async traerMenu() {
@@ -21,7 +21,7 @@ export const useMenuStore = defineStore('menu', {
             } catch (error) {
                 mensajesStore.crearError('noTraerMenu', 'No se pudo recuperar la información del menú');
                 console.log(error);
-            }
+            } 
         }
         // async traerIngredientes() {
         //     const mensajesStore = useMensajesStore();

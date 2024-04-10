@@ -1,6 +1,6 @@
 <script setup>
   // librerias de vue y afilidados
-  import { onMounted } from 'vue';
+  import { onMounted, onBeforeMount } from 'vue';
   import { RouterView } from 'vue-router'
 
   // los store de pinia
@@ -15,6 +15,7 @@
   import Navbar from './components/Navbar.vue';
   import Footer from './components/Footer.vue';
   import AlertaContenedor from './components/Alertas/AlertasContenedor.vue';
+  import { useMenuStore } from './stores/menu';
 
   // se instancias todas las stores
   const mesasStore = useMesasStore();
@@ -23,13 +24,15 @@
   const jornadaStore = useJornadaStore();
   const bodegaStore = useBodegaStore();
   const historialStore = useHistorialStore();
+  const menuStore = useMenuStore()
 
   // Trae los datos de la db solo cuando se hayan cargado todos los elementos de la vista
-  onMounted(() => {
+  onBeforeMount(() => {
     mesasStore.traerMesas();
     ordenesStore.traerOrdenes();
     jornadaStore.estadoJornada();
     bodegaStore.traerIngredientes();
+    menuStore.traerMenu()
     
     // Para traer el historial de ordenes
     const fechaHasta = new Date();

@@ -17,7 +17,7 @@ const userStore = useUserStore();
 
 // variables reactvias
 const email = ref('admin@test.com');
-const pass = ref('admin123');
+const pass = ref('123456');
 
 // variable reactiva para mostrar el alert de erro de iniciar sesion
 let hayError = ref(false);

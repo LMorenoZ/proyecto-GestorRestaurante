@@ -1,12 +1,13 @@
 <script setup>
     // librerias
-    import { ref, computed} from 'vue';
+    import { ref, computed, onMounted} from 'vue';
 
     // stores de pinia
     import { useOrdenesStore } from '../stores/ordenes.js';
     import { useJornadaStore } from '../stores/jornada';
     import { useMesasStore } from '../stores/mesas';
     import { useBodegaStore } from '../stores/bodega';
+    import { useMenuStore } from '../stores/menu.js';
 
     // props y emits
     const props = defineProps(['modalId', 'mesaNum', 'mesaInfo']);
@@ -17,52 +18,64 @@
     const jornadaStore = useJornadaStore();
     const mesasStore = useMesasStore();
     const bodegaStore = useBodegaStore();
+    const menuStore = useMenuStore()
     //-----------------------------------------------------------
 
+    const productos = menuStore.menu
 
-    // Seguimiento de la orden
-    const pupusasQueso = ref(0);
-    const pupusasRevueltas = ref(0);
-    const pupusasChicharron = ref(0);
-    const gaseosa = ref(0);
-    const refresco = ref(0);
-    const chocolate = ref(0);
+    const cantidades = {};
 
-    // metodo computado para determinar si se puede ordenar
-    const puedeOrdenar = computed(() => {
-        if(
-            pupusasQueso.value > 0 ||
-            pupusasRevueltas.value > 0 ||
-            pupusasChicharron.value > 0 ||
-            gaseosa.value > 0 ||
-            refresco.value > 0 ||
-            chocolate.value > 0
-        ) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    const submitForm = () => {
+      console.log(cantidades);
+    };
 
-    // Metodo para realizar la orden para la mesa
-    const ordenar = () => {
-        const orden = {
-            queso: pupusasQueso.value,
-            revueltas: pupusasRevueltas.value,
-            chicharron: pupusasChicharron.value,
-            gaseosa: gaseosa.value,
-            refresco: refresco.value,
-            chocolate: chocolate.value,
-            estado: 'preparacion',
-            mesaNum: props.mesaNum,
-            pago: 0
-        };
 
-        ordenesStore.agregarOrden(orden);
-        props.mesaInfo.estado = 'ocupada';
-        mesasStore.modMesa(props.mesaInfo);
-        emits('cambiarEstado', props.mesaInfo, props.mesaInfo.estado);  // la funcion recibe 2 argumentos
-    };  
+    //Pupuseria
+    //-----------------------------------------------------------
+
+    // // Seguimiento de la orden
+    // const pupusasQueso = ref(0);
+    // const pupusasRevueltas = ref(0);
+    // const pupusasChicharron = ref(0);
+    // const gaseosa = ref(0);
+    // const refresco = ref(0);
+    // const chocolate = ref(0);
+
+    // // metodo computado para determinar si se puede ordenar
+    // const puedeOrdenar = computed(() => {
+    //     if(
+    //         pupusasQueso.value > 0 ||
+    //         pupusasRevueltas.value > 0 ||
+    //         pupusasChicharron.value > 0 ||
+    //         gaseosa.value > 0 ||
+    //         refresco.value > 0 ||
+    //         chocolate.value > 0
+    //     ) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // });
+
+    // // Metodo para realizar la orden para la mesa
+    // const ordenar = () => {
+    //     const orden = {
+    //         queso: pupusasQueso.value,
+    //         revueltas: pupusasRevueltas.value,
+    //         chicharron: pupusasChicharron.value,
+    //         gaseosa: gaseosa.value,
+    //         refresco: refresco.value,
+    //         chocolate: chocolate.value,
+    //         estado: 'preparacion',
+    //         mesaNum: props.mesaNum,
+    //         pago: 0
+    //     };
+
+    //     ordenesStore.agregarOrden(orden);
+    //     props.mesaInfo.estado = 'ocupada';
+    //     mesasStore.modMesa(props.mesaInfo);
+    //     emits('cambiarEstado', props.mesaInfo, props.mesaInfo.estado);  // la funcion recibe 2 argumentos
+    // };  
 </script>
 
 <template>
@@ -77,7 +90,7 @@
             <div class="modal-body">
 
                 <!-- Pupusas -->
-                <form @submit.prevent="ordenar">
+                <!-- <form @submit.prevent="ordenar">
                     <div class="mb-3">
                         <label for="pupusaQueso" class="form-label">Queso</label>
                         <input type="number" class="form-control" id="pupusaQueso" aria-describedby="queso" v-model="pupusasQueso">
@@ -107,9 +120,19 @@
                         data-bs-dismiss="modal" 
                         :disabled="!puedeOrdenar"
                     >Ordenar</button>
+                </form> -->
+
+                <!-- Gestor Restaurante -->
+                <form @submit.prevent="submitForm">
+                    <div class="mb-3" v-for="(producto, index) in productos" :key="index">
+                        <label :for="`Id${producto.id}`" class="form-label">{{ producto.nombre }}</label>
+                        <input type="number" class="form-control" :id="`Id${producto.id}`" :aria-describedby="producto.nombre" v-model="cantidades[producto.id]">
+                    </div>      
+                    <button type="submit" 
+                        class="btn btn-primary" 
+                        data-bs-dismiss="modal" 
+                    >Ordenar</button>
                 </form>
-
-
 
             </div>
 

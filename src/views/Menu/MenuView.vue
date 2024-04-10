@@ -14,8 +14,6 @@ const menuStore = useMenuStore()
 const toNuevoProducto = () => {
     router.push('/menu/nuevo')
 }
-
-menuStore.traerMenu()
 </script>
 
 <template>
