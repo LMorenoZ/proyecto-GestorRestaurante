@@ -7,20 +7,20 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto row">
             <li class="nav-item">
-                <router-link  class="nav-link link-dark" aria-current="page" to="empleados">
+                <router-link  class="nav-link link-dark" aria-current="page" to="/administracion/empleados">
                     <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
                     Empleados
                 </router-link>
             </li>
             <li class="">
-                <router-link  class="nav-link link-dark" to="informes">
+                <router-link  class="nav-link link-dark" to="/administracion/informes">
                     <svg class="bi me-2" width="16" height="16"><use xlink:href="#informes"></use></svg>
                     Informes
                 </router-link>
-                <router-link  class="nav-link link-dark" to="bodega">
+                <!-- <router-link  class="nav-link link-dark" to="/administracion/bodega">
                     <svg class="bi me-2" width="16" height="16"><use xlink:href="#bodega"></use></svg>
                     Bodega
-                </router-link>
+                </router-link> -->
             </li>
         </ul>
   </div>

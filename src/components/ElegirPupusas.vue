@@ -75,6 +75,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
+                <!-- Pupusas -->
                 <form @submit.prevent="ordenar">
                     <div class="mb-3">
                         <label for="pupusaQueso" class="form-label">Queso</label>
@@ -106,6 +108,9 @@
                         :disabled="!puedeOrdenar"
                     >Ordenar</button>
                 </form>
+
+
+
             </div>
 
             <div class="modal-footer">

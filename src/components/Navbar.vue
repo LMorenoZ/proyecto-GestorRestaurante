@@ -12,6 +12,9 @@ import { fechaFormateada, nombreUsuario } from '../utilidades';
 // importando componentes de ui
 import ModalConfirmacion from './ModalConfirmacion.vue';
 
+// imagen del navbar
+import logoImg from '../assets/logoImg.jpg'
+
 // instanciando las stores
 const userStore = useUserStore();
 const jornadaStore = useJornadaStore();
@@ -30,8 +33,11 @@ const fechaHoy = computed(() => {
     <div class="container">
 
       <!-- Logo -->
-      <router-link class="navbar-brand fs-4" active-class="active fw-bolder" to="/">Pupusería</router-link>
-      <span class="nav-link text-light">Bienvenido {{nombreUsuario(userStore.userData.email)}}</span>
+      <router-link class="navbar-brand fs-4" active-class="active fw-bolder" to="/">
+        <img :src="logoImg" alt="" width="30" height="24">
+      </router-link>
+
+      <span class="nav-link text-light">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
       <!-- Toggle btn -->
       <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
@@ -44,7 +50,7 @@ const fechaHoy = computed(() => {
         <!-- Sidebar header -->
         <div class="offcanvas-header text-white border-bottom">
           <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Pupusería</h5>
-          <span class="nav-link">Bienvenido {{nombreUsuario(userStore.userData.email)}}</span>
+          <span class="nav-link">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
           <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"
             aria-label="Close"></button>
         </div>
@@ -58,27 +64,23 @@ const fechaHoy = computed(() => {
               <router-link class="nav-link" active-class="active fw-bolder" to="/ordenes">Órdenes</router-link>
             </li>
             <li class="nav-item mx-2">
-              <router-link class="nav-link" to="/administracion" v-if="userStore.userData.email === 'admin@test.com'" active-class="active fw-bolder">Administración</router-link>
+              <router-link class="nav-link" active-class="active fw-bolder" to="/menu">Menú</router-link>
+            </li>
+            <li class="nav-item mx-2">
+              <router-link class="nav-link" to="/administracion" v-if="userStore.userData.email === 'admin@test.com'"
+                active-class="active fw-bolder">Administración</router-link>
             </li>
           </ul>
           <!-- Login/ Sign up -->
-          <span class="nav-link" v-if="jornadaStore.jornadaValor">Jornada activa en {{fechaHoy}}</span>
+          <span class="nav-link" v-if="jornadaStore.jornadaValor">Jornada activa en {{ fechaHoy }}</span>
           <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3">
-            <button 
-              class="btn text-white text-decoration-none px-3 py-1 rounded-4"
-              style="background-color: #f94ca4;"  
-              data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
-            >
+            <button class="btn text-white text-decoration-none px-3 py-1 rounded-4" style="background-color: #f94ca4;"
+              data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
               Salir
             </button>
-              <ModalConfirmacion 
-                id="modalCerrarSesion"
-                titulo="Cerrar sesión"
-                cuerpo="¿Está seguro que desea cerrar sesión?"
-                color="primary"
-                @accion="userStore.logoutUser()"
-                texto-boton="Cerrar sesión"
-              />
+            <ModalConfirmacion id="modalCerrarSesion" titulo="Cerrar sesión"
+              cuerpo="¿Está seguro que desea cerrar sesión?" color="primary" @accion="userStore.logoutUser()"
+              texto-boton="Cerrar sesión" />
           </div>
         </div>
       </div>

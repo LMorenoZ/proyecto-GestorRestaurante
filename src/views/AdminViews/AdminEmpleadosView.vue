@@ -1,5 +1,6 @@
 <script setup>
     import { ref } from 'vue';
+    import { RouterLink } from 'vue-router';
 
     import { useUserStore } from '../../stores/users';
     import { useMensajesStore } from '../../stores/mensajes';
@@ -8,6 +9,7 @@
 
     // componentes de ui
     import ModalConfirmacion from '../../components/ModalConfirmacion.vue';
+    
 
     const userStore = useUserStore();
     const mensajesStore = useMensajesStore();
@@ -96,6 +98,7 @@
                     <th scope="col">Contraseña</th>
                     <th scope="col">Creación</th>
                     <th scope="col">Acción</th>
+                    <th scope="col">Perfil</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,6 +130,9 @@
                             @accion="borrarEmpleado"
                             :param="empleado"
                         />
+                    </td>
+                    <td>
+                        <RouterLink :to="`/administracion/perfil/${empleado.uid}`">Ver</RouterLink>
                     </td>
                 </tr>
             </tbody>

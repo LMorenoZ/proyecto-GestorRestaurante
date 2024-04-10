@@ -12,6 +12,10 @@ import Administracion from './views/AdministracionView.vue';
 import AdminEmpleados from './views/AdminViews/AdminEmpleadosView.vue';
 import AdminInformes from './views/AdminViews/AdminInformesView.vue';
 import AdminBodega from './views/AdminViews/AdminBodegaView.vue';
+import ProductoCrearView from './views/Menu/ProductoCrearView.vue';
+import ProductoInfoView from './views/Menu/ProductoInfoView.vue';
+import Menu from './views/Menu/MenuView.vue';
+import UserProfileView from './views/AdminViews/UserProfileView.vue';
 
 
 // middlewares para realizar comprobaciones de sesion
@@ -60,9 +64,24 @@ const routes = [
         beforeEnter: comprobarSesion
     },
     {
+        path: '/menu',
+        component: Menu,
+        beforeEnter: sesionAdmin
+    },
+    {
+        path: '/menu/nuevo',
+        component: ProductoCrearView,
+        beforeEnter: sesionAdmin
+    },
+    {
+        path: '/menu/info/:id',
+        component: ProductoInfoView,
+        beforeEnter: sesionAdmin
+    },
+    {
         path: '/ordenes',
         component: Ordenes,
-        beforeEnter: comprobarSesion
+        beforeEnter: sesionAdmin
     },
     {
         path: '/administracion/',
@@ -79,6 +98,9 @@ const routes = [
             },
             { path: 'bodega', 
                 components: {seccionAdmin: AdminBodega}
+            },
+            { path: 'perfil/:id', 
+                components: {seccionAdmin: UserProfileView}
             }
         ],
         beforeEnter: sesionAdmin
