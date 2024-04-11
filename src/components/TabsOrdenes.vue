@@ -4,9 +4,11 @@
 
     // importando stores
     import { useOrdenesStore } from '../stores/ordenes';
+    import { useProductosStore } from '../stores/productos';
 
     // instanciando ordenes
     const ordenesStore = useOrdenesStore();
+    const productosStore = useProductosStore()
     //-------------------------------------------
 </script>
 
@@ -25,7 +27,7 @@
     </ul>
 
     <!-- Contenido de los tabs -->
-    <div class="tab-content" id="ordenesTabContent">
+    <div class="tab-content" id="ordenesTabContent" v-if="!ordenesStore.cargando">
         <div class="tab-pane fade show active" id="ordenesActivas" role="tabpanel" aria-labelledby="ordenesActivas-tab">
             <!-- Primero mostrar ordenes retrasadas -->
             <h3>Retrasadas (<span class="fw-bold">{{ ordenesStore.ordenesTardadas }}</span>)</h3>
@@ -34,6 +36,7 @@
                     <OrdenMesa 
                         v-if="orden.estado === 'tardada'"
                         :orden="orden"
+                        :productos="productosStore.productos"
                     />
                 </template> 
                 <div v-if="ordenesStore.ordenesTardadas == 0">No hay órdenes retrasadas</div>
@@ -46,6 +49,7 @@
                     <OrdenMesa 
                         v-if="orden.estado === 'preparacion'"
                         :orden="orden"
+                        :productos="productosStore.productos"
                     />
                 </template> 
                 <div v-if="ordenesStore.ordenesPreparacion == 0">No hay órdenes en preparación</div>
@@ -57,6 +61,7 @@
                     <OrdenMesa 
                         v-if="orden.estado === 'completada'"
                         :orden="orden"
+                        :productos="productosStore.productos"
                     />
                 </template> 
                 <div v-if="ordenesStore.ordenesCompletadas == 0">No hay órdenes completadas</div>
@@ -68,10 +73,14 @@
                     <OrdenMesa 
                         v-if="orden.estado === 'cancelada'"
                         :orden="orden"
+                        :productos="productosStore.productos"
                     />
                 </template> 
                 <div v-if="ordenesStore.ordenesCanceladas == 0">No hay órdenes canceladas</div>
             </div>
         </div>
+    </div>
+    <div v-else>
+        Cargando...
     </div>
 </template>

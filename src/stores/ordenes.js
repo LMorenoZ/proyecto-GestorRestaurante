@@ -5,7 +5,8 @@ import { useMensajesStore } from './mensajes';
 
 export const useOrdenesStore = defineStore('ordenesStore', {
     state: () => ({
-        ordenes: []
+        ordenes: [],
+        cargando: false
     }),
     getters: { // Propiedades computadas, no cambian el valor del estado, siempre retornan algo
         cantidadOrdenes(state) {
@@ -25,17 +26,18 @@ export const useOrdenesStore = defineStore('ordenesStore', {
         },
         ordenesActivas(state) {   // en preparacion y tardadas
             return this.ordenesPreparacion + this.ordenesTardadas;
-        }
+        },
     },
     actions: {  // metodos que mutan el valor del estado
         async traerOrdenes() {
+            this.cargando = true
             const mensajesStore = useMensajesStore();   
             try {
-                const q = query(collection(db, 'orden'), orderBy("fecha", "desc"));
+                const q = query(collection(db, 'orden'), orderBy("fechaCreacion", "desc"));
                 const querySnapshot = await getDocs(q);
 
                 this.ordenes = [];  // se borran todas las ordenes
-                querySnapshot.forEach(orden => {
+                await querySnapshot.forEach(orden => {
                     this.ordenes.push({...orden.data(), id: orden.id})
                 });
             } catch (error) {
@@ -44,12 +46,14 @@ export const useOrdenesStore = defineStore('ordenesStore', {
                     `No se pueden mostrar las órdenes`
                 );
                 console.log(error);
+            } finally {
+                this.cargando = false
             }
         },
         async agregarOrden(orden) {
             const mensajesStore = useMensajesStore();
             const ordenNueva = orden;
-            ordenNueva.fecha = Timestamp.now();
+            ordenNueva.fechaCreacion = Timestamp.now(); 
             try {
                 await addDoc(collection(db, 'orden'), ordenNueva);
                 mensajesStore.crearMensaje({
@@ -80,7 +84,7 @@ export const useOrdenesStore = defineStore('ordenesStore', {
                 
                 await updateDoc(docRef, {
                     estado: ordenModificada.estado,
-                    pago: ordenModificada.pago
+                    // pago: ordenModificada.pago
                 });
 
                 this.traerOrdenes();

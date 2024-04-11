@@ -45,3 +45,14 @@ export const USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
+
+// mostrar en consola formato de JSON 
+export const printf = mensajeJSON => {
+    return console.log(JSON.parse(JSON.stringify(mensajeJSON)))
+}
+
+// encontrar el producto identificado por su id, debe enviarse el array de productos tambien
+export const encontrarProducto = (productos, id) => {
+   const productoEncontrado = productos.find(producto => producto.id === id)
+   return productoEncontrado
+}

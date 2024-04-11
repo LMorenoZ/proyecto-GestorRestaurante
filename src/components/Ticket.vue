@@ -1,10 +1,11 @@
 <script setup>
 // definiendo las props del componente
-const props = defineProps(['ordenInfo', 'modalId', 'totalPagar']);
+const props = defineProps(['ordenInfo', 'modalId', 'productos']);
 
 // para imprimir el ticket
 import pdfMake from "pdfmake/build/pdfmake.js";
 import pdfFonts from '../vfs_fonts';
+import { USDollar, encontrarProducto } from "../utilidades";
 pdfMake.vfs = pdfFonts;
 
 const exportPDF = () => {
@@ -83,6 +84,9 @@ const exportPDF = () => {
 
     Pdftest();
 }
+
+
+const productos = props.productos;
 </script>
 
 <template>
@@ -91,38 +95,54 @@ const exportPDF = () => {
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5">Ticket órden {{ ordenInfo.id }}</h1>
+                    <h1 class="modal-title fs-5">Ticket órden: {{ ordenInfo.id }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <ul class="list-group list-group-flush ">
-                        <li class="list-group-item" v-if="ordenInfo.queso > 0">
-                            <span class="fw-bold">Pupusas de queso:</span> {{ ordenInfo.queso }} x $0.50
-                        </li>
-                        <li class="list-group-item" v-if="ordenInfo.revueltas > 0">
-                            <span class="fw-bold">Pupusas revueltas:</span> {{ ordenInfo.revueltas }} x $0.50
-                        </li>
-                        <li class="list-group-item" v-if="ordenInfo.chicharron > 0">
-                            <span class="fw-bold">Pupusas de chicharron</span> {{ ordenInfo.chicharron }} x $0.50
-                        </li>
-                        <li class="list-group-item" v-if="ordenInfo.gaseosa > 0">
-                            <span class="fw-bold">Gaseosas:</span> {{ ordenInfo.gaseosa }} x $1.00
-                        </li>
-                        <li class="list-group-item" v-if="ordenInfo.refresco > 0">
-                            <span class="fw-bold">Refrescos: </span> {{ ordenInfo.refresco }} x $1.00
-                        </li>
-                        <li class="list-group-item" v-if="ordenInfo.chocolate > 0">
-                            <span class="fw-bold">Chocolate</span> {{ ordenInfo.chocolate }} x $1.00
-                        </li>
-                    </ul>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio unidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(producto, index) in ordenInfo.productos">
+                                <th scope="row">{{ index + 1 }}</th>
+                                <td>{{ encontrarProducto(productos, producto.idProducto).nombre }}</td>
+                                <td>{{ producto.cantidad }}</td>
+                                <td>{{ USDollar.format(producto.precio) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td class="fw-bold">
+                                    <h5>Total:</h5>
+                                </td>
+                                <td></td>
+                                <td class="fw-bold">
+                                    <h5>{{ USDollar.format(ordenInfo.total) }}</h5>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
                     <hr>
                     <p class="fs-5">
-                        <span class="fw-bold">Total:</span> {{ totalPagar }}
+                        <span class="fw-bold">Cobrar</span>  <br>
+                        <span>Cliente entrega:</span> <br> 
+                        <input class="form-control" type="number">
+                        <span>Vuelto:</span> <br> 
+                        <input class="form-control" type="number">
+                        <button class="btn btn-success mt-2">Calcular</button> <br>
+                        <button class="btn btn-primary mt-2">Completar órden</button>
                     </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" @click="exportPDF">Imprimir</button>
+                    <button type="button" class="btn btn-warning" @click="exportPDF">Imprimir recibo</button>
                 </div>
             </div>
         </div>

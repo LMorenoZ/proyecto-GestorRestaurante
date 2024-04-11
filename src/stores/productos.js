@@ -4,24 +4,27 @@ import { db } from '../firebaseConfig';
 
 import { useMensajesStore } from './mensajes';
 
-export const useMenuStore = defineStore('menu', {
+export const useProductosStore = defineStore('productos', {
     state: () => ({
-        menu: [],
+        productos: []
     }),
     actions: {
-        async traerMenu() {
+        async traerProductos() {
             const mensajesStore = useMensajesStore();
-
-            if (this.menu.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
-                
+            
+            if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
+            
             try {
                 const q = query(collection(db, 'menu'));
                 const querySnapshot = await getDocs(q);
-                querySnapshot.forEach(elem => this.menu.push({...elem.data(), id: elem.id}));
+
+                this.productos = []
+                
+                querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
             } catch (error) {
                 mensajesStore.crearError('noTraerMenu', 'No se pudo recuperar la información del menú');
                 console.log(error);
-            } 
+            }
         }
         // async traerIngredientes() {
         //     const mensajesStore = useMensajesStore();

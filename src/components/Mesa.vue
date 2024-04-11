@@ -7,7 +7,7 @@ import { useMesasStore } from '../stores/mesas';
 import { useUserStore } from '../stores/users';
 
 // componentes de interfaz
-import ElegirPupusas from '../components/ElegirPupusas.vue';
+import CrearOrden from '../components/CrearOrden.vue';
 
 // inicializando stores
 const mesasStore = useMesasStore();
@@ -98,8 +98,9 @@ const colorEstado = computed(() => {  // cambia el color del estado de cada mesa
     </div>
 
     <!-- Modal para elegir la comida -->
-    <ElegirPupusas :modalId="`modal${mesaInfo.id}`" :mesaNum="mesaInfo.mesaNum" :mesaInfo="mesaInfo"
-        @cambiarEstado="cambiarEstado"></ElegirPupusas>
+    <CrearOrden :modalId="`modal${mesaInfo.id}`" :mesaNum="mesaInfo.mesaNum" :mesaInfo="mesaInfo"
+        @cambiarEstado="cambiarEstado">
+    </CrearOrden>
 </template>
 
 <style>

@@ -1,6 +1,6 @@
 <script setup>
 // stores de pinia
-import { useMenuStore } from '../../stores/menu';
+import { useProductosStore } from '../../stores/productos';
 
 import { useRouter } from 'vue-router';
 
@@ -8,7 +8,7 @@ import MenuItem from '../../components/Menu/MenuItem.vue';
 
 const router = useRouter()
 
-const menuStore = useMenuStore()
+const productosStore = useProductosStore()
 
 
 const toNuevoProducto = () => {
@@ -21,7 +21,7 @@ const toNuevoProducto = () => {
     <button class="btn btn-success" @click="toNuevoProducto">Nuevo producto</button>
 
     <div class="d-flex flex-wrap">
-        <MenuItem v-for="producto in menuStore.menu" :key="producto.id" 
+        <MenuItem v-for="producto in productosStore.menu" :key="producto.id" 
             :id="producto.id" 
             :nombre="producto.nombre" 
             :desc="producto.desc" 

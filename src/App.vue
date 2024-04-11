@@ -10,12 +10,12 @@
   import { useJornadaStore } from './stores/jornada';
   import { useBodegaStore } from './stores/bodega';
   import { useHistorialStore } from './stores/historial';
+  import { useProductosStore } from './stores/productos';
 
   // componentes de interfaz
   import Navbar from './components/Navbar.vue';
   import Footer from './components/Footer.vue';
   import AlertaContenedor from './components/Alertas/AlertasContenedor.vue';
-  import { useMenuStore } from './stores/menu';
 
   // se instancias todas las stores
   const mesasStore = useMesasStore();
@@ -24,7 +24,7 @@
   const jornadaStore = useJornadaStore();
   const bodegaStore = useBodegaStore();
   const historialStore = useHistorialStore();
-  const menuStore = useMenuStore()
+  const productosStore = useProductosStore()
 
   // Trae los datos de la db solo cuando se hayan cargado todos los elementos de la vista
   onBeforeMount(() => {
@@ -32,7 +32,7 @@
     ordenesStore.traerOrdenes();
     jornadaStore.estadoJornada();
     bodegaStore.traerIngredientes();
-    menuStore.traerMenu()
+    productosStore.traerProductos();
     
     // Para traer el historial de ordenes
     const fechaHasta = new Date();
