@@ -114,7 +114,7 @@
                     <td >
                         <button 
                             class="btn btn-sm fs-4" 
-                            data-bs-toggle="modal" data-bs-target="#modalBorrarEmpleado"
+                            data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
                             :disabled="botonBorrarDesactivado"
                         >
                             <span class="badge bg-danger rounded-pill ">
@@ -122,7 +122,7 @@
                             </span>
                         </button>
                         <ModalConfirmacion
-                            id="modalBorrarEmpleado"
+                            :id="`modalBorrarEmpleado${empleado.uid}`"
                             :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
                             :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
                             texto-boton="Eliminar empleado"
@@ -138,6 +138,9 @@
             </tbody>
         </table>
     </div>
+
+
+
     <div class="mt-4" v-else>
         <h3 class="fs-3">No hay empleados todavía...</h3>
     </div>

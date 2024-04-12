@@ -4,11 +4,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 // stores
 import { useUserStore } from './stores/users';
 
-// views 
+// views
 import Home from './views/HomeView.vue';
 import Ordenes from './views/OrdenesView.vue';
 import Mesas from './views/MesasView.vue';
-import Administracion from './views/AdministracionView.vue'; 
+import Administracion from './views/AdministracionView.vue';
 import AdminEmpleados from './views/AdminViews/AdminEmpleadosView.vue';
 import AdminInformes from './views/AdminViews/AdminInformesView.vue';
 import AdminBodega from './views/AdminViews/AdminBodegaView.vue';
@@ -17,9 +17,9 @@ import ProductoInfoView from './views/Menu/ProductoInfoView.vue';
 import Menu from './views/Menu/MenuView.vue';
 import UserProfileView from './views/AdminViews/UserProfileView.vue';
 
-
 // middlewares para realizar comprobaciones de sesion
-const comprobarSesion = async (to, from, next) => {   // simple comprobacion de sesion
+// simple comprobacion de sesion
+const comprobarSesion = async (to, from, next) => {   
     const userStore = useUserStore();
     const user = await userStore.currentUser();
     if (user) {  // la sesion existe, el usuario puede pasar
@@ -30,7 +30,8 @@ const comprobarSesion = async (to, from, next) => {   // simple comprobacion de 
     
 };
 
-const existeSesion = async (to, from, next) => {   // para evitar que un usuario quiera entrar en la vista de login
+// para evitar que un usuario quiera entrar en la vista de login
+const existeSesion = async (to, from, next) => {   
     const userStore = useUserStore();
     const user = await userStore.currentUser();
     if (user) {
@@ -40,15 +41,17 @@ const existeSesion = async (to, from, next) => {   // para evitar que un usuario
     }
 }
 
-const sesionAdmin = async (to, from, next) => {   // solo podra entrar el admin
+// solo podra entrar el admin
+const sesionAdmin = async (to, from, next) => {   
     const userStore = useUserStore();
     const user = await userStore.currentUser();
-    if (user.email === 'admin@test.com') {
+    if (userStore.userRol === 'admin') {
         next();
     } else {
         next('/mesas');
     }
 }
+
 
 const routes = [
     {
@@ -108,9 +111,9 @@ const routes = [
 ];
 
 const router = createRouter({
-    routes,
-    linkActiveClass: 'fw-bolder',
-    history: createWebHistory(import.meta.env.BASE_URL)
+  routes,
+  linkActiveClass: 'fw-bolder',
+  history: createWebHistory(import.meta.env.BASE_URL),
 });
 
 export default router;
