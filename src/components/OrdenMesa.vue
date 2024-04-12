@@ -63,7 +63,28 @@ const modificarOrden = async (orden) => {
     cambiarColor(ordenActual.value.estado);
 };
 
-printf(ordenActual.value)
+// // TODO: Para poder mover la orden a 'tardada' si pasa un tiempo:
+// let fechaMaxima = ordenActual.value.fechaCreacion.toDate().getTime() + 20 * 60 * 1000  // hora maxima hasta que se considera retrasada
+// let horaActual = Date.now()  // hora actual en milisegundos
+
+// let tiempoRestante = fechaMaxima - horaActual // diferencia del momento actual con la fehca maxima
+
+// tiempoRestante = tiempoRestante < 0 ? 0 : tiempoRestante  // para no tener tiempo negativo por cualquier razon
+
+// // console.log('Minutos restantes:', tiempoRestante / 60000 ) 
+
+// if (ordenActual.value.estado === 'preparacion') {  // solo afecta a ordenes en estado 'preparacion'
+// // if (!ordenActual.value.cronometro && ordenActual.value.estado === 'preparacion') {  // solo afecta a ordenes en estado 'preparacion'
+//     // funcion que automaticamente mueve la orden a 'tardada' si pasa un tiempo
+//     // ordenesStore.activarCronometro(ordenActual.value, true)  // informa a la orden que el cronometro esta activo
+//     console.log('hola')
+//     setTimeout(() => {
+//         estadoOrden.value = 'tardada'
+//         modificarOrden(ordenActual.value)
+//     // }, tiempoRestante);
+//     }, 5000);
+//     // 1200000 : 20 minutos
+// }
 </script>
 
 <template>
@@ -79,23 +100,14 @@ printf(ordenActual.value)
                 horaFormateada(orden.fechaCreacion.toDate()) }}</p>
 
 
-            <!-- <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
+            <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
                 <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`">
                     {{ encontrarProducto(productos, producto.idProducto).nombre }}
                     <span class="badge bg-primary rounded-pill">
                         {{ producto.cantidad }}
                     </span>
                 </li>
-            </template> -->
-            
-            <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`" v-if="orden.queso">
-                Queso: 
-                <span class="badge bg-primary rounded-pill">{{ orden.queso }}</span>
-            </li>
-            <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`" v-if="orden.revueltas">
-                Revueltas: 
-                <span class="badge bg-primary rounded-pill">{{ orden.revueltas }}</span>
-            </li>
+            </template>
 
 
 
@@ -103,7 +115,8 @@ printf(ordenActual.value)
                 Total: {{ USDollar.format(ordenActual.total) }}
             </li>
         </ul>
-        <div class="card-footer mt-auto">
+        <div class="card-footer mt-auto"
+            v-if="!(ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada')">
             <p>Cambiar estado:</p>
 
             <select class="form-select form-select-sm" v-model="estadoOrden">
@@ -114,15 +127,17 @@ printf(ordenActual.value)
                 <option value="cancelada">Cancelada</option>
             </select>
             <div class="d-flex justify-content-between mt-1">
-                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
-                    :data-bs-target="`#ticketModal${orden.id}`">
-                    Ver ticket
-                </button>
+
                 <button class="btn btn-sm btn-primary" @click="modificarOrden(ordenActual)"
                     :disabled="orden.estado === estadoOrden">Actualizar</button>
             </div>
         </div>
+        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
+            :data-bs-target="`#ticketModal${orden.id}`"
+           >
+            {{ (ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada') ? 'Pasar a caja' : 'Ver productos' }}
+        </button>
     </div>
 
-    <!-- <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket> -->
+    <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket>
 </template>

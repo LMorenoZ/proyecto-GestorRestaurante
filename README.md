@@ -1,6 +1,6 @@
 # Enlace al proyecto subido a un servidos:
 
-[Enlace](https://proyecto-pupuseria.netlify.app/) 
+<!-- [Enlace]('google.com')  -->
 
 ## Recommended IDE Setup
 

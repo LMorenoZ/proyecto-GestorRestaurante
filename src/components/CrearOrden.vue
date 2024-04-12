@@ -50,7 +50,6 @@ const crearOrden = () => {
     ordenObjeto.total = calcularTotalOrden(ordenObjeto.productos)
 
     cantidades.value = {}
-    console.log(ordenObjeto)
 
     ordenesStore.agregarOrden(ordenObjeto)
     props.mesaInfo.estado = 'ocupada';
@@ -61,7 +60,6 @@ const crearOrden = () => {
 const calcularTotalOrden = productos => {
     let total = 0; 
     productos.forEach(producto => total += producto.precio * producto.cantidad)
-    // return total.toFixed(2);
     return Math.round(total * 100)/100;  // redondea el total a 2 decimales
 }
 

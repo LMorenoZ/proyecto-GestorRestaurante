@@ -6,10 +6,13 @@ import { useMensajesStore } from './mensajes';
 
 export const useProductosStore = defineStore('productos', {
     state: () => ({
-        productos: []
+        productos: [],
+        cargando: false
     }),
     actions: {
         async traerProductos() {
+            this.cargando = true
+
             const mensajesStore = useMensajesStore();
             
             if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
@@ -18,12 +21,12 @@ export const useProductosStore = defineStore('productos', {
                 const q = query(collection(db, 'menu'));
                 const querySnapshot = await getDocs(q);
 
-                this.productos = []
-                
                 querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
             } catch (error) {
                 mensajesStore.crearError('noTraerMenu', 'No se pudo recuperar la información del menú');
                 console.log(error);
+            } finally {
+                this.cargando = false
             }
         }
         // async traerIngredientes() {

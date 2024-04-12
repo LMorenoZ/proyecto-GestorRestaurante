@@ -27,7 +27,7 @@
     </ul>
 
     <!-- Contenido de los tabs -->
-    <div class="tab-content" id="ordenesTabContent" v-if="!ordenesStore.cargando">
+    <div class="tab-content" id="ordenesTabContent" v-if="!productosStore.cargando">
         <div class="tab-pane fade show active" id="ordenesActivas" role="tabpanel" aria-labelledby="ordenesActivas-tab">
             <!-- Primero mostrar ordenes retrasadas -->
             <h3>Retrasadas (<span class="fw-bold">{{ ordenesStore.ordenesTardadas }}</span>)</h3>

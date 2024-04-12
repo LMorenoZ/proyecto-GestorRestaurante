@@ -1,4 +1,8 @@
 <script setup>
+import { computed, ref } from 'vue'
+
+import { useOrdenesStore } from '../stores/ordenes';
+
 // definiendo las props del componente
 const props = defineProps(['ordenInfo', 'modalId', 'productos']);
 
@@ -7,6 +11,9 @@ import pdfMake from "pdfmake/build/pdfmake.js";
 import pdfFonts from '../vfs_fonts';
 import { USDollar, encontrarProducto } from "../utilidades";
 pdfMake.vfs = pdfFonts;
+
+// inicializando stores
+const ordenesStore = useOrdenesStore()
 
 const exportPDF = () => {
 
@@ -87,6 +94,33 @@ const exportPDF = () => {
 
 
 const productos = props.productos;
+
+const clienteEntrega = ref(0)   // dinero que el cliente entrega para pagar su orden
+const vuelto = ref(0)           // el vuelto a entregar al cliente
+const puedeCompletar = ref(false)   // bandera que indica si la orden puede ser completada o falta que el cliente pague
+
+const calcularVuelto = () => {      // calcula el vuelto que hay que entregarle al usuario
+    vuelto.value = clienteEntrega.value - props.ordenInfo.total
+    puedeCompletar.value = true;
+}
+
+const completarOrden = () => {    // funcion que envia la orden del ticket al tab de completadas
+    const ordenActualizada = props.ordenInfo;
+    ordenActualizada.estado = 'completada';
+
+    ordenesStore.actualizarOrden(ordenActualizada);
+}
+
+const cancelarOrden = () => {
+    const ordenActualizada = props.ordenInfo;
+    ordenActualizada.estado = 'cancelada';
+
+    ordenesStore.actualizarOrden(ordenActualizada);
+}
+
+// si la orden esta  pendiente (en preparacion o retrasada)
+const ordenPendiente = ref(props.ordenInfo.estado == 'preparacion' || props.ordenInfo.estado == 'tardada') 
+
 </script>
 
 <template>
@@ -129,20 +163,31 @@ const productos = props.productos;
                             </tr>
                         </tfoot>
                     </table>
-                    <hr>
-                    <p class="fs-5">
-                        <span class="fw-bold">Cobrar</span>  <br>
-                        <span>Cliente entrega:</span> <br> 
-                        <input class="form-control" type="number">
-                        <span>Vuelto:</span> <br> 
-                        <input class="form-control" type="number">
-                        <button class="btn btn-success mt-2">Calcular</button> <br>
-                        <button class="btn btn-primary mt-2">Completar órden</button>
+                    <p class="fs-5" v-if="ordenPendiente">
+                        <hr>
+                        <span>Cobrar</span> <br>
+                        <span>Cliente entrega:</span> <br>
+                        <input class="form-control" type="number" v-model="clienteEntrega">
+                        <span class="fw-bold">Vuelto:</span> <br>
+                    <p>{{ USDollar.format(vuelto) || 'Ingrese cantidad' }}</p>
+                    <button class="btn btn-success mt-2" @click="calcularVuelto"
+                        :disabled="ordenInfo.total > clienteEntrega">Calcular vuelto</button> <br>
+                    <button type="button" class="btn btn-primary mt-2" data-bs-dismiss="modal" @click="completarOrden"
+                        :disabled="!puedeCompletar">Completar órden</button>
                     </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-warning" @click="exportPDF">Imprimir recibo</button>
+                <div class="modal-footer justify-content-between" v-if="ordenPendiente">
+
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="cancelarOrden">Cancelar orden</button>
+                    <div>
+                        <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-warning" @click="exportPDF">Imprimir recibo</button>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
