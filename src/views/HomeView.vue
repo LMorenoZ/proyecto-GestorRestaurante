@@ -14,8 +14,8 @@ const cambiarAccion = () => {
 <template class="row align-items-center ">
     <Login v-show="loginValor"  />
     <RecuperarPass v-show="!loginValor" />
-    
+    <!-- Esto lo comente porque en login estaba como un boton, y le puse un label
     <button class="btn btn-success mt-auto" @click="cambiarAccion">
         {{ loginValor ? '¿Has olvidado tu contraseña?' : 'Iniciar sesión'}}
-    </button>
+    </button>-->
 </template>
