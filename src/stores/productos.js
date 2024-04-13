@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { collection, getDocs, getDoc, query, updateDoc, doc } from "firebase/firestore/lite";
+import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc } from "firebase/firestore/lite";
 import { db } from '../firebaseConfig';
 
 import { useMensajesStore } from './mensajes';
@@ -46,6 +46,24 @@ export const useProductosStore = defineStore('productos', {
                 console.log(error);
             } finally {
                 this.cargando = false
+            }
+        },
+        async crearProducto(payload) {
+            const mensajesStore = useMensajesStore();
+
+            try {
+                await addDoc(collection(db, 'menu'), payload);
+                mensajesStore.crearMensaje({
+                    titulo: 'Producto creado',
+                    texto: `El producto ${payload.nombre} se creó exitosamente`,
+                    color: 'success',
+                    id: 'mensajeProductoCreada',
+                    autoEliminar: true,
+                });
+                this.traerProductos();
+            } catch (error) {
+                mensajesStore.crearError('productoNoSeCrea', `No se pudo crear el producto`);
+                console.log(error);
             }
         }
         // async traerIngredientes() {

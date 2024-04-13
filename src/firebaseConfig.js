@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore/lite';
+import { getStorage } from "firebase/storage";
 
 
 // Your web app's Firebase configuration
@@ -17,8 +18,9 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);  
 const auth = getAuth();
 const db = getFirestore();
+const storage = getStorage()
 
 const creacionUsuariosApp = initializeApp(firebaseConfig, "CreacionUsuarios");  // para crear usuarios sin logearse 
 const authCreacion = getAuth(creacionUsuariosApp);
 
-export { auth, db, creacionUsuariosApp, authCreacion};
+export { auth, db, storage, creacionUsuariosApp, authCreacion};

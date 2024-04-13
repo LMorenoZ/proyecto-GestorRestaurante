@@ -1,3 +1,8 @@
+// las importaciones relacionadas con firebase son para la funcion para subir imagenes en 'storage'
+import { storage } from './firebaseConfig';
+import { ref as firebaseRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
 // Recibe un argumento de tipo Date y devuelve un string formateado de la fecha en español
 export const fechaFormateada = fecha => {
     const opciones = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
@@ -55,4 +60,26 @@ export const printf = mensajeJSON => {
 export const encontrarProducto = (productos, id) => {
    const productoEncontrado = productos.find(producto => producto.id === id)
    return productoEncontrado
+}
+
+// subir imagen en formato archivo ('jpg', 'png', etc) a Storage de Firebase
+export const uploadFile = async (archivo, carpetaString) => {  // carpetaString: 'productos', 'usuarios'
+    let imgURL = null
+
+    if (archivo) {
+        try {
+            // crea una referencia al nombre del archivo con su extension
+            const imgRef = firebaseRef(storage, `${carpetaString}/${archivo.name}`)   // ubicacion en storage: carpetaString/archivo
+
+            // sube el archivo a la referencia establecida, se sube la imagen y se guarda la respuesta
+            const snapshot = await uploadBytes(imgRef, archivo)
+
+            // obtiene la URL de la imagen subida
+            imgURL = await getDownloadURL(snapshot.ref)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return imgURL
 }
