@@ -31,7 +31,14 @@ const borrarError = () => {
 const ingresar = async (correo, contra) => {
     try {
         await userStore.loginUser(correo, contra);
-        router.push('/mesas');
+        // redirecciona al usuario a la vista mas apropiada para su rol
+        if(userStore.userRol === 'Mesero') { 
+            router.push('/mesas');
+        } else if (userStore.userRol === 'Cocina' || userStore.userRol === 'Caja') {
+            router.push('/ordenes')
+        } else if (userStore.userRol === 'admin') {
+            router.push('/administracion')
+        }
     } catch (error) {
         hayError.value = true;
         console.log(error);

@@ -34,8 +34,15 @@ const comprobarSesion = async (to, from, next) => {
 const existeSesion = async (to, from, next) => {   
     const userStore = useUserStore();
     const user = await userStore.currentUser();
+
     if (user) {
-        next('/mesas');
+        if(userStore.userRol === 'Mesero') { 
+            next('/mesas');
+        } else if (userStore.userRol === 'Cocina' || userStore.userRol === 'Caja') {
+            next('/ordenes')
+        } else if (userStore.userRol === 'admin') {
+            next('/administracion')
+        }
     } else {
         next();
     }
@@ -44,11 +51,11 @@ const existeSesion = async (to, from, next) => {
 // solo podra entrar el admin
 const sesionAdmin = async (to, from, next) => {   
     const userStore = useUserStore();
-    const user = await userStore.currentUser();
+    await userStore.currentUser();
     if (userStore.userRol === 'admin') {
         next();
     } else {
-        next('/mesas');
+        next('/');
     }
 }
 
@@ -69,7 +76,7 @@ const routes = [
     {
         path: '/menu',
         component: Menu,
-        beforeEnter: sesionAdmin
+        beforeEnter: comprobarSesion
     },
     {
         path: '/menu/nuevo',
@@ -84,7 +91,7 @@ const routes = [
     {
         path: '/ordenes',
         component: Ordenes,
-        beforeEnter: sesionAdmin
+        beforeEnter: comprobarSesion
     },
     {
         path: '/administracion/',

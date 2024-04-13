@@ -6,10 +6,11 @@ import { ref, computed, onMounted } from 'vue';
 import { useOrdenesStore } from '../stores/ordenes.js';
 import { useJornadaStore } from '../stores/jornada.js';
 import { useMesasStore } from '../stores/mesas.js';
-import { useBodegaStore } from '../stores/bodega.js';
 import { useProductosStore } from '../stores/productos.js';
 import { useUserStore } from '../stores/users.js';
-import { encontrarProducto } from '../utilidades.js';
+
+// utilidades
+import { encontrarProducto, printf } from '../utilidades.js';
 
 // props y emits
 const props = defineProps(['modalId', 'mesaNum', 'mesaInfo']);
@@ -19,7 +20,6 @@ const emits = defineEmits(['cambiarEstado']);
 const ordenesStore = useOrdenesStore();
 const jornadaStore = useJornadaStore();
 const mesasStore = useMesasStore();
-const bodegaStore = useBodegaStore();
 const productosStore = useProductosStore()
 const usersStore = useUserStore()
 //-----------------------------------------------------------
@@ -27,8 +27,12 @@ const usersStore = useUserStore()
 const productos = productosStore.productos
 
 const cantidades = ref({});
+const formOrden = ref(null)  // informacion del formulario con la que se creara la orden
 
 const crearOrden = () => {
+
+    formOrden.value.requestSubmit   // se activa el evento 'submit' del formulario, pero sin recargar la pagina
+
     const ordenObjeto = {
         mesaNum: props.mesaNum,
         idUsuario: usersStore.userData.uid,
@@ -58,57 +62,18 @@ const crearOrden = () => {
 };
 
 const calcularTotalOrden = productos => {
-    let total = 0; 
+    let total = 0;
     productos.forEach(producto => total += producto.precio * producto.cantidad)
-    return Math.round(total * 100)/100;  // redondea el total a 2 decimales
+    return Math.round(total * 100) / 100;  // redondea el total a 2 decimales
 }
 
-//Pupuseria
+//Listar productos
+const tiposProductos = productosStore.productosTipos
+
+// mostrar el primer acordeon de los tipos de productos abiertos
+const monstrarAcordeon = indice => indice === 0 ? 'show' : ''  
 //-----------------------------------------------------------
 
-// // Seguimiento de la orden
-// const pupusasQueso = ref(0);
-// const pupusasRevueltas = ref(0);
-// const pupusasChicharron = ref(0);
-// const gaseosa = ref(0);
-// const refresco = ref(0);
-// const chocolate = ref(0);
-
-// // metodo computado para determinar si se puede ordenar
-// const puedeOrdenar = computed(() => {
-//     if(
-//         pupusasQueso.value > 0 ||
-//         pupusasRevueltas.value > 0 ||
-//         pupusasChicharron.value > 0 ||
-//         gaseosa.value > 0 ||
-//         refresco.value > 0 ||
-//         chocolate.value > 0
-//     ) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// });
-
-// // Metodo para realizar la orden para la mesa
-// const ordenar = () => {
-//     const orden = {
-//         queso: pupusasQueso.value,
-//         revueltas: pupusasRevueltas.value,
-//         chicharron: pupusasChicharron.value,
-//         gaseosa: gaseosa.value,
-//         refresco: refresco.value,
-//         chocolate: chocolate.value,
-//         estado: 'preparacion',
-//         mesaNum: props.mesaNum,
-//         pago: 0
-//     };
-
-//     ordenesStore.agregarOrden(orden);
-//     props.mesaInfo.estado = 'ocupada';
-//     mesasStore.modMesa(props.mesaInfo);
-//     emits('cambiarEstado', props.mesaInfo, props.mesaInfo.estado);  // la funcion recibe 2 argumentos
-// };  
 </script>
 
 <template>
@@ -122,19 +87,38 @@ const calcularTotalOrden = productos => {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Gestor Restaurante -->
-                    <form @submit.prevent="crearOrden">
-                        <div class="mb-3" v-for="(producto, index) in productos" :key="index">
-                            <label :for="`Id${producto.id}`" class="form-label">{{ producto.nombre }}</label>
-                            <input type="number" class="form-control" :id="`Id${producto.id}`"
-                                :aria-describedby="producto.nombre" v-model="cantidades[producto.id]">
+
+                    <!-- Acordion -->
+                    <form ref="formOrden">
+                        <div class="accordion">
+                            <div class="accordion-item" v-for="(tipo, index) in tiposProductos" :key="tipo.id">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        :data-bs-target="`#panel${tipo.id}`" aria-expanded="true"
+                                        :aria-controls="`panel${tipo.id}`">
+                                        {{ tipo.nombre }}
+                                    </button>
+                                </h2>
+                                <div :id="`panel${tipo.id}`" :class="`accordion-collapse collapse ${monstrarAcordeon(index)}`">
+                                    <div class="accordion-body">
+                                        <div class="mb-3" v-for="(producto, index) in productos" :key="index">
+                                            <template v-if="producto.tipo == tipo.nombre">
+                                                <label :for="`Id${producto.id}`" class="form-label">{{ producto.nombre
+                                                    }}</label>
+                                                <input type="number" class="form-control" :id="`Id${producto.id}`"
+                                                    :aria-describedby="producto.nombre" v-model="cantidades[producto.id]">
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Ordenar</button>
                     </form>
 
                 </div>
 
                 <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-dismiss="modal" @click="crearOrden">Ordenar</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>

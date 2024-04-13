@@ -48,7 +48,7 @@ export const useUserStore = defineStore('users', {
         );
 
         // obteniendo el rol del usuario, que se usara para las rutas protegidas
-        this.getRolUsuario(user);
+        await this.getRolUsuario(user);
 
         // asignando la informacion del usuario logeado de Authentication
         this.userData = { email: user.email, uid: user.uid };
@@ -77,7 +77,6 @@ export const useUserStore = defineStore('users', {
       if (docSnap.exists()) {
         const { puesto } = docSnap.data();
         this.userRol = puesto;
-        console.log('rol es', this.userRol);
       } else {
         console.log('Usuario no encontrado');
         throw new Error('Usuario no encontrado');

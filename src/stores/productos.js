@@ -7,6 +7,7 @@ import { useMensajesStore } from './mensajes';
 export const useProductosStore = defineStore('productos', {
     state: () => ({
         productos: [],
+        productosTipos: [],
         cargando: false
     }),
     actions: {
@@ -24,6 +25,24 @@ export const useProductosStore = defineStore('productos', {
                 querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
             } catch (error) {
                 mensajesStore.crearError('noTraerMenu', 'No se pudo recuperar la información del menú');
+                console.log(error);
+            } finally {
+                this.cargando = false
+            }
+        },
+        async traerProductosTipos() {
+            this.cargando = true
+            const mensajesStore = useMensajesStore();
+
+            if (this.productosTipos.length > 0) return // no ejecuta la peticion porque los tipos ya estan cargadoos
+
+            try {
+                const q = query(collection(db, 'tipoProducto'));
+                const querySnapshot = await getDocs(q);
+
+                querySnapshot.forEach(elem => this.productosTipos.push({...elem.data(), id: elem.id}));
+            } catch (error) {
+                mensajesStore.crearError('noTraerTipos', 'No se pudo recuperar los tipos de productos');
                 console.log(error);
             } finally {
                 this.cargando = false

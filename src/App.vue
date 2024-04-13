@@ -33,6 +33,7 @@
     jornadaStore.estadoJornada();
     bodegaStore.traerIngredientes();
     productosStore.traerProductos();
+    productosStore.traerProductosTipos();
     
     // Para traer el historial de ordenes
     const fechaHasta = new Date();
