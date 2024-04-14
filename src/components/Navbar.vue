@@ -29,7 +29,7 @@ const fechaHoy = computed(() => {
 
 <template>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg bg-info" data-bs-theme="dark">
+  <nav class="navbar navbar-expand-lg bg-green navbar-dark">
     <div class="container">
 
       <!-- Logo -->
@@ -37,8 +37,10 @@ const fechaHoy = computed(() => {
         <img :src="logoImg" alt="" width="30" height="24">
       </router-link>
 
-      <span class="nav-link text-light">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
-      <!-- Toggle btn -->
+      <!-- Username -->
+      <span class="nav-link text-light d-none d-lg-inline-block">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
+
+      <!-- Sidebar Toggle btn -->
       <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -72,9 +74,9 @@ const fechaHoy = computed(() => {
             </li>
           </ul>
           <!-- Login/ Sign up -->
-          <span class="nav-link" v-if="jornadaStore.jornadaValor">Jornada activa en {{ fechaHoy }}</span>
-          <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3">
-            <button class="btn text-white text-decoration-none px-3 py-1 rounded-4" style="background-color: #f94ca4;"
+          <span class="nav-link mt-lg-3 mb-lg-auto" v-if="jornadaStore.jornadaValor">Jornada activa en {{ fechaHoy }}</span>
+          <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3 mt-4">
+            <button class="btn text-white text-decoration-none rounded-4 ms-auto" style="background-color: #f94ca4;"
               data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
               Salir
             </button>
@@ -95,4 +97,15 @@ const fechaHoy = computed(() => {
     backdrop-filter: blur(10px);
   }
 }
+/* Cambiar color de fondo a verde */
+.bg-green {
+    background-color: #00FF00; /* Verde */
+}
+
+/* Ajustar margen superior e inferior de la fecha en dispositivos grandes */
+.nav-link {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
 </style>
