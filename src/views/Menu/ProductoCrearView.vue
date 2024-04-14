@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col">
                 <!--Columna vacia-->
-                <h1>xddd</h1>
+                
             </div>
             <div class="col">
                 <h4>Nombre del producto:</h4>
