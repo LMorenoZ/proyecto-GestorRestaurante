@@ -1,4 +1,12 @@
+<!-- Javascript del componente -->
+<script setup>
+
+</script>
+
+
+<!-- HTML del componente -->
 <template>
+    <!-- Sidebar de la seccion administrador provisional -->
     <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
        
             <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
@@ -17,11 +25,12 @@
                     <svg class="bi me-2" width="16" height="16"><use xlink:href="#informes"></use></svg>
                     Informes
                 </router-link>
-                <!-- <router-link  class="nav-link link-dark" to="/administracion/bodega">
-                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#bodega"></use></svg>
-                    Bodega
-                </router-link> -->
             </li>
         </ul>
   </div>
 </template>
+
+<!-- CSS del componente -->
+<style scoped>
+
+</style>
