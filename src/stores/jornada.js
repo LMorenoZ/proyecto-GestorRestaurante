@@ -7,7 +7,8 @@ import { fechaFormateada, fechaFormateadaCorta, horaFormateada } from '../utilid
 
 export const useJornadaStore = defineStore('jornada', {
     state: () => ({
-        jornadaActiva: false
+        jornadaActiva: false,
+        cerrandoJornada: false
     }), 
     getters: {
         jornadaValor(state) {
@@ -47,6 +48,7 @@ export const useJornadaStore = defineStore('jornada', {
                 console.log(error);
             }
         },
+        // cierra la jornada y envia todas las ordenes completadas y finalizadas al historial
         async terminarJornada() {
             const mensajesStore = useMensajesStore();
 
@@ -66,6 +68,7 @@ export const useJornadaStore = defineStore('jornada', {
             }
             
             try {
+                this.cerrandoJornada = true
                 // indicando que la jornada ha acabado
                 const docRefJornada = doc(db, 'jornada', 'estadoId');
                 await updateDoc(docRefJornada, {
@@ -74,8 +77,6 @@ export const useJornadaStore = defineStore('jornada', {
                 this.jornadaActiva = false;
 
                 /******  generando el resumen de todas las ordenes de la jornada, para el historial de ordenes  ****/
-                  
-
                 // validaciones 
                 if (ordenesStore.cantidadOrdenes == 0) { 
                     mensajesStore.crearMensaje({
@@ -91,30 +92,42 @@ export const useJornadaStore = defineStore('jornada', {
                 const ordenesCompletadasTemp = ordenesStore.ordenes.filter(orden => orden.estado === 'completada');
                 const ordenesCanceladasTemp = ordenesStore.ordenes.filter(orden => orden.estado === 'cancelada');
                 
-                // se ganancias y ventas totales a lo largo de la jornada
+                // ganancias y ventas totales a lo largo de la jornada
                 let objJornada = {
                     ordenesCompletadas: ordenesCompletadasTemp.length,
                     ordenesCanceladas: ordenesCanceladasTemp.length,
                     gananciasTotales: 0,   // dinero
                     gananciasPerdidas: 0,   // dinero
                     jornadaFecha: Timestamp.now(), // marca de tiempo de firestore, debe ser convertida a Date de JS 
-                    quesoTot: 0,  // cantidad de producto vendido
-                    revueltasTot: 0,
-                    chicharronTot: 0,
-                    gaseosaTot: 0,
-                    refrescoTot: 0,
-                    chocolateTot: 0
+                    productosVendidos: []  // [{ idProducto, cantidadVendida }, { ... }], los productos no se deben repetir
                 };
+
+                let productosVendidosTemp = [] // [{ idProducto, cantidadVendida }, { ... }], los productos se pueden repetir
+
+
                 ordenesCompletadasTemp.forEach(ordenCompletada => {
-                    objJornada.gananciasTotales += ordenCompletada.pago;
-                    objJornada.quesoTot += ordenCompletada.queso;
-                    objJornada.revueltasTot += ordenCompletada.revueltas; 
-                    objJornada.chicharronTot += ordenCompletada.chicharron;
-                    objJornada.gaseosaTot += ordenCompletada.gaseosa;
-                    objJornada.refrescoTot += ordenCompletada.refresco;
-                    objJornada.chocolateTot += ordenCompletada.chocolate;
+                    objJornada.gananciasTotales += ordenCompletada.total;
+                    productosVendidosTemp.push(...ordenCompletada.productos) 
                 });
-                ordenesCanceladasTemp.forEach(ordenCancelada => objJornada.gananciasPerdidas += ordenCancelada.pago);
+
+                // reduce el array para que los productos no se repitan y se sumen sus iteraciones
+                  const productosReducidos = productosVendidosTemp.reduce((acumulador, producto) => {
+                    const productoEncontrado = acumulador.find(
+                      (productoAcumulado) => productoAcumulado.idProducto === producto.idProducto
+                    );
+                  
+                    if (productoEncontrado) {
+                      productoEncontrado.cantidad += producto.cantidad;
+                    } else {
+                      acumulador.push({ idProducto: producto.idProducto, cantidad: producto.cantidad });
+                    }
+                  
+                    return acumulador;
+                  }, []);
+                  objJornada.productosVendidos = productosReducidos
+                  
+
+                ordenesCanceladasTemp.forEach(ordenCancelada => objJornada.gananciasPerdidas += ordenCancelada.total);
 
                 // crear la entrada en el historial de ordenes
                 await addDoc(collection(db, 'historialOrdenes'), objJornada);
@@ -137,6 +150,8 @@ export const useJornadaStore = defineStore('jornada', {
             } catch (error) {
                 mensajesStore.crearError('noTerminoJornada', 'No se pudo terminar la jornada');
                 console.log(error);
+            } finally {
+                this.cerrandoJornada = false
             }
         }
     }
