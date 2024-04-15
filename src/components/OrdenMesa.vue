@@ -1,6 +1,6 @@
 <script setup>
 // librerias de vue y afiliados
-import { ref } from 'vue';
+import { ref, computed} from 'vue';
 
 // stores de pinia
 import { useOrdenesStore } from '../stores/ordenes.js';
@@ -19,11 +19,11 @@ const ordenesStore = useOrdenesStore();
 //---------------------------------------------
 
 // variables reactivas
-const ordenActual = ref(props.orden);
+const ordenActual = computed( () => props.orden );
 const colorOrden = ref('');
 const estadoDescri = ref('');
 const estadoOrden = ref(props.orden.estado);
-const productos = ref(props.productos)
+const productos = ref(props.productos)  // todos los productos del local
 
 // metodos
 const cambiarColor = color => {
@@ -88,7 +88,7 @@ const modificarOrden = async (orden) => {
 </script>
 
 <template>
-    <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;">
+    <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;" v-if="ordenActual">
         <div class="card-header d-flex justify-content-between fw-bold">
             <p>Órden mesa {{ orden.mesaNum }}</p>
             <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
@@ -101,12 +101,14 @@ const modificarOrden = async (orden) => {
 
 
             <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
+
                 <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`">
                     {{ encontrarProducto(productos, producto.idProducto).nombre }}
                     <span class="badge bg-primary rounded-pill">
                         {{ producto.cantidad }}
                     </span>
                 </li>
+
             </template>
 
 
@@ -137,6 +139,9 @@ const modificarOrden = async (orden) => {
            >
             {{ (ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada') ? 'Pasar a caja' : 'Ver productos' }}
         </button>
+    </div>
+    <div v-else>
+        Cargando...
     </div>
 
     <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket>
