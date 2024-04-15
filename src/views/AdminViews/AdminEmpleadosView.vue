@@ -82,6 +82,7 @@
         </div>
         <div class="vw-auto d-flex justify-content-end">
             <button type="submit" class="btn btn-primary mt-2" :disabled="botonCrearDesactivado">Crear empleado</button>
+            <RouterLink to="crear_usuario">Vista crear empleado</RouterLink>
         </div>
     </form>
 

@@ -66,45 +66,11 @@ export const useProductosStore = defineStore('productos', {
                 console.log(error);
             }
         }
-        // async traerIngredientes() {
-        //     const mensajesStore = useMensajesStore();
-
-        //     if (this.ingredientes.length > 0) {  // no ejecuta el codigo si ya se ha llamado previamente
-        //         return;
-        //     }
-            
-            // try {
-            //     const q = query(collection(db, 'ingredientes'));
-            //     const querySnapshot = await getDocs(q);
-            //     querySnapshot.forEach(ingrediente => this.ingredientes.push({...ingrediente.data(), id: ingrediente.id}));
-            // } catch (error) {
-            //     mensajesStore.crearError('noTraerIngredientes', 'No se pudo recuperar la información de la bodega');
-            //     console.log(error);
-            // }
-        // }, async modificarIngrediente(ingredienteMod) {
-        //     const mensajesStore = useMensajesStore();
-        //     try {
-        //         // se procede a la actualizacion
-        //         const docRef = doc(db, 'ingredientes', ingredienteMod.id);
-        //         await updateDoc(docRef, {
-        //             cantidad: ingredienteMod.cantidad
-        //         });
-
-        //         // modificando el valor en el array del estado
-        //         let indexIngrediente = this.ingredientes.findIndex(i => i.id === ingredienteMod.id);
-        //         this.ingredientes.splice(indexIngrediente, 1, ingredienteMod);
-
-        //         mensajesStore.crearMensaje({
-        //             titulo: 'Ingrediente modificado', 
-        //             texto: `La cantidad de ${ingredienteMod.nombre.toLowerCase()} se actualizó correctamente`, 
-        //             color: 'success', 
-        //             id: 'mensajeIngredienteModificado',
-        //             autoEliminar: true
-        //         });
-        //     } catch (error) {
-        //         mensajesStore.crearError('noModIngrediente', `No se pudo modificar la cantidad de ${ingredienteMod.nombre.toLowerCase()} en la bodega`);
-        //         console.log(error);
-        //     }
-        // }
+    },
+    getters: {
+         listarProductos(state) {
+            const productos = state.productos
+            return productos;
+        }
     }
 });

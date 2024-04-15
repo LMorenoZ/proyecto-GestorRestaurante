@@ -1,25 +1,30 @@
 <script setup>
 import { ref } from 'vue';
 
+// valor del email
 const email = ref('')
 
-const enviarRecuperar = correoUsuario => {
+// funcion que deberia enviar el correo de recuperacion a la direccion especificada
+const enviarCorreo = correoUsuario => {
     console.log(email.value)
+}
+
+// emits que vienen de la vista Home
+const emit = defineEmits(['cambiarFormulario'])
+
+// activa la funcion emit de la vista 'HomeView' para cambiar al formulario de login
+const irALogin = () => {
+    emit('cambiarFormulario')
 }
 </script>
 
 <template>
-    <div class="my-2">
-        <form @submit.prevent="enviarRecuperar">
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                    v-model="email">
-                <div id="emailHelp" class="form-text">Escriba su correo electrónico</div>
-            </div>
-            <div class="d-grid gap-2"> 
-                <button type="submit" class="btn btn-primary ml-auto mr-auto">Enviar</button>
-            </div>  
-        </form>
-    </div>
+    <!-- Formulario provisional para enviar el correo electronico y poder recuperar la contrasenia -->
+    <form @submit.prevent="enviarCorreo">
+        <input type="email" v-model="email">
+        <div>Escriba su correo electrónico</div>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <span style="color: #6c757d; cursor: pointer;" @click="irALogin">Inicia sesión si ya tiene cuenta </span>
 </template>
