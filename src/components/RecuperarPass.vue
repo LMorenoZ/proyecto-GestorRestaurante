@@ -30,7 +30,6 @@ const enviarCorreo =async ()=>{
 
 <template>
     <!-- Formulario provisional para enviar el correo electronico y poder recuperar la contrasenia -->
-    {{ email }}
     <form @submit.prevent="enviarCorreo">
         <input type="email" v-model="email">
         <div>Escriba su correo electrónico</div>
