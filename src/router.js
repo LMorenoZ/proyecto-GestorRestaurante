@@ -17,6 +17,7 @@ import ProductoInfoView from './views/Menu/EditarProductoView.vue';
 import Menu from './views/Menu/MenuView.vue';
 import UserProfileView from './views/AdminViews/UserProfileView.vue';
 import CrearUsuarioView from './views/AdminViews/CrearUsuarioView.vue';
+import NotFound from './views/404NotFoundView.vue'
 
 // middlewares para realizar comprobaciones de sesion
 // simple comprobacion de sesion
@@ -118,7 +119,13 @@ const routes = [
             }
         ],
         beforeEnter: sesionAdmin
-    }
+    },
+    { 
+        path: '/:pathMatch(.*)*', 
+        name: 'NotFound', 
+        component: NotFound,
+        beforeEnter: comprobarSesion
+    },
 ];
 
 const router = createRouter({

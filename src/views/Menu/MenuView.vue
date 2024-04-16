@@ -21,6 +21,7 @@ const toNuevoProducto = () => {
     <button class="btn btn-success" @click="toNuevoProducto">Nuevo producto</button>
 
     <div class="d-flex flex-wrap">
+        
         <MenuItem v-for="producto in productosStore.productos" :key="producto.id" 
             :id="producto.id" 
             :nombre="producto.nombre" 

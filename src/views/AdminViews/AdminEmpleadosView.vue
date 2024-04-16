@@ -9,6 +9,7 @@
 
     // componentes de ui
     import ModalConfirmacion from '../../components/ModalConfirmacion.vue';
+    import Empleados from '../../components/Admin/Empleados.vue';
     
 
     const userStore = useUserStore();
@@ -43,13 +44,6 @@
         puestoEmpleado.value = '';
         botonCrearDesactivado.value = false;
     }
-
-    const borrarEmpleado = async (empleado) => {
-        botonBorrarDesactivado.value = true;
-        await userStore.deleteEmpleado(empleado);
-        botonBorrarDesactivado.value = false;
-    };
-
     userStore.getEmpleados();
 </script>
 
@@ -87,61 +81,9 @@
     </form>
 
     <!-- Lista de empleados -->
-    <div class="my-4" v-if="userStore.listaEmpleados.length > 0" style="overflow: scroll; height: 70vh">
-        <h3 class="fs-3">Lista de empleados:</h3>
-        <table class="table table-hover ">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Usuario</th>
-                    <th scope="col">Correo</th>
-                    <th scope="col">Puesto</th>
-                    <th scope="col">Contraseña</th>
-                    <th scope="col">Creación</th>
-                    <th scope="col">Acción</th>
-                    <th scope="col">Perfil</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr 
-                    v-for="(empleado, index) in userStore.listaEmpleados" 
-                    :key="empleado.email">
-                    <th scope="row">{{ index + 1 }}</th>
-                    <td>{{nombreUsuario(empleado.email)}}</td>
-                    <td>{{empleado.email}}</td>
-                    <td>{{empleado.puesto}}</td>
-                    <td>{{empleado.password}}</td>
-                    <td>{{fechaFormateadaCorta(empleado.creation.toDate())}}</td>
-                    <td >
-                        <button 
-                            class="btn btn-sm fs-4" 
-                            data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
-                            :disabled="botonBorrarDesactivado"
-                        >
-                            <span class="badge bg-danger rounded-pill ">
-                                <i class="bi bi-x fs-5"></i>
-                            </span>
-                        </button>
-                        <ModalConfirmacion
-                            :id="`modalBorrarEmpleado${empleado.uid}`"
-                            :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
-                            :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
-                            texto-boton="Eliminar empleado"
-                            color="danger"
-                            @accion="borrarEmpleado"
-                            :param="empleado"
-                        />
-                    </td>
-                    <td>
-                        <RouterLink :to="`/administracion/perfil/${empleado.uid}`">Ver</RouterLink>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-
-
+    <template v-if="userStore.listaEmpleados.length > 0">
+        <Empleados :listaEmpleados="userStore.listaEmpleados" :botonBorrar="botonBorrarDesactivado" />
+    </template>
     <div class="mt-4" v-else>
         <h3 class="fs-3">No hay empleados todavía...</h3>
     </div>

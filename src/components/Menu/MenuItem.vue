@@ -7,7 +7,7 @@ const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
 </script>
 
 <template>
-    <RouterLink :to="`menu/info/${id}`" class="menu-card-link">
+    <RouterLink :to="`menu/editar/${id}`" class="menu-card-link">
       <div class="menu-card">
         <div class="menu-card__image">
           <div class="menu-card__image-wrapper">
