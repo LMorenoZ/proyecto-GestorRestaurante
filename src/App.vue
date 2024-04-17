@@ -46,7 +46,8 @@
 <template >
   <Navbar v-if="userStore.userData"></Navbar>
   <AlertaContenedor v-if="userStore.userData" />
-  <div class="container d-flex flex-column p-4" style="min-height: 80vh;">
+  <!-- <div class="container d-flex flex-column p-4" style="min-height: 80vh;"> -->
+  <div class="container" style="min-height: 80vh;">
     <router-view></router-view>
   </div>
   <Footer class="mt-auto mb-0" v-if="userStore.userData"></Footer>
