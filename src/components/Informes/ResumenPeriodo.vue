@@ -2,6 +2,8 @@
 // librerias y metodos de vue
 import { onMounted, ref, computed } from 'vue';
 
+// store de pinia
+import { useProductosStore } from '../../stores/productos'
 
 // para imprimir el informe
 import pdfMake from "pdfmake/build/pdfmake.js";
@@ -10,13 +12,18 @@ import pdfFonts from '../../vfs_fonts';
 // componentes de ui
 import TablaResumen from './TablaResumen.vue';
 
+// funciones de utilidades 
+import { USDollar, encontrarProducto, fechaFormateadaCorta } from '../../utilidades';
+
+// props del componente
 const props = defineProps(['id', 'rango', 'totales']);
+
+// inicializando stores
+const productosStore = useProductosStore()
 
 // pdfmake y vfonts para dar tipografia al documento pdf
 pdfMake.vfs = pdfFonts;
 
-// utilidades
-import { USDollar, fechaFormateadaCorta } from '../../utilidades';
 
 // metodos 
 const rangoFormateado = computed(() => {
@@ -110,12 +117,11 @@ const table = (data, columns, encabezado, footer = null) => {
 const Pdftest = () => {
     // datos de la tabla de productos vendidos:
     let externalDataRetrievedFromServer = [];
-        externalDataRetrievedFromServer.push({ Producto: 'Pupusas de queso', Ventas: props?.totales.quesoTotales });
-        externalDataRetrievedFromServer.push({ Producto: 'Pupusas revueltas', Ventas: props?.totales.revueltasTotales });
-        externalDataRetrievedFromServer.push({ Producto: 'Pupusas de chicharrón', Ventas: props?.totales.chicharronTotales });
-        externalDataRetrievedFromServer.push({ Producto: 'Gaseosas', Ventas: props?.totales.gaseosaTotales });
-        externalDataRetrievedFromServer.push({ Producto: 'Refrescos', Ventas: props?.totales.refrescoTotales });
-        externalDataRetrievedFromServer.push({ Producto: 'Chocolate caliente', Ventas: props?.totales.chocolateTotales });
+
+        props?.totales.productos.forEach(prod => {
+            const producto = encontrarProducto(productosStore.productos, prod.idProducto)
+            externalDataRetrievedFromServer.push({ Producto: producto.nombre, Ventas: prod.cantidad });
+        })
 
     let ordenesTabla = [];
         ordenesTabla.push({ Resultado: 'Órdenes completadas', Orden: props?.totales.completadasTotales});
@@ -220,4 +226,5 @@ Pdftest();
                 </div>
             </div>
     </div>
-</div></template>
+</div>
+</template>

@@ -83,3 +83,24 @@ export const uploadFile = async (archivo, carpetaString) => {  // carpetaString:
 
     return imgURL
 }
+
+// reduce un array de objetos proporcionado para que los elementos no se repitan y se sumen sus iteraciones,
+// el objeto del array debe tener la forma '{  idProducto, cantidad }' para que la funcion pueda reducirla
+// y devuelve un array con los nuevos objetos
+export const reducirArray = arrayDuplicado => {
+    const arrayReducido = arrayDuplicado.reduce((acumulador, producto) => {
+        const productoEncontrado = acumulador.find(
+          (productoAcumulado) => productoAcumulado.idProducto === producto.idProducto
+        );
+      
+        if (productoEncontrado) {
+          productoEncontrado.cantidad += producto.cantidad;
+        } else {
+          acumulador.push({ idProducto: producto.idProducto, cantidad: producto.cantidad });
+        }
+      
+        return acumulador;
+      }, []);
+
+    return arrayReducido
+}

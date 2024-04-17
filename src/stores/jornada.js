@@ -3,7 +3,7 @@ import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc,
 import { db } from '../firebaseConfig';
 import { useOrdenesStore } from './ordenes';
 import { useMensajesStore } from './mensajes';
-import { fechaFormateada, fechaFormateadaCorta, horaFormateada } from '../utilidades';
+import { fechaFormateada, fechaFormateadaCorta, horaFormateada, reducirArray } from '../utilidades';
 
 export const useJornadaStore = defineStore('jornada', {
     state: () => ({
@@ -110,21 +110,9 @@ export const useJornadaStore = defineStore('jornada', {
                     productosVendidosTemp.push(...ordenCompletada.productos) 
                 });
 
-                // reduce el array para que los productos no se repitan y se sumen sus iteraciones
-                  const productosReducidos = productosVendidosTemp.reduce((acumulador, producto) => {
-                    const productoEncontrado = acumulador.find(
-                      (productoAcumulado) => productoAcumulado.idProducto === producto.idProducto
-                    );
-                  
-                    if (productoEncontrado) {
-                      productoEncontrado.cantidad += producto.cantidad;
-                    } else {
-                      acumulador.push({ idProducto: producto.idProducto, cantidad: producto.cantidad });
-                    }
-                  
-                    return acumulador;
-                  }, []);
-                  objJornada.productosVendidos = productosReducidos
+                // reduce el array para que los productos no se repitan y en su lugar se sumen sus iteraciones
+                const arrayProductosReducido = reducirArray(productosVendidosTemp)
+                objJornada.productosVendidos = arrayProductosReducido
                   
 
                 ordenesCanceladasTemp.forEach(ordenCancelada => objJornada.gananciasPerdidas += ordenCancelada.total);
