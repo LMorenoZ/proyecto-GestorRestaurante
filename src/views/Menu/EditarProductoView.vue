@@ -65,7 +65,7 @@ const actualizar = async () => {
 
 <template>
 <br>
-<h1>Editar informacion</h1>
+<h1>Editar informacion del producto:</h1>
 <br>
 <div class="container text-center">
     
@@ -113,8 +113,8 @@ const actualizar = async () => {
 
             <label for="basic-url" class="form-label"></label>
             <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon3">Precio:</span>
-                <input type="number" class="form-control" id="txtCambiarPrecioProducto" required placeholder="Ingrese el precio" aria-describedby="basic-addon3">
+                <span class="input-group-text" id="basic-addon3">Precio $</span>
+                <input type="number" class="form-control" min="0" id="txtCambiarPrecioProducto" required placeholder="Ingrese el precio" aria-describedby="basic-addon3">
                 <div class="invalid-feedback">
                     Por favor ingrese el precio.
                 </div>
