@@ -64,28 +64,14 @@ const actualizar = async () => {
 </script>
 
 <template>
-
-    <!-- Muestra el div hasta que se hallan traido los datos de la base de datos -->
-    <div v-if="producto">
-        <!-- Componente provisional para mostrar en un formulario la información del producto a editar -->
-        <h1>Editar informacion</h1>
-
-        <p>Nombre:</p>
-        <input type="text" v-model="nombre">
-        <p>Descripcion:</p>
-        <input type="text" v-model="descripcion">
-        <p>Precio ($):</p>
-        <input type="number" v-model="precio">
-        <p>Tipo de producto:</p>
-        <select v-model="tipo">
-            <option disabled value="">Elija opcion</option>
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
-        </select>
-        <p>Foto:</p>
-
-        <!-- Muestra la imagen seleccionada -->
+<br>
+<h1>Editar informacion</h1>
+<br>
+<div class="container text-center">
+    
+  <div class="row">
+    <div class="col">
+                <!-- Muestra la imagen seleccionada -->
         <div class="prevImagen">
             <div class="border border-default">
                 <div class="imagePreviewWrapper" :style="{ 'background-image': `url(${foto})` }">
@@ -95,8 +81,7 @@ const actualizar = async () => {
                 Por favor elija una imagen.
             </div>
         </div>
-
-        <!-- Seleccionar imagen para -->
+                <!-- Seleccionar imagen para -->
         <div class="prevImagen">
             <label for="seleccionarImagen" required class="form-label">Seleccione una imagen para el
                 producto:</label>
@@ -105,19 +90,77 @@ const actualizar = async () => {
                 Por favor elija una imagen.
             </div>
         </div>
-        <button class="btn btn-primary mt-2"  @click="actualizar">Actualizar producto</button>
-    </div>
 
-    <!-- Div que se muestra solo mientras se cargan los datos desde la base de datos -->
-    <div v-else>
-        Cargando información...
     </div>
+    <div class="col">
+        <label for="basic-url" class="form-label"></label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon3">Nombre:</span>
+                <input type="text" class="form-control" id="txtCambiarNombreProducto" required placeholder="Ingrese el nombre" aria-describedby="basic-addon3">
+                <div class="invalid-feedback">
+                    Por favor ingrese el nombre.
+                </div>
 
-    <!-- Boton que regresa al menu -->
-    <button type="button" class="btn btn-info" @click="router.push('/menu')">Ir al menú</button>
+            </div>
+
+            <div class="input-group" required id="txtCambiarDescripcionProducto" >
+                <span class="input-group-text">Descripcion:</span>
+                <textarea class="form-control" aria-label="With textarea"></textarea>
+                <div class="invalid-feedback">
+                    Por favor ingrese la descripcion.
+                </div>
+            </div>
+
+            <label for="basic-url" class="form-label"></label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon3">Precio:</span>
+                <input type="number" class="form-control" id="txtCambiarPrecioProducto" required placeholder="Ingrese el precio" aria-describedby="basic-addon3">
+                <div class="invalid-feedback">
+                    Por favor ingrese el precio.
+                </div>
+            </div>
+
+            <select class="form-select" aria-label="Default select example" required id="elegirTipoProducto">
+                 <option selected disabled>Tipo de producto:</option>
+                 <option value="1">Postre</option>
+                 <option value="2">Bebida Caliente</option>
+                 <option value="3">Bebida Fria</option>
+                 <div class="invalid-feedback">
+                    Por favor elija una opcion.
+                </div>
+            </select>
+            <br>
+            <div class="container text-center">
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn btn-outline-primary">Editar informacion</button>
+                </div>
+                <div class="col">
+                <!-- Muestra el div hasta que se hallan traido los datos de la base de datos -->
+                <div v-if="producto">
+                    <!-- Componente provisional para mostrar en un formulario la información del producto a editar -->
+                    <button class="btn btn-outline-success"  @click="actualizar">Actualizar producto</button>
+                </div>
+
+                 <!-- Div que se muestra solo mientras se cargan los datos desde la base de datos -->
+                <div v-else>
+                    Cargando información...
+                </div>
+                </div>
+                <div class="col">
+                        <!-- Boton que regresa al menu -->
+                    <button type="button" class="btn btn-outline-info" @click="router.push('/menu')">Ir al menú</button>
+                </div>
+            </div>
+            </div>
+            
+    </div>
+    <div class="col">
+      <!--Columna vacia-->
+    </div>
+  </div>
+</div>
 </template>
-
-
 <style scoped>
 .imagePreviewWrapper {
     width: 250px;
