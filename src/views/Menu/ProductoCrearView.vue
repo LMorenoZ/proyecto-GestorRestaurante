@@ -24,8 +24,8 @@ const precioProd = ref(null)
 const tipoProd = ref(null)
 
 // valores reactivos para subir la imagen
-const selectedFile = ref(null)
-const previewImage = ref(null)
+const selectedFile = ref(null) // archivo de la imagen que subira a storage
+const previewImage = ref(null) // uri para mostra la imagen
 const isUploading = ref(false)
 
 // para poder mostrar la imagen en el div
@@ -49,7 +49,7 @@ const crearProducto = async () => {
         nombre: nombreProd.value,
         desc: descProd.value,
         precio: precioProd.value,
-        tipo: tipoProd.value
+        tipo: tipoProd.value    
     }
 
     try {
