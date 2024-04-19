@@ -32,6 +32,7 @@ const tiposProductos = productosStore.listarTipoProductos
 const nombre = ref(null)
 const descripcion = ref(null)
 const precio = ref(null)
+const disponibilidad = ref(null)
 const tipo = ref(null)
 const foto = ref(null)  // url de la imagen en Storage
 
@@ -39,6 +40,7 @@ const foto = ref(null)  // url de la imagen en Storage
 const nombreCopia = ref(null)
 const descripcionCopia = ref(null)
 const precioCopia = ref(null)
+const disponibilidadCopia = ref(null)
 const tipoCopia = ref(null)
 const fotoCopia = ref(null)  // url de la imagen en Storage
 
@@ -57,6 +59,7 @@ const producto = computed(() => {
     nombreCopia.value = nombre.value = productoInfo?.nombre
     descripcionCopia.value = descripcion.value = productoInfo?.desc
     precioCopia.value = precio.value = productoInfo?.precio
+    disponibilidadCopia.value = disponibilidad.value = productoInfo?.disponible
     tipoCopia.value = tipo.value = productoInfo?.tipo
     fotoCopia.value = foto.value = productoInfo?.foto
 
@@ -133,6 +136,7 @@ const actualizarProducto = async () => {
             nombre: nombre.value === nombreCopia.value ? undefined : nombre.value,
             desc: descripcion.value === descripcionCopia.value ? undefined : descripcion.value,
             precio: precio.value === precioCopia.value ? undefined : precio.value,
+            disponible: disponibilidad.value === disponibilidadCopia.value ? undefined : disponibilidad.value,
             tipo: tipo.value === tipoCopia.value ? undefined : tipo.value,
             foto: fotoActualizarURL === fotoCopia.value ? undefined : fotoActualizarURL
         }
@@ -167,6 +171,7 @@ const actualizarProducto = async () => {
             nombreCopia.value = nombre.value
             descripcionCopia.value = descripcion.value
             precioCopia.value = precio.value
+            disponibilidadCopia.value = disponibilidad.value
             tipoCopia.value = tipo.value
             fotoCopia.value = foto.value
         }
@@ -204,7 +209,7 @@ const validarFormulario = () => {
     <br>
     <div class="container text-center" v-if="producto">
 
-        <form :class="claseValidacion">
+        <form :class="claseValidacion" @submit.prevent>
             <div class="row">
                 <div class="col">
                     <!-- Muestra la imagen seleccionada -->
@@ -252,6 +257,19 @@ const validarFormulario = () => {
                             placeholder="Ingrese el precio" min="0" aria-describedby="basic-addon3" v-model.number="precio">
                         <div class="invalid-feedback">
                             Por favor ingrese el precio.
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon3">Disponibilidad:</span>
+                        <select class="form-select" v-model="disponibilidad" required>
+                            <option value="" disabled>Elija una opción</option>
+                            <option value="true" :selected="disponibilidad">Disponible</option>
+                            <option value="false" :selected="!disponibilidad">No disponible</option>
+                        </select>
+    
+                        <div class="invalid-feedback">
+                            Por favor ingrese la disponibilidad
                         </div>
                     </div>
 

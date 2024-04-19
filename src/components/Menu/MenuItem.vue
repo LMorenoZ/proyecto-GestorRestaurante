@@ -76,6 +76,7 @@ const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
     top: 12px;
     right: 12px;
     background-color: rgba(255, 255, 255, 0.8);
+    /* background-image: url(''); */
     border-radius: 50%;
     width: 32px;
     height: 32px;
