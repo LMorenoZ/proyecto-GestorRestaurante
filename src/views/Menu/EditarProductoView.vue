@@ -264,8 +264,8 @@ const validarFormulario = () => {
                         <span class="input-group-text" id="basic-addon3">Disponibilidad:</span>
                         <select class="form-select" v-model="disponibilidad" required>
                             <option value="" disabled>Elija una opción</option>
-                            <option value="true" :selected="disponibilidad">Disponible</option>
-                            <option value="false" :selected="!disponibilidad">No disponible</option>
+                            <option :value="true" :selected="disponibilidad">Disponible</option>
+                            <option :value="false" :selected="!disponibilidad">No disponible</option>
                         </select>
     
                         <div class="invalid-feedback">

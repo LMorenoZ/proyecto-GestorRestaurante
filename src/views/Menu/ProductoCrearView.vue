@@ -109,8 +109,8 @@ const crearProducto = async () => {
                     <div class="input-group mb-3">
                         <select class="form-select" v-model="disponibilidadProd">
                             <option value="" disabled>Elija una opción</option>
-                            <option value="true" selected>Disponible</option>
-                            <option value="false">No disponible</option>
+                            <option :value="true" selected>Disponible</option>
+                            <option :value="false">No disponible</option>
                         </select>
 
                         <div class="invalid-feedback">
