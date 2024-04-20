@@ -51,7 +51,7 @@ export const USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-// mostrar en consola formato de JSON 
+// mostrar en consola objetos en formato de JSON 
 export const printf = mensajeJSON => {
     return console.log(JSON.parse(JSON.stringify(mensajeJSON)))
 }
@@ -83,3 +83,28 @@ export const uploadFile = async (archivo, carpetaString) => {  // carpetaString:
 
     return imgURL
 }
+
+// reduce un array de objetos proporcionado para que los elementos no se repitan y se sumen sus iteraciones,
+// el objeto del array debe tener la forma '{  idProducto, cantidad }' para que la funcion pueda reducirla
+// y devuelve un array con los nuevos objetos
+export const reducirArray = arrayDuplicado => {
+    const arrayReducido = arrayDuplicado.reduce((acumulador, producto) => {
+        const productoEncontrado = acumulador.find(
+          (productoAcumulado) => productoAcumulado.idProducto === producto.idProducto
+        );
+      
+        if (productoEncontrado) {
+          productoEncontrado.cantidad += producto.cantidad;
+        } else {
+          acumulador.push({ idProducto: producto.idProducto, cantidad: producto.cantidad });
+        }
+      
+        return acumulador;
+      }, []);
+
+    return arrayReducido
+}
+
+// funcion que comprueba si un objeto de javascript esta vacio, y si es el caso, retorna true
+// si tiene longitud de 0 indica que el objeto si esta vacio 
+export const isEmptyObject = objetoJavascript => Object.keys(objetoJavascript).length === 0  

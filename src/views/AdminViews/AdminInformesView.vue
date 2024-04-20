@@ -15,7 +15,7 @@ import { useHistorialStore } from '../../stores/historial'
 import { useMensajesStore } from '../../stores/mensajes';
 
 // utilidades
-import { fechaFormateada, nombreUsuario } from '../../utilidades';
+import { fechaFormateada, nombreUsuario, reducirArray } from '../../utilidades';
 
 // componentes de ui
 import JornadaInfo from '../../components/Informes/JornadaInfo.vue';
@@ -55,34 +55,33 @@ Date.prototype.addDays = function (days) {  // funcion para sumar una cantidad d
 // realiza calculo de todos los productos listados en el historial existentes al momento de hacer click
 const totalResumen = computed(() => {
     let objetoTotal = {
-        quesoTotales: 0,  // pupusas
-        revueltasTotales: 0,
-        chicharronTotales: 0,
-        gaseosaTotales: 0,  // bebidas
-        chocolateTotales: 0,
-        refrescoTotales: 0,
+        diasTotales: historialStore.historialOrdenes.length,
         completadasTotales: 0,  // ordenes
         canceladasTotales: 0,
         gananciasTotales: 0,  // dinero
         perdidasTotales: 0,
-        diasTotales: historialStore.historialOrdenes.length
+        productos: []  // [{productoId, cantidad}...]
     };
 
+    // array temporal con todos los productos vendidos en el rango de tiempo
+    let productosVendidosTemp = [] // [{ idProducto, cantidadVendida }, { ... }], los productos se pueden repetir
+
     historialStore.historialOrdenes.forEach(jornada => {
-        objetoTotal.quesoTotales += jornada.quesoTot,
-            objetoTotal.revueltasTotales += jornada.revueltasTot,
-            objetoTotal.chicharronTotales += jornada.chicharronTot,
-            objetoTotal.gaseosaTotales += jornada.gaseosaTot,
-            objetoTotal.chocolateTotales += jornada.chocolateTot,
-            objetoTotal.refrescoTotales += jornada.refrescoTot,
-            objetoTotal.completadasTotales += jornada.ordenesCompletadas,
+        objetoTotal.completadasTotales += jornada.ordenesCompletadas,
             objetoTotal.canceladasTotales += jornada.ordenesCanceladas,
             objetoTotal.gananciasTotales += jornada.gananciasTotales,
             objetoTotal.perdidasTotales += jornada.gananciasPerdidas
+            productosVendidosTemp.push(...jornada.productosVendidos)
     });
 
+    
+    // reduce el array temporal para que los productos no se repitan y en su lugar se sumen sus iteraciones
+    const arrayProductosReducido = reducirArray(productosVendidosTemp)
+    objetoTotal.productos = arrayProductosReducido
+    
     return objetoTotal;
 });
+
 
 </script>
 
@@ -99,7 +98,8 @@ const totalResumen = computed(() => {
     <div class="d-flex" v-if="historialStore.historialOrdenes.length > 0">
         <!-- Tabs -->
         <ul class="nav nav-tabs flex-column" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation" v-for="(jornada, index) of historialStore.historialOrdenes" :key="jornada.id">
+            <li class="nav-item" role="presentation" v-for="(jornada, index) of historialStore.historialOrdenes"
+                :key="jornada.id">
                 <button :class="`nav-link ${index == 0 ? 'active' : ''}`" data-bs-toggle="tab"
                     :data-bs-target="`#tab-pane-${index}`" type="button" aria-selected="true">
                     {{ fechaFormateada(jornada.jornadaFecha) }}
@@ -109,8 +109,9 @@ const totalResumen = computed(() => {
 
         <!-- Contenido de las tabs -->
         <div class="tab-content" id="myTabContent">
-            <div v-for="(jornada, index) of historialStore.historialOrdenes" :class="`tab-pane fade ${index == 0 ? 'show active' : ''}`"
-                role="tabpanel" tabindex="0" :id="`tab-pane-${index}`">
+            <div v-for="(jornada, index) of historialStore.historialOrdenes"
+                :class="`tab-pane fade ${index == 0 ? 'show active' : ''}`" role="tabpanel" tabindex="0"
+                :id="`tab-pane-${index}`">
                 <!-- Componente con la informacion de una jornada en particular -->
                 <JornadaInfo :jornada="jornada" />
             </div>

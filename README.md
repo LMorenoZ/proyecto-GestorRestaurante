@@ -1,6 +1,8 @@
 # Enlace al proyecto subido a un servidos:
 
 <!-- [Enlace]('google.com')  -->
+Instalar dependencias del proyecto: npm i
+Ejecutar el proyecto: npm run dev
 
 ## Recommended IDE Setup
 
