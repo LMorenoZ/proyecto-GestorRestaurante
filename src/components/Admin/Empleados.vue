@@ -71,9 +71,7 @@
                   >
                     <i class="bi bi-x"></i>
                   </button>
-                  <button class="btn btn-primary btn-sm fs-4" @click="copiarEmpleado(empleado)">
-                    <i class="bi bi-clipboard"></i>
-                  </button>
+                  <!--  TODO: Implementar edicion de los trabajadores -->
                   <button class="btn btn-secondary btn-sm fs-4">
                     <i class="bi bi-pencil"></i>
                   </button>
@@ -97,29 +95,6 @@
       </div>
     </div>
   </template>
-  
-  <script>
-  export default {
-    props: ['listaEmpleados'],
-    methods: {
-      copiarEmpleado(empleado) {
-        const texto = `Nombre: ${empleado.nombre} ${empleado.apellido}\nTeléfono: ${empleado.tel}\nCorreo: ${empleado.email}\nPuesto: ${empleado.puesto}\nEstado: ${empleado.logeado ? 'Activo' : 'No activo'}`;
-        navigator.clipboard.writeText(texto)
-          .then(() => {
-            this.mostrarNotificacion('Datos del empleado copiados al portapapeles.', 'success');
-          })
-          .catch((error) => {
-            console.error('Error al copiar los datos del empleado al portapapeles:', error);
-            this.mostrarNotificacion('Error al copiar los datos del empleado al portapapeles. Por favor, intente nuevamente.', 'error');
-          });
-      },
-      mostrarNotificacion(mensaje, tipo) {
-        // Implementación básica de una notificación más agradable visualmente
-        alert(`${tipo.toUpperCase()}: ${mensaje}`);
-      }
-    }
-  };
-  </script>
   
   <style scoped>
   /* Estilos personalizados */
