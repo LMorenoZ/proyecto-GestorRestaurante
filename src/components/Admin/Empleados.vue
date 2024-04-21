@@ -35,60 +35,163 @@
 
 <!-- HTML del componente -->
 <template>
-    <div class="my-4" style="overflow: scroll; height: 70vh">
-        <h3 class="fs-3">Lista de empleados:</h3>
-        <table class="table table-hover ">
-            <thead>
-                <tr>
-                    <th scope="col">Foto</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Teléfono</th>
-                    <th scope="col">Correo</th>
-                    <th scope="col">Puesto</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Borrar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <template v-for="empleado in props.listaEmpleados"  :key="empleado.email">
-                    <tr style="cursor: pointer;" @click="router.push(`/administracion/perfil/${empleado.uid}`)">                        
-                        <td><img class="img-thumbnail" :src="empleado.foto" alt=""></td>
-                        <td>{{ `${empleado.nombre} ${empleado.apellido}` }}</td>
-                        <td>{{ empleado.tel }}</td>
-                        <td>{{empleado.email}}</td>
-                        <td>{{empleado.puesto}}</td>
-                        <td>{{ empleado.logeado ? 'Activo' : 'No activo' }}</td>
-                        <td >
-                            <button 
-                                class="btn btn-sm fs-4" 
-                                data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
-                                :disabled="botonBorrarDesactivado"
-                            >
-                                <span class="badge bg-danger rounded-pill ">
-                                    <i class="bi bi-x fs-5"></i>
-                                </span>
-                            </button>
-                            <ModalConfirmacion
-                                :id="`modalBorrarEmpleado${empleado.uid}`"
-                                :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
-                                :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
-                                texto-boton="Eliminar empleado"
-                                color="danger"
-                                @accion="borrarEmpleado"
-                                :param="empleado"
-                            />
-                        </td>
-                        <td>
-                            <!-- <RouterLink :to="`/administracion/perfil/${empleado.uid}`">Ver</RouterLink> -->
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
+    <div class="container mt-4">
+      <h3 class="text-center mb-4">Lista de Empleados</h3>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Puesto</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="empleado in props.listaEmpleados" :key="empleado.email">
+              <td>
+                <div class="photo-container">
+                  <img class="img-thumbnail" :src="empleado.foto" alt="" @mouseover="zoomIn" @mouseleave="zoomOut">
+                </div>
+              </td>
+              <td>{{ `${empleado.nombre} ${empleado.apellido}` }}</td>
+              <td>{{ empleado.tel }}</td>
+              <td>{{ empleado.email }}</td>
+              <td>{{ empleado.puesto }}</td>
+              <td :style="{ color: empleado.logeado ? 'green' : 'red' }">{{ empleado.logeado ? 'Activo' : 'No activo' }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button 
+                    class="btn btn-danger btn-sm fs-4"  
+                    data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
+                    :disabled="botonBorrarDesactivado"
+                  >
+                    <i class="bi bi-x"></i>
+                  </button>
+                  <button class="btn btn-primary btn-sm fs-4" @click="copiarEmpleado(empleado)">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm fs-4">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <router-link class="btn btn-info btn-sm fs-4" :to="`/administracion/perfil/${empleado.uid}`">
+                    <i class="bi bi-eye"></i>
+                  </router-link>
+                </div>
+                <ModalConfirmacion
+                  :id="`modalBorrarEmpleado${empleado.uid}`"
+                  :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
+                  :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
+                  texto-boton="Eliminar empleado"
+                  color="danger"
+                  @accion="borrarEmpleado"
+                  :param="empleado"
+                />
+              </td>
+            </tr>
+          </tbody>
         </table>
+      </div>
     </div>
-</template>
-
-<!-- Estilos CSS de este componente -->
-<style scoped>
-
-</style>
+  </template>
+  
+  <script>
+  export default {
+    props: ['listaEmpleados'],
+    methods: {
+      copiarEmpleado(empleado) {
+        const texto = `Nombre: ${empleado.nombre} ${empleado.apellido}\nTeléfono: ${empleado.tel}\nCorreo: ${empleado.email}\nPuesto: ${empleado.puesto}\nEstado: ${empleado.logeado ? 'Activo' : 'No activo'}`;
+        navigator.clipboard.writeText(texto)
+          .then(() => {
+            this.mostrarNotificacion('Datos del empleado copiados al portapapeles.', 'success');
+          })
+          .catch((error) => {
+            console.error('Error al copiar los datos del empleado al portapapeles:', error);
+            this.mostrarNotificacion('Error al copiar los datos del empleado al portapapeles. Por favor, intente nuevamente.', 'error');
+          });
+      },
+      mostrarNotificacion(mensaje, tipo) {
+        // Implementación básica de una notificación más agradable visualmente
+        alert(`${tipo.toUpperCase()}: ${mensaje}`);
+      }
+    }
+  };
+  </script>
+  
+  <style scoped>
+  /* Estilos personalizados */
+  .container {
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .table {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .btn-danger,
+  .btn-primary,
+  .btn-secondary,
+  .btn-info {
+    padding: 0.3rem; /* Ajuste de tamaño del botón */
+    border-radius: 5px; /* Bordes redondeados */
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .btn-info:hover {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .img-thumbnail {
+    max-width: 50px;
+    border-radius: 50%;
+    transition: transform 0.3s ease; /* Transición suave */
+  }
+  
+  .photo-container {
+    position: relative;
+  }
+  
+  .photo-container:hover .img-thumbnail {
+    transform: scale(1.2); /* Aumenta el tamaño al pasar el mouse */
+  }
+  </style>
+  
