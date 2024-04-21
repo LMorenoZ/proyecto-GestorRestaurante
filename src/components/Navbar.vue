@@ -29,7 +29,7 @@ const fechaHoy = computed(() => {
 
 <template>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg bg-green navbar-dark">
+  <nav class="navbar navbar-expand-lg bg-custom navbar-dark">
     <div class="container">
 
       <!-- Logo -->
@@ -76,13 +76,27 @@ const fechaHoy = computed(() => {
           <!-- Login/ Sign up -->
           <span class="nav-link mt-lg-3 mb-lg-auto" v-if="jornadaStore.jornadaValor">Jornada activa en {{ fechaHoy }}</span>
           <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3 mt-4">
-            <button class="btn text-white text-decoration-none rounded-4 ms-auto" style="background-color: #f94ca4;"
+            <button class="btn text-white text-decoration-none rounded-4 ms-auto" style="background-color: #0069d9;"
               data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
               Salir
             </button>
-            <ModalConfirmacion id="modalCerrarSesion" titulo="Cerrar sesión"
-              cuerpo="¿Está seguro que desea cerrar sesión?" color="primary" @accion="userStore.logoutUser()"
-              texto-boton="Cerrar sesión" />
+            <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalCerrarSesionLabel">Cerrar sesión</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>¿Está seguro que desea cerrar sesión?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @click="cerrarSesion">Cerrar sesión</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -90,22 +104,25 @@ const fechaHoy = computed(() => {
   </nav>
 </template>
 
-<style>
-@media (max-width: 991px) {
-  .sidebar {
-    background-color: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
+<script>
+export default {
+  methods: {
+    cerrarSesion() {
+      // Aquí puedes agregar la lógica para cerrar sesión
+    }
   }
 }
-/* Cambiar color de fondo a verde */
-.bg-green {
-    background-color: #00FF00; /* Verde */
+</script>
+
+<style>
+.bg-custom {
+  background-color: #0baf0b; /* Cambiar color de fondo a verde */
 }
 
 /* Ajustar margen superior e inferior de la fecha en dispositivos grandes */
 .nav-link {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
 }
 
 </style>
