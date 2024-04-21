@@ -1,3 +1,34 @@
+<script setup>
+import { ref } from 'vue';
+import{auth} from '../firebaseConfig'
+import {sendPasswordResetEmail } from "firebase/auth";
+
+const email = ref('');
+const mensaje = ref('');
+const error = ref('');
+
+// emits que vienen de la vista Home
+const emit = defineEmits(['cambiarFormulario'])
+
+// activa la funcion emit de la vista 'HomeView' para cambiar al formulario de login
+const irALogin = () => {
+    emit('cambiarFormulario')
+}
+
+// TODO: Implementar mensajes para cada caso
+const enviarCorreo = async () => {
+    try {
+        const resultado = await sendPasswordResetEmail(auth, email.value)
+        mensaje.value = 'Se ha enviado un correo electrónico con instrucciones para recuperar su contraseña.';
+        email.value = '';
+        error.value = '';
+    } catch (error) {
+        error.value = 'Error al tratar de enviar correo de recuperación: ' + error ;
+        console.log(error)
+    }
+}
+</script>
+
 <template>
   <div class="container">
     <div class="row justify-content-center mt-5">
@@ -7,12 +38,15 @@
             <h4 class="mb-0">Recuperar Contraseña</h4>
           </div>
           <div class="card-body">
-            <form @submit.prevent="enviarRecuperar" class="recovery-form">
+            <form @submit.prevent="enviarCorreo" class="recovery-form">
               <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Correo Electrónico</label>
                 <input type="email" class="form-control" id="exampleInputEmail1" v-model="email" placeholder="Escriba su correo electrónico" required>
               </div>
-              <button type="submit" class="btn btn-primary btn-block">Enviar</button>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary d-block">Enviar</button>
+              </div>
+              <span class="d-block text-center mt-3" style="color: #6c757d; cursor: pointer;" @click="irALogin">Inicia sesión si ya tiene cuenta </span>
             </form>
           </div>
         </div>
@@ -26,25 +60,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-
-const email = ref('');
-const mensaje = ref('');
-const error = ref('');
-
-const enviarRecuperar = () => {
-  // Simulación de solicitud de recuperación de contraseña
-  if (email.value === 'correo@example.com') {
-    mensaje.value = 'Se ha enviado un correo electrónico con instrucciones para recuperar su contraseña.';
-    error.value = '';
-  } else {
-    error.value = 'El correo electrónico ingresado no coincide con ninguna cuenta.';
-    mensaje.value = '';
-  }
-};
-</script>
 
 <style scoped>
 .container {

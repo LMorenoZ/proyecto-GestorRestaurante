@@ -92,7 +92,7 @@ const fechaHoy = computed(() => {
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" @click="cerrarSesion">Cerrar sesión</button>
+                    <button type="button" class="btn btn-primary" @click="userStore.logoutUser()" data-bs-dismiss="modal">Cerrar sesión</button>
                   </div>
                 </div>
               </div>
@@ -103,16 +103,6 @@ const fechaHoy = computed(() => {
     </div>
   </nav>
 </template>
-
-<script>
-export default {
-  methods: {
-    cerrarSesion() {
-      // Aquí puedes agregar la lógica para cerrar sesión
-    }
-  }
-}
-</script>
 
 <style>
 .bg-custom {

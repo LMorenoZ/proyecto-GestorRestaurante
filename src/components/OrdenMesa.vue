@@ -1,6 +1,6 @@
 <script setup>
 // librerias de vue y afiliados
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 // stores de pinia
 import { useOrdenesStore } from '../stores/ordenes.js';
@@ -19,17 +19,17 @@ const ordenesStore = useOrdenesStore();
 //---------------------------------------------
 
 // variables reactivas
-const ordenActual = ref(props.orden);
+const ordenActual = computed( () => props.orden );
 const colorOrden = ref('');
 const estadoDescri = ref('');
 const estadoOrden = ref(props.orden.estado);
 const productos = ref(props.productos)
 
-// metodos
+// cambiar el color de la orden cuando se mueve de estado
 const cambiarColor = color => {
     switch (color) {
         case 'preparacion':
-            colorOrden.value = 'info';
+            colorOrden.value = 'white';
             estadoDescri.value = "Orden en curso"
             break;
 
@@ -89,10 +89,10 @@ const modificarOrden = async (orden) => {
 
 <template>
     <transition name="fade">
-      <div class="card m-3" style="width: 18rem;">
-        <div class="card-header d-flex justify-content-between fw-bold" :style="{ backgroundColor: colorOrden, color: textColor }">
+      <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;">
+        <div class="card-header d-flex justify-content-between fw-bold" >
           <p>Órden mesa {{ orden.mesaNum }}</p>
-          <div class="badge bg-scondary text-wrap" style="width: 6rem;">
+          <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
             {{ estadoDescri }}
           </div>
         </div>
@@ -100,7 +100,7 @@ const modificarOrden = async (orden) => {
           <p class="fst-italic fw-bold text-end mt-1" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fechaCreacion.toDate()) }}</p>
   
           <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
-            <li class="list-group-item d-flex justify-content-between align-items-center" :style="{ backgroundColor: colorOrden, color: textColor }">
+            <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`">
               {{ encontrarProducto(productos, producto.idProducto).nombre }}
               <span class="badge bg-primary rounded-pill">
                 {{ producto.cantidad }}
@@ -108,7 +108,7 @@ const modificarOrden = async (orden) => {
             </li>
           </template>
   
-          <li class="list-group-item" :style="{ backgroundColor: colorOrden, color: textColor }">
+          <li :class="`list-group-item bg-${colorOrden}`">
             Total: {{ USDollar.format(ordenActual.total) }}
           </li>
         </ul>
@@ -134,33 +134,7 @@ const modificarOrden = async (orden) => {
     <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket>
   </template>
   
-  <script>
-  export default {
-    props: {
-      orden: Object,
-      productos: Array,
-      colorOrden: {
-        type: String,
-        default: 'white' // Color de fondo predeterminado blanco
-      },
-      estadoDescri: String,
-      ordenActual: Object
-    },
-    data() {
-      return {
-        estadoOrden: '',
-        textColor: 'black' // Color de texto predeterminado negro
-      };
-    },
-    methods: {
-      toggleModal() {
-        // Aquí puedes agregar alguna lógica para mostrar/ocultar el modal
-      }
-    }
-  };
-  </script>
-  
-  <style>
+  <style scoped>
   .fade-enter-active, .fade-leave-active {
     transition: opacity 0.5s;
   }
