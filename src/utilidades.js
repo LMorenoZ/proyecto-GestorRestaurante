@@ -63,6 +63,7 @@ export const encontrarProducto = (productos, id) => {
 }
 
 // subir imagen en formato archivo ('jpg', 'png', etc) a Storage de Firebase
+// la funcion retorna la url de la imagen alojada en Storage
 export const uploadFile = async (archivo, carpetaString) => {  // carpetaString: 'productos', 'usuarios'
     let imgURL = null
 

@@ -91,7 +91,7 @@ traerInfoEmpleado()
                 <span>{{ empleadoInfo.dui }}</span>
               </div>
               <div class="info-item my-2">
-                <span class="item-title fw-bold ">Fecha creación: </span>
+                <span class="item-title fw-bold ">Fecha de creación: </span>
                 <span>{{ fechaFormateada(empleadoInfo.creation.toDate()) }}</span>
               </div>
             </div>
