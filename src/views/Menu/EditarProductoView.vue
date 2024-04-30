@@ -305,7 +305,8 @@ const validarFormulario = () => {
             </div>
         </form>
     </div>
-    <!-- Div que se muestra solo mientras se cargan los datos desde la base de datos -->
+
+    <!-- Reemplazar lo que esta dentro de este div con un loading spinner  -->
     <div v-else>
         Cargando información...
     </div>

@@ -14,6 +14,8 @@
 
 <template>
     <h1>Disposición de mesas</h1> <br>
+
+    <!-- Botón para añadir nueva mesa -->
     <button 
         class="btn btn-success ml-2 col-sm-10 col-md-2" 
         data-bs-toggle="modal" data-bs-target="#crearMesa" 

@@ -55,10 +55,13 @@ const hayProductos = (productos, tipo, disponibilidad) => {
 
     return productosCumplen.length > 0
 }
+
+import { popper } from '@popperjs/core';
 </script>
 
 <template>
     <h1>Lista de productos</h1>
+    <!-- Boton para que redirige a vista para crear nuevo producto -->
     <button class="btn btn-success" @click="router.push('/menu/nuevo')">Nuevo producto</button>
     
     <!-- Seleccion para mostrar productos disponibles o no disponibles -->
