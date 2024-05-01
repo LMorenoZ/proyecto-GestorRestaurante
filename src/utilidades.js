@@ -51,7 +51,7 @@ export const USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-// mostrar en consola formato de JSON 
+// mostrar en consola objetos en formato de JSON 
 export const printf = mensajeJSON => {
     return console.log(JSON.parse(JSON.stringify(mensajeJSON)))
 }
@@ -63,6 +63,7 @@ export const encontrarProducto = (productos, id) => {
 }
 
 // subir imagen en formato archivo ('jpg', 'png', etc) a Storage de Firebase
+// la funcion retorna la url de la imagen alojada en Storage
 export const uploadFile = async (archivo, carpetaString) => {  // carpetaString: 'productos', 'usuarios'
     let imgURL = null
 
@@ -104,3 +105,7 @@ export const reducirArray = arrayDuplicado => {
 
     return arrayReducido
 }
+
+// funcion que comprueba si un objeto de javascript esta vacio, y si es el caso, retorna true
+// si tiene longitud de 0 indica que el objeto si esta vacio 
+export const isEmptyObject = objetoJavascript => Object.keys(objetoJavascript).length === 0  
