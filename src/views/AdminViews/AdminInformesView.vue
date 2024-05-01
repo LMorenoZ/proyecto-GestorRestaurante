@@ -131,7 +131,7 @@ const chartOptionsTop10 = computed(() => {
 const seriesTop10 = computed(() => {
     return [
         {
-            name: 'series-1',
+            name: 'Ventas',
             data: productosVentasTop10.value
         },
     ]

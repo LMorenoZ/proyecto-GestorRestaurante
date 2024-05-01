@@ -8,7 +8,7 @@ import { printf } from "../utilidades";
 export const useProductosStore = defineStore('productos', {
     state: () => ({
         productos: [],
-        productosTipos: [],
+        productosTipos: [], // categorias
         cargando: false
     }),
     actions: {
@@ -82,6 +82,17 @@ export const useProductosStore = defineStore('productos', {
 
             } catch {
                 console.log(error)
+            }
+        },
+        async crearCategoria(categoriaObj) {
+            try {
+                const res = await addDoc(collection(db, 'tipoProducto'), categoriaObj);
+                
+                // actualizar informacion en el UI:
+                this.productosTipos.push({...categoriaObj, id: res.id})
+            } catch (error) {
+                console.log(error);
+                throw error
             }
         }
     },
