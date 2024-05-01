@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc } from "firebase/firestore/lite";
+import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc } from "firebase/firestore/lite";
 import { db } from '../firebaseConfig';
 
 import { useMensajesStore } from './mensajes';
@@ -53,7 +53,7 @@ export const useProductosStore = defineStore('productos', {
             const mensajesStore = useMensajesStore();
 
             try {
-                await addDoc(collection(db, 'menu'), payload);
+                const res = await addDoc(collection(db, 'menu'), payload);
                 mensajesStore.crearMensaje({
                     titulo: 'Producto creado',
                     texto: `El producto ${payload.nombre} se creó exitosamente`,
@@ -61,7 +61,10 @@ export const useProductosStore = defineStore('productos', {
                     id: 'mensajeProductoCreada',
                     autoEliminar: true,
                 });
-                this.traerProductos();
+
+                // Actualizar UI aniadiendo el nuevo elemento al array en el store
+                const productoCreado = {...payload, id: res.id}
+                this.productos.push(productoCreado)
             } catch (error) {
                 mensajesStore.crearError('productoNoSeCrea', `No se pudo crear el producto`);
                 console.log(error);
@@ -82,6 +85,16 @@ export const useProductosStore = defineStore('productos', {
 
             } catch {
                 console.log(error)
+            }
+        },
+        async eliminarProducto(idProducto) {
+            try {
+                await deleteDoc(doc(db, 'menu', idProducto));
+
+                // actualizar el UI eliminando el elemento de este store
+                this.productos = this.productos.filter(prod => prod.id !== idProducto)
+            } catch (error) {
+                throw error
             }
         },
         async crearCategoria(categoriaObj) {

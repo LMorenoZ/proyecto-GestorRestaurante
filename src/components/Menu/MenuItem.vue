@@ -2,30 +2,70 @@
 import { RouterLink } from 'vue-router';
 import { USDollar } from '../../utilidades';
 
+import { useProductosStore } from '../../stores/productos';
+import { useMensajesStore } from '../../stores/mensajes';
+
+import ModalConfirmacion from '../ModalConfirmacion.vue';
+
+const productosStore = useProductosStore()
+const mensajestore = useMensajesStore()
+
 const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
+
+const borrarProducto = async (idProducto) => {
+  try {
+    await productosStore.eliminarProducto(idProducto)
+
+    mensajestore.crearMensaje({
+      titulo: 'Producto eliminado',
+      texto: 'El producto ha sido eliminado exitosamente',
+      color: 'success',
+      id: 'ProductoBorrardoExito',
+      autoEliminar: true
+    })
+  } catch (error) {
+    mensajestore.crearError('NoProductoBorrado', 'No se pudo borrar el producto')
+    console.log(error)
+  }
+}
 
 </script>
 
 <template>
-    <RouterLink :to="`menu/editar/${id}`" class="menu-card-link">
+    
       <div class="menu-card">
         <div class="menu-card__image">
-          <div class="menu-card__image-wrapper">
-            <img :src="foto" :alt="nombre" class="menu-card__image-item">
+          <RouterLink :to="`menu/editar/${id}`" class="menu-card-link">
+            <div class="menu-card__image-wrapper">
+              <img :src="foto" :alt="nombre" class="menu-card__image-item">
+            </div>
+        </RouterLink>
+          <div class="menu-card__icon bg-danger" title="Borrar" data-bs-toggle="modal" :data-bs-target="`#borrarProductoModal${id}`">
+            <span class="badge btn text-bg-danger"><i class="bi bi-trash"></i></span>
           </div>
-          <div class="menu-card__icon"><!--
-             Aquí puedes colocar el icono correspondiente al tipo de platillo
-          
-            -->
-            <i class="fas fa-utensils"></i>
-          </div>
-        </div>
+        </div> 
         <div class="menu-card__content">
           <h3 class="menu-card__title">{{ nombre }}</h3>
           <p class="menu-card__price">{{ USDollar.format(precio) }}</p>
+          <div class="d-flex justify-content-end">
+            <RouterLink :to="`menu/editar/${id}`" class="menu-card-link" title="Editar">
+              <div class="btn btn-success btn-sm ">
+                <i class="bi bi-pencil"></i>  
+              </div >
+            </RouterLink>
+          </div>
         </div>
       </div>
-    </RouterLink>
+
+      <ModalConfirmacion 
+        :id="`borrarProductoModal${id}`"
+        titulo="Borrar producto"
+        :cuerpo="`Está seguro que desea borrar el producto ${nombre} ¡Esta acción no se puede deshacer!`"
+        color="danger"
+        textoBoton="Borrar producto"
+        :param="id"
+        @accion="borrarProducto"
+      />
   </template>
   
 
@@ -75,7 +115,7 @@ const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: rgba(255, 255, 255, 0.8);
+    /* background-color: rgba(211, 36, 36, 0.8); */
     /* background-image: url(''); */
     border-radius: 50%;
     width: 32px;

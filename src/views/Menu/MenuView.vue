@@ -117,7 +117,7 @@ const crearCategoria = async () => {
     <!-- Boton para crear nueva categoria de productos -->
     <button class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria">Crear nueva categoría</button>
     
-    <!-- Seleccion para mostrar productos disponibles o no disponibles -->
+    <!-- Seleccion para elegir que producto, disponibles o no disponibles, se mostraran -->
     <div class="mt-2 d-flex justify-content-end">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineDisponibles" :value="true" v-model="mostrarDisponibles" checked>
@@ -130,7 +130,7 @@ const crearCategoria = async () => {
     </div>
 
     <!-- Tabs de categorias de productos -->
-    <div class="row mt-4">
+    <div class="row mt-4 overflow-y-scroll" style="height: 60vh;">
         <div class="col-sm-12 col-md-2 mt-4">
             <h4>Categoría de producto</h4>
 
@@ -138,12 +138,12 @@ const crearCategoria = async () => {
             <div class="d-flex align-items-start">
                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <template v-for="(tipo, index) in tiposProductos" :key="tipo.id">
-                        <div>
+                        <div class="d-grid gap-2">
                             <button :class="`nav-link ${esPrimerElemento(index, 'active')}`" :id="`v-pills-${tipo.id}-tab`"
                             data-bs-toggle="pill" :data-bs-target="`#v-pills-${tipo.id}`" type="button" role="tab"
                             :aria-controls="`v-pills-${tipo.id}`" aria-selected="true">
-                            {{ tipo.nombre }}
-                        </button>
+                                {{ tipo.nombre }}
+                            </button>
                         </div>
                         
                     </template>
