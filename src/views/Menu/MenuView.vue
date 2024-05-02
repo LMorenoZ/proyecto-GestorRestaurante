@@ -9,6 +9,7 @@ import { useMensajesStore } from '../../stores/mensajes';
 
 // importando componentes de ui
 import MenuItem from '../../components/Menu/MenuItem.vue';
+import ModalConfirmacion from '../../components/ModalConfirmacion.vue'
 
 // Incializando importaciones
 const router = useRouter()
@@ -17,13 +18,12 @@ const mensajesStore = useMensajesStore()
 
 // variables reactivas
 const modalRef = ref(null)
-const tiposProductos = ref(productosStore.productosTipos)
 const productos = ref(productosStore.productos) 
 const mostrarDisponibles = ref(true)
 const nombreTipoProductos = computed(() => {
     const listaNombre = []
 
-    for(let tipo of tiposProductos.value) {
+    for(let tipo of productosStore.listarTipoProductos) {
         listaNombre.push(tipo.nombre)
     }
 
@@ -35,17 +35,6 @@ const hayErrorCategoria = ref(false)
 const errorCategoriaMensaje = ref('Debe introducir un nombre')
 
 /*** Funciones ***/
-// funcion para filtrar productos
-const filtrarProductos = tipoProducto => {
-  const productosFiltrados = productos.value.filter(producto => producto.tipo === tipoProducto.nombre);
-}
-
-// objeto donde cada llave son los tipos de productos y sus valores son un array con todos los productos que corresponden al tipo
-const productosCategorizados = computed(() => {
-  return Object.fromEntries(
-    tiposProductos.value.map(tipoProducto => [tipoProducto.nombre, filtrarProductos(tipoProducto)])
-  );
-});
 
 // funcion para establecer clases de Bootstrap al primer elemento resultante de un v-for 
 const esPrimerElemento = (index, clases) => {
@@ -107,6 +96,24 @@ const crearCategoria = async () => {
         console.log(error)
     } 
 }
+
+// funcion para eliminar una categoria vacia
+const borrarCategoria = async (categoria) => {
+    try {
+        await productosStore.eliminarCategoria(categoria.id)
+
+        mensajesStore.crearMensaje({
+            titulo: 'Categoría borrada',
+            texto: `La categoría '${categoria.nombre}' se borró exitosamente`,
+            color: 'success',
+            id: 'mensajeCatCreada',
+            autoEliminar: true,
+        });
+    } catch (error) {
+        mensajesStore.crearError('NoEliminacionCategoria', 'No se pudo borrar la categoría')
+        console.log(error)
+    } 
+}
 </script>
 
 <template>
@@ -134,10 +141,10 @@ const crearCategoria = async () => {
         <div class="col-sm-12 col-md-2 mt-4">
             <h4>Categoría de producto</h4>
 
-            <!-- Seleccion de tabs -->
+            <!-- Seccion de tabs -->
             <div class="d-flex align-items-start">
                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <template v-for="(tipo, index) in tiposProductos" :key="tipo.id">
+                    <template v-for="(tipo, index) in productosStore.listarTipoProductos" :key="tipo.id">
                         <div class="d-grid gap-2">
                             <button :class="`nav-link ${esPrimerElemento(index, 'active')}`" :id="`v-pills-${tipo.id}-tab`"
                             data-bs-toggle="pill" :data-bs-target="`#v-pills-${tipo.id}`" type="button" role="tab"
@@ -155,7 +162,7 @@ const crearCategoria = async () => {
         <!-- Contenido de las tabs -->
         <div class="col-sm-12 col-md-8">
             <div class="tab-content" id="v-pills-tabContent">
-                <template v-for="(tipo, index) in tiposProductos" :key="tipo.id">
+                <template v-for="(tipo, index) in productosStore.listarTipoProductos" :key="tipo.id">
                     <div :class="`tab-pane ${esPrimerElemento(index, 'show active')}`" :id="`v-pills-${tipo.id}`" role="tabpanel"
                         :aria-labelledby="`v-pills-${tipo.id}-tab`" :tabindex="`${index + 1}`">
                         <div class="d-flex flex-wrap">
@@ -177,8 +184,33 @@ const crearCategoria = async () => {
                             <div v-else>
                                 <h4>No hay productos '{{ tipo.nombre }}'' que actualmente sean {{ mostrarDisponibles ? 'disponibles' : 'no disponibles' }}</h4>
                             </div>
-
+                            
                         </div>
+                        <div class="d-flex justify-content-center mt-4">
+                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" :data-bs-target="`#categoriaBorrar${tipo.id}`">
+                                Borrar la categoría '{{tipo.nombre}}'
+                            </button>
+                        </div>
+        
+                        <!-- Modals para elminiar la categoria. El primero informa al usuario la categoria no debe tener productos, el segundo borra las categorias ya vacias -->
+                        <ModalConfirmacion
+                            v-if="productosStore.filtrarProductos(tipo.nombre).length > 0"
+                            :id="`categoriaBorrar${tipo.id}`"
+                            :titulo="`Debe borrar todos los productos`"
+                            :cuerpo="`Para borrar esta categoría '${tipo.nombre}' debe estar vacía. Cambie los productos a otras categorías.`"
+                            color="info"
+                        />
+
+                        <ModalConfirmacion
+                            v-else
+                            :id="`categoriaBorrar${tipo.id}`"
+                            titulo="Borrar categoría"
+                            :cuerpo="`¿Desea borrar la categoría '${tipo.nombre}?'`"
+                            color="danger"
+                            textoBoton="Borrar categoría"
+                            :param="tipo"
+                            @accion="borrarCategoria"
+                        />
                     </div>
 
                 </template>
@@ -186,6 +218,8 @@ const crearCategoria = async () => {
 
         </div>
     </div>
+
+    
 
 
     <!-- Modal para crear una nueva categoria -->

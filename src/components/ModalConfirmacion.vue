@@ -18,7 +18,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" :class="`btn btn-${color}`" data-bs-dismiss="modal" @click="$emit('accion', props?.param)">{{ textoBoton }}</button>
+                    <button type="button" :class="`btn btn-${color}`" data-bs-dismiss="modal" @click="$emit('accion', props?.param)" v-if="textoBoton">{{ textoBoton }}</button>
                 </div>
             </div>
         </div>
