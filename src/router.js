@@ -4,21 +4,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 // stores
 import { useUserStore } from './stores/users';
 
-// views
-import Home from './views/HomeView.vue';
-import Ordenes from './views/OrdenesView.vue';
-import Mesas from './views/MesasView.vue';
-import Administracion from './views/AdministracionView.vue';
-import AdminEmpleados from './views/AdminViews/AdminEmpleadosView.vue';
-import AdminInformes from './views/AdminViews/AdminInformesView.vue';
-import AdminBodega from './views/AdminViews/AdminBodegaView.vue';
-import ProductoCrearView from './views/Menu/ProductoCrearView.vue';
-import ProductoInfoView from './views/Menu/EditarProductoView.vue';
-import Menu from './views/Menu/MenuView.vue';
-import UserProfileView from './views/AdminViews/UserProfileView.vue';
-import CrearUsuarioView from './views/AdminViews/CrearUsuarioView.vue';
-import NotFound from './views/404NotFoundView.vue'
-
 // middlewares para realizar comprobaciones de sesion
 // simple comprobacion de sesion
 const comprobarSesion = async (to, from, next) => {   
@@ -65,57 +50,50 @@ const sesionAdmin = async (to, from, next) => {
 const routes = [
     {
         path: '/',
-        components: {
-            default: Home,
-        },
+        component: () => import('./views/HomeView.vue'),
         beforeEnter: existeSesion
     },
     {
         path: '/mesas',
-        component: Mesas,
+        component: () => import('./views/MesasView.vue'),
         beforeEnter: comprobarSesion
     },
     {
         path: '/menu',
-        component: Menu,
+        component: () => import('./views/Menu/MenuView.vue'),
         beforeEnter: comprobarSesion
     },
     {
         path: '/menu/nuevo',
-        component: ProductoCrearView,
+        component: () => import('./views/Menu/ProductoCrearView.vue'),
         beforeEnter: sesionAdmin
     },
     {
         path: '/menu/editar/:id',
-        component: ProductoInfoView,
+        component: () => import('./views/Menu/EditarProductoView.vue'),
         beforeEnter: sesionAdmin
     },
     {
         path: '/ordenes',
-        component: Ordenes,
+        component: () => import('./views/OrdenesView.vue'),
         beforeEnter: comprobarSesion
     },
     {
         path: '/administracion/',
         redirect: { path: "/administracion/empleados" },
-        components: {
-            default: Administracion
-        },
+        component: () => import('./views/AdministracionView.vue'),
         children: [
             { path: 'empleados', 
-                components: {seccionAdmin: AdminEmpleados}
+                components: {seccionAdmin: () => import('./views/AdminViews/AdminEmpleadosView.vue')}
             },
             { path: 'informes', 
-                components: {seccionAdmin: AdminInformes}
-            },
-            { path: 'bodega', 
-                components: {seccionAdmin: AdminBodega}
+                components: {seccionAdmin: () => import('./views/AdminViews/AdminInformesView.vue')}
             },
             { path: 'crear_usuario', 
-                components: {seccionAdmin: CrearUsuarioView}
+                components: {seccionAdmin: () => import('./views/AdminViews/CrearUsuarioView.vue')}
             },
             { path: 'perfil/:id', 
-                components: {seccionAdmin: UserProfileView}
+                components: {seccionAdmin: () => import('./views/AdminViews/UserProfileView.vue')}
             }
         ],
         beforeEnter: sesionAdmin
@@ -123,7 +101,7 @@ const routes = [
     { 
         path: '/:pathMatch(.*)*', 
         name: 'NotFound', 
-        component: NotFound,
+        component: () => import('./views/404NotFoundView.vue'),
         beforeEnter: comprobarSesion
     },
 ];

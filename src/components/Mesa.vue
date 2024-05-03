@@ -89,7 +89,7 @@ const colorEstado = computed(() => {  // cambia el color del estado de cada mesa
             <small class=" text-muted fw-bold">{{ mesaInfo.asientos }} asientos</small> <br>
             <small class="fw-bold">Estado:</small>
         </div>
-        <select class="form-select form-select-sm text-center bg-danger-subtle" :class="colorEstado" @change="cambiarEstado(mesaInfo, estadoMesa)" v-model="estadoMesa" >
+        <select class="form-select form-select-sm text-center bg-danger-subtle" :class="colorEstado" @change="cambiarEstado(mesaInfo, estadoMesa)" v-model="estadoMesa" :id="`mesa${mesaInfo.id}`">
             <option disabled value="">Cambiar estado</option>
             <option value="libre">Libre</option>
             <option value="ocupada">Ocupada</option>

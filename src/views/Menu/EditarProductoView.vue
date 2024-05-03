@@ -233,7 +233,7 @@ const validarFormulario = () => {
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">Nombre:</span>
+                        <label class="input-group-text" for="txtCambiarNombreProducto">Nombre:</label>
                         <input type="text" class="form-control" id="txtCambiarNombreProducto" required
                             placeholder="Ingrese el nombre" aria-describedby="basic-addon3" v-model.trim="nombre">
                         <div class="invalid-feedback">
@@ -243,8 +243,8 @@ const validarFormulario = () => {
                     </div>
 
                     <div class="input-group mb-3" required id="txtCambiarDescripcionProducto">
-                        <span class="input-group-text">Descripcion:</span>
-                        <textarea class="form-control" aria-label="With textarea" v-model.trim="descripcion"
+                        <label class="input-group-text" for="ponerDescripcion">Descripcion:</label>
+                        <textarea class="form-control" aria-label="With textarea" id="ponerDescripcion" v-model.trim="descripcion"
                             required></textarea>
                         <div class="invalid-feedback">
                             Por favor ingrese la descripcion.
@@ -252,8 +252,8 @@ const validarFormulario = () => {
                     </div>
 
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">Precio ($):</span>
-                        <input type="number" class="form-control" id="txtCambiarPrecioProducto" required
+                        <label class="input-group-text" for="elegirPrecio">Precio ($):</label>
+                        <input type="number" class="form-control" id="elegirPrecio" required
                             placeholder="Ingrese el precio" min="0" aria-describedby="basic-addon3" v-model.number="precio">
                         <div class="invalid-feedback">
                             Por favor ingrese el precio.
@@ -261,8 +261,8 @@ const validarFormulario = () => {
                     </div>
                     
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">Disponibilidad:</span>
-                        <select class="form-select" v-model="disponibilidad" required>
+                        <label class="input-group-text" for="elegirDisponibilidad">Disponibilidad:</label>
+                        <select class="form-select" id="elegirDisponibilidad" v-model="disponibilidad" required>
                             <option value="" disabled>Elija una opción</option>
                             <option :value="true" :selected="disponibilidad">Disponible</option>
                             <option :value="false" :selected="!disponibilidad">No disponible</option>
@@ -274,9 +274,8 @@ const validarFormulario = () => {
                     </div>
 
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon3">Tipo del producto:</span>
-                        <select class="form-select" aria-label="Default select example" required id="elegirTipoProducto"
-                            v-model.trim="tipo">
+                        <label class="input-group-text" for="elegirTipoProducto">Tipo del producto:</label>
+                        <select class="form-select" aria-label="Default select example" required id="elegirTipoProducto" v-model.trim="tipo">
                             <option selected disabled value="">Seleccione una opción</option>
                             <template v-for="tipo in tiposProductos" :key="tipo.id">
                                 <option :value="tipo.nombre" :selected="tipoProductoOption === tipo.nombre">{{

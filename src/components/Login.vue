@@ -111,7 +111,7 @@ const recuperarPass = () => {
                 </div>
 
                 <div>
-                  <label class="forgot-password" @click="recuperarPass">¿Olvidó su contraseña?</label>
+                  <span class="forgot-password" @click="recuperarPass">¿Olvidó su contraseña?</span>
                 </div>
               </div>
             </form>
