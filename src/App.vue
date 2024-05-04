@@ -52,3 +52,9 @@
   </div>
   <Footer class="mt-auto mb-0" v-if="userStore.userData"></Footer>
 </template>
+
+<style>
+* {
+  /* font-family: 'Times New Roman', Times, serif */
+}
+</style>

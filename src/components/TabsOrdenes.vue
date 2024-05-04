@@ -80,7 +80,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Reemplazar lo que esta dentro de este div con un loading spinner -->
     <div v-else>
         Cargando...
     </div>
+    
 </template>

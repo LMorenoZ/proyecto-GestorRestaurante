@@ -51,6 +51,7 @@
 <template>
     <h1>Administracion de Empleados</h1>
     <div class="vw-auto my-3 d-flex justify-content-center">
+        <!-- Boton que redirige a vista para crear nuevo empleado -->
         <button type="button" class="btn btn-primary mt-2" @click="router.push('crear_usuario')">Crear nuevo empleado</button>
     </div>
 

@@ -102,9 +102,12 @@ traerInfoEmpleado()
           </div>
         </div>
       </template>
+
+      <!-- Reemplazar lo que esta dentro de este div con un loading spinner  -->
       <div v-else>
         Cargando información...
       </div>
+      
       </div>
     </div>
   </div>
