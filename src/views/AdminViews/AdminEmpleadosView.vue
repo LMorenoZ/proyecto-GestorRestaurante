@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import { RouterLink } from 'vue-router';
+    import { RouterLink, useRouter } from 'vue-router';
 
     import { useUserStore } from '../../stores/users';
     import { useMensajesStore } from '../../stores/mensajes';
@@ -14,6 +14,7 @@
 
     const userStore = useUserStore();
     const mensajesStore = useMensajesStore();
+    const router = useRouter()
 
     // constantes reactivas 
     const email = ref('empleado2@test.com');
@@ -49,36 +50,9 @@
 
 <template>
     <h1>Administracion de Empleados</h1>
-    <h3>Crear nuevo empleado</h3>
-    <!-- Aniadir empleados -->
-    <form @submit.prevent="crearUsuario" class="col-sm-12 col-md-6  mt-3">
-        <div class="">
-            <div class="input-group mb-3">
-                <span class="input-group-text fw-bold" id="emailUsuario">Email:</span> 
-                <input type="email" id="emailUsuario" placeholder="email" class="form-control" v-model.trim="email">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text fw-bold" id="passUsuario">Contraseña del empleado:</span>
-                <input type="text" id="passUsuario" placeholder="pass" class="form-control" v-model.trim="pass">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text fw-bold" id="puestoUsuario">Puesto del empleado:</span>
-                <select class="form-select" id="puestoUsuario" v-model.trim="puestoEmpleado">
-                    <option disabled value="">Elija uno</option>
-                    <option>Caja</option>
-                    <option>Cocina</option>
-                    <option>Mesero</option>
-                </select>
-            </div>
-            <div class="mt-2">
-                
-            </div>
-        </div>
-        <div class="vw-auto d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary mt-2" :disabled="botonCrearDesactivado">Crear empleado</button>
-            <RouterLink to="crear_usuario">Vista crear empleado</RouterLink>
-        </div>
-    </form>
+    <div class="vw-auto my-3 d-flex justify-content-center">
+        <button type="button" class="btn btn-primary mt-2" @click="router.push('crear_usuario')">Crear nuevo empleado</button>
+    </div>
 
     <!-- Lista de empleados -->
     <template v-if="userStore.listaEmpleados.length > 0">

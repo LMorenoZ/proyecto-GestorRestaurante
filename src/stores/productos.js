@@ -3,6 +3,7 @@ import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc } from "fire
 import { db } from '../firebaseConfig';
 
 import { useMensajesStore } from './mensajes';
+import { printf } from "../utilidades";
 
 export const useProductosStore = defineStore('productos', {
     state: () => ({
@@ -65,12 +66,32 @@ export const useProductosStore = defineStore('productos', {
                 mensajesStore.crearError('productoNoSeCrea', `No se pudo crear el producto`);
                 console.log(error);
             }
+        },
+        async actualizarProducto(informacionActualizar, idProducto) {
+
+            try {
+                const docRef = doc(db, 'menu', idProducto)
+                await updateDoc(docRef, informacionActualizar)
+
+                // Actualizar el array de productos con la nueva informacion
+                const productoRef = doc(db, "menu", idProducto);  // la nueva informacion se trae desde la base de datos
+                const docSnap = await getDoc(productoRef);
+
+                const indice = this.productos.findIndex(prod => prod.id === idProducto) // determinar el indice
+                this.productos.splice(indice, 1, {...docSnap.data(), id: idProducto})  // reemplazar el elemento viejo con el nuevo
+
+            } catch {
+                console.log(error)
+            }
         }
     },
     getters: {
          listarProductos(state) {
             const productos = state.productos
             return productos;
+        },
+        listarTipoProductos(state) {
+            return state.productosTipos
         }
     }
 });

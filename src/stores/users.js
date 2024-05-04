@@ -53,6 +53,9 @@ export const useUserStore = defineStore('users', {
         // asignando la informacion del usuario logeado de Authentication
         this.userData = { email: user.email, uid: user.uid };
 
+        // poniendo el estado logeado a activo en el objeto del usuario en la base de datos
+        this.cambiarEstado(user.uid, true)   // true: usuario logeado
+
         mensajesStore.crearMensaje({
           titulo: 'Inició sesión',
           texto: `Hola ${this.userData.email}`,
@@ -85,9 +88,15 @@ export const useUserStore = defineStore('users', {
     async logoutUser() {
       const mensajesStore = useMensajesStore();
       try {
+        const idUsuario = this.userData.uid
+
         await signOut(auth);
         this.userData = null; // data del usuario
         this.userRol = null; // rol del usuario
+
+        // poniendo el estado logeado a activo en el objeto del usuario en la base de datos
+        this.cambiarEstado(idUsuario, false)   // false: deslogeado
+
         router.push('/');
       } catch (error) {
         mensajesStore.crearError('errorLogout', 'No se puede cerrar sesión');
@@ -112,8 +121,7 @@ export const useUserStore = defineStore('users', {
         return user;
       });
     },
-    async createUser(email, password, puesto) {
-      const mensajesStore = useMensajesStore();
+    async createUser(email, password, objUsuario) {
       try {
         // creando el usuario en Authentication
         const res = await createUserWithEmailAndPassword(
@@ -125,26 +133,14 @@ export const useUserStore = defineStore('users', {
 
         // creando el respectivo documento del usuario en la coleccion 'empleados' de firestore
         const nuevoEmpleado = {
-          uid: res.user.uid,
-          email: email,
-          password: password,
-          puesto,
+          ...objUsuario,
+          logeado: false,
           creation: Timestamp.now(),
         };
+
         await setDoc(doc(db, 'empleado', res.user.uid), nuevoEmpleado);
         this.listaEmpleados.unshift(nuevoEmpleado);
-        mensajesStore.crearMensaje({
-          titulo: 'Cuenta creada',
-          texto: 'La cuenta del empleado fue creada exitosamente',
-          color: 'success',
-          id: 'empleadoCreado',
-          autoEliminar: true,
-        });
       } catch (error) {
-        mensajesStore.crearError(
-          'empleadoNoCreado',
-          'Email repetido o no se pudo crear el empleado'
-        );
         console.log(error);
       }
     },
@@ -205,5 +201,18 @@ export const useUserStore = defineStore('users', {
         console.log(error);
       }
     },
+    async cambiarEstado(id, nuevoEstado) { // nuevoEstado: true - logeado, false - noLogeado
+      try {
+        // se obtiene la referencia al usuario en la base de datos
+        const docRef = doc(db, "empleado", id);
+
+        // se actualiza unicamente el valor 'logeado' al valor especificado
+        await updateDoc(docRef, {
+          logeado: nuevoEstado
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
   },
 });

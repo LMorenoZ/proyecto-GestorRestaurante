@@ -22,10 +22,11 @@ const nombreProd = ref(null)
 const descProd = ref(null)
 const precioProd = ref(null)
 const tipoProd = ref(null)
+const disponibilidadProd = ref(true)
 
 // valores reactivos para subir la imagen
-const selectedFile = ref(null)
-const previewImage = ref(null)
+const selectedFile = ref(null) // archivo de la imagen que subira a storage
+const previewImage = ref(null) // uri para mostra la imagen
 const isUploading = ref(false)
 
 // para poder mostrar la imagen en el div
@@ -49,7 +50,8 @@ const crearProducto = async () => {
         nombre: nombreProd.value,
         desc: descProd.value,
         precio: precioProd.value,
-        tipo: tipoProd.value
+        tipo: tipoProd.value,
+        disponible: disponibilidadProd.value
     }
 
     try {
@@ -97,6 +99,19 @@ const crearProducto = async () => {
                         <span class="input-group-text">$</span>
                         <input type="text" class="form-control " id="precioProducto" placeholder="Ingrese la cantidad"
                             aria-label="Dollar amount (with dot and two decimal places)" required v-model="precioProd">
+
+                        <div class="invalid-feedback">
+                            Por favor digite en el area de texto.
+                        </div>
+                    </div>
+
+                    <h4>Disponibilidad del producto:</h4>
+                    <div class="input-group mb-3">
+                        <select class="form-select" v-model="disponibilidadProd">
+                            <option value="" disabled>Elija una opción</option>
+                            <option :value="true" selected>Disponible</option>
+                            <option :value="false">No disponible</option>
+                        </select>
 
                         <div class="invalid-feedback">
                             Por favor digite en el area de texto.

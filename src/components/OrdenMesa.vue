@@ -1,6 +1,6 @@
 <script setup>
 // librerias de vue y afiliados
-import { ref, computed} from 'vue';
+import { ref, computed } from 'vue';
 
 // stores de pinia
 import { useOrdenesStore } from '../stores/ordenes.js';
@@ -23,13 +23,13 @@ const ordenActual = computed( () => props.orden );
 const colorOrden = ref('');
 const estadoDescri = ref('');
 const estadoOrden = ref(props.orden.estado);
-const productos = ref(props.productos)  // todos los productos del local
+const productos = ref(props.productos)
 
-// metodos
+// cambiar el color de la orden cuando se mueve de estado
 const cambiarColor = color => {
     switch (color) {
         case 'preparacion':
-            colorOrden.value = 'info';
+            colorOrden.value = 'white';
             estadoDescri.value = "Orden en curso"
             break;
 
@@ -87,74 +87,60 @@ const modificarOrden = async (orden) => {
 // }
 </script>
 
-<!-- HTML del componente -->
 <template>
-
-    <!-- Diseño provisonal del card para las órdenes: -->
-    <template v-if="ordenActual">
-        <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;" >
-            <div class="card-header d-flex justify-content-between fw-bold">
-                <p>Órden mesa {{ orden.mesaNum }}</p>
-                <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
-                    {{ estadoDescri }}
-                </div>
-            </div>
-            <ul class="list-group list-group-flush">
-                <p class="fst-italic fw-bold text-end mt-1" style="font-size: 0.7rem;">Fecha: {{
-                horaFormateada(orden.fechaCreacion.toDate()) }}</p>
-
-
-                <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
-        
-                    <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`">
-                        {{ encontrarProducto(productos, producto.idProducto).nombre }}
-                        <span class="badge bg-primary rounded-pill">
-                            {{ producto.cantidad }}
-                        </span>
-                    </li>     
-                </template>
-    
-                <li :class="`list-group-item bg-${colorOrden}`">
-                    Total: {{ USDollar.format(ordenActual.total) }}
-                </li>
-            </ul>
-
-            <div class="card-footer mt-auto"
-                v-if="!(ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada')">
-                <p>Cambiar estado:</p>
-                
-                <select class="form-select form-select-sm" v-model="estadoOrden">
-                    <option disabled value="">Seleccione una</option>
-                    <option value="preparacion">En preparacion</option>
-                    <option value="tardada">Orden retrasada</option>
-                    <option value="completada">Completada</option>
-                    <option value="cancelada">Cancelada</option>
-                </select>
-                <div class="d-flex justify-content-between mt-1">
-                    <button class="btn btn-sm btn-primary" @click="modificarOrden(ordenActual)" 
-                    :disabled="orden.estado === estadoOrden">
-                        Actualizar
-                    </button>
-                </div>
-            </div>
-                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
-                    :data-bs-target="`#ticketModal${orden.id}`"
-                >
-                    {{ (ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada') ? 'Pasar a caja' : 'Ver productos' }}
-                </button>
+    <transition name="fade">
+      <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;">
+        <div class="card-header d-flex justify-content-between fw-bold" >
+          <p>Órden mesa {{ orden.mesaNum }}</p>
+          <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
+            {{ estadoDescri }}
+          </div>
         </div>
-
-    </template>
-    
-    <div v-else>
-        Cargando información...
-    </div>
-
-    <!-- Componente que carga un modal con el ticket de la orden -->
+        <ul class="list-group list-group-flush">
+          <p class="fst-italic fw-bold text-end mt-1" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fechaCreacion.toDate()) }}</p>
+  
+          <template v-for="producto in ordenActual.productos" :key="producto.idProducto">
+            <li :class="`list-group-item d-flex justify-content-between align-items-center bg-${colorOrden}`">
+              {{ encontrarProducto(productos, producto.idProducto).nombre }}
+              <span class="badge bg-primary rounded-pill">
+                {{ producto.cantidad }}
+              </span>
+            </li>
+          </template>
+  
+          <li :class="`list-group-item bg-${colorOrden}`">
+            Total: {{ USDollar.format(ordenActual.total) }}
+          </li>
+        </ul>
+        <div class="card-footer mt-auto" v-if="!(ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada')">
+          <p>Cambiar estado:</p>
+  
+          <select class="form-select form-select-sm" v-model="estadoOrden">
+            <option disabled value="">Seleccione una</option>
+            <option value="preparacion">En preparacion</option>
+            <option value="tardada">Orden retrasada</option>
+            <option value="completada">Completada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+          <div class="d-flex justify-content-between mt-1">
+            <button class="btn btn-sm btn-primary" @click="modificarOrden(ordenActual)" :disabled="orden.estado === estadoOrden">Actualizar</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" :data-bs-target="`#ticketModal${orden.id}`" @click="toggleModal">
+          {{ (ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada') ? 'Pasar a caja' : 'Ver productos' }}
+        </button>
+      </div>
+    </transition>
     <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket>
-</template>
-
-<!-- CSS del componente -->
-<style scoped>
-
-</style>
+  </template>
+  
+  <style scoped>
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  </style>
+  
+  

@@ -6,31 +6,31 @@
 
 <!-- HTML del componente -->
 <template>
-    <!-- Sidebar de la seccion administrador provisional -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
+    <div class="d-flex flex-column flex-shrink-0 p-3 fondo" style="height:auto;">
        
             <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-            <span class="fs-4">Administración del local</span>
+            <span class="fs-5 text-black text-center">Administración</span>
         
         <hr>
         <ul class="nav nav-pills flex-column mb-auto row">
-            <li class="nav-item">
-                <router-link  class="nav-link link-dark" aria-current="page" to="/administracion/empleados">
-                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+            <li class="nav-item  text-center">
+
+                <router-link  class="btn btn-dark text-white" aria-current="page" to="/administracion/empleados">
                     Empleados
                 </router-link>
             </li>
-            <li class="">
-                <router-link  class="nav-link link-dark" to="/administracion/informes">
-                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#informes"></use></svg>
+            <li class="nav-item  text-center mt-4">
+                <router-link  class="btn btn-dark text-white" to="/administracion/informes">
                     Informes
                 </router-link>
             </li>
         </ul>
-  </div>
+  </div> 
 </template>
 
 <!-- CSS del componente -->
 <style scoped>
-
+.fondo{
+background-color:#F3E75C ;
+}
 </style>
