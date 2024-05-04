@@ -3,7 +3,6 @@ import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc }
 import { db } from '../firebaseConfig';
 
 import { useMensajesStore } from './mensajes';
-import { printf } from "../utilidades";
 
 export const useProductosStore = defineStore('productos', {
     state: () => ({
@@ -107,6 +106,16 @@ export const useProductosStore = defineStore('productos', {
                 console.log(error);
                 throw error
             }
+        },
+        async eliminarCategoria(categoriaId) {
+            try {
+                const res = await deleteDoc(doc(db, "tipoProducto", categoriaId));
+
+                // actualizando el store para actualizar las UI
+                this.productosTipos = this.productosTipos.filter(prod => prod.id !== categoriaId)
+            } catch (error) {
+                throw error
+            }
         }
     },
     getters: {
@@ -116,6 +125,11 @@ export const useProductosStore = defineStore('productos', {
         },
         listarTipoProductos(state) {
             return state.productosTipos
-        }
+        },
+        filtrarProductos(state) { // filtra productos segun la categoria
+            return nombreCategoria => {
+                return state.productos.filter(prod => prod.tipo === nombreCategoria)
+            }
+        },
     }
 });
