@@ -155,7 +155,7 @@ const crearProducto = async () => {
 
                             <label for="seleccionarImagen" required class="form-label">Seleccione una imagen para el
                                 producto:</label>
-                            <input class="form-control" type="file" id="seleccionarImagen" @change="handleFileUpload">
+                            <input class="form-control" type="file" id="seleccionarImagen" accept="image/*" @change="handleFileUpload">
                             <div class="d-grid gap-2">
                                 <span>Formatos probados: 'jpg', 'jpeg', 'png', 'webp', 'avif'</span>
                                 <button class="btn btn-primary mt-2" type="submit">Crear producto</button>

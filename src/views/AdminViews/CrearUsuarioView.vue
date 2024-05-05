@@ -139,13 +139,13 @@ const limpiarInputs = () => {
                 <div class="row">
                     <div class="col-sm-12 col-md-6">
                         <div class="imagePreviewWrapper border" :style="{ 'background-image': `url(${previewImage})` }"></div>
-                        <input class="form-control" type="file" id="seleccionarImagen" @change="handleFileUpload" required> 
+                        <input class="form-control" type="file" accept="image/*" id="seleccionarImagen" @change="handleFileUpload" required> 
                     </div>
                     <div class="col-sm-12 col-md-6">
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtNombreUsuario">Nombre:</label>
-                            <input type="text" class="form-control" id="txtNombreUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Nombre del empleado" v-model.trim="nombre">
+                            <input type="text" class="form-control" id="txtNombreUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Nombre del empleado" pattern="[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+" v-model.trim="nombre">
                             <div class="invalid-feedback">
                                 Por favor escriba el nombre.
                             </div>
@@ -153,7 +153,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtApellidoUsuario">Apellido:</label>
-                            <input type="text" class="form-control" id="txtApellidoUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Apellido del empleado" v-model.trim="apellido">
+                            <input type="text" class="form-control" id="txtApellidoUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Apellido del empleado" pattern="[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+" v-model.trim="apellido">
                             <div class="invalid-feedback">
                                 Por favor escriba el apellido.
                             </div>
@@ -161,7 +161,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtDuiUsuario"><abbr title="Documento Unico de Identidad">DUI:</abbr></label>
-                            <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="DUI del empleado" v-model.trim="dui">
+                            <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="DUI del empleado" pattern="^\d{8}-\d$" maxlength="10" v-model.trim="dui">
                             <div class="invalid-feedback">
                                 Por favor escriba el DUI.
                             </div>
@@ -169,7 +169,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtDireccionUsuario">Direccion:</label>
-                            <input type="text" class="form-control" id="txtDireccionUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Dirección del empleado" v-model.trim="direccion">
+                            <input type="text" class="form-control" id="txtDireccionUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Dirección del empleado" pattern="^[a-zA-Z0-9-#]+$" v-model.trim="direccion">
                             <div class="invalid-feedback">
                                 Por favor escriba el direccion.
                             </div>
