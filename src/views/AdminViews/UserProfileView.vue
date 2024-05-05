@@ -105,7 +105,9 @@ traerInfoEmpleado()
 
       <!-- Reemplazar lo que esta dentro de este div con un loading spinner  -->
       <div v-else>
-        Cargando información...
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
       </div>
       
       </div>
