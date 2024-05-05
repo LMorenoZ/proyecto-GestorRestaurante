@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
-import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc } from "firebase/firestore/lite";
+import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy } from "firebase/firestore/lite";
 import { db } from '../firebaseConfig';
+
+import { ordenarArrayPorNombre, printf } from '../utilidades.js'
 
 import { useMensajesStore } from './mensajes';
 
@@ -19,7 +21,7 @@ export const useProductosStore = defineStore('productos', {
             if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
             
             try {
-                const q = query(collection(db, 'menu'));
+                const q = query(collection(db, 'menu'), orderBy('nombre', 'asc'));
                 const querySnapshot = await getDocs(q);
 
                 querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
@@ -37,7 +39,8 @@ export const useProductosStore = defineStore('productos', {
             if (this.productosTipos.length > 0) return // no ejecuta la peticion porque los tipos ya estan cargadoos
 
             try {
-                const q = query(collection(db, 'tipoProducto'));
+                const q = query(collection(db, 'tipoProducto'),  orderBy('nombre', 'asc'));
+                
                 const querySnapshot = await getDocs(q);
 
                 querySnapshot.forEach(elem => this.productosTipos.push({...elem.data(), id: elem.id}));
@@ -52,7 +55,8 @@ export const useProductosStore = defineStore('productos', {
             const mensajesStore = useMensajesStore();
 
             try {
-                const res = await addDoc(collection(db, 'menu'), payload);
+                const objProducto = {...payload, creation: Timestamp.now(),}
+                const res = await addDoc(collection(db, 'menu'), objProducto);
                 mensajesStore.crearMensaje({
                     titulo: 'Producto creado',
                     texto: `El producto ${payload.nombre} se creó exitosamente`,
@@ -64,7 +68,8 @@ export const useProductosStore = defineStore('productos', {
                 // Actualizar UI aniadiendo el nuevo elemento al array en el store
                 const productoCreado = {...payload, id: res.id}
                 this.productos.push(productoCreado)
-            } catch (error) {
+                this.productos = ordenarArrayPorNombre(this.productos)
+            } catch (error) {   
                 mensajesStore.crearError('productoNoSeCrea', `No se pudo crear el producto`);
                 console.log(error);
             }
@@ -102,6 +107,8 @@ export const useProductosStore = defineStore('productos', {
                 
                 // actualizar informacion en el UI:
                 this.productosTipos.push({...categoriaObj, id: res.id})
+
+                this.productosTipos = ordenarArrayPorNombre(this.productosTipos)
             } catch (error) {
                 console.log(error);
                 throw error

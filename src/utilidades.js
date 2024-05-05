@@ -109,3 +109,24 @@ export const reducirArray = arrayDuplicado => {
 // funcion que comprueba si un objeto de javascript esta vacio, y si es el caso, retorna true
 // si tiene longitud de 0 indica que el objeto si esta vacio 
 export const isEmptyObject = objetoJavascript => Object.keys(objetoJavascript).length === 0  
+
+// funcion que recibe un array de objetos y lo devuelve pero con los objetos ordenados alfabeticamente
+// para que funcione, los objetos deben tener una propiedad llamada 'nombre' 
+export const ordenarArrayPorNombre = arrayObjetos => {
+    // Crea una copia del array original para no modificarlo directamente
+    const arrayOrdenado = [...arrayObjetos];
+  
+    // Ordena el array copiado usando la propiedad "nombre"
+    arrayOrdenado.sort((a, b) => {
+      if (a.nombre < b.nombre) {
+        return -1;
+      } else if (a.nombre > b.nombre) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  
+    // Devuelve el array ordenado
+    return arrayOrdenado;
+  }

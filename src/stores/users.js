@@ -22,7 +22,6 @@ import {
 } from 'firebase/firestore/lite';
 import router from '../router';
 import { useMensajesStore } from './mensajes';
-import { printf } from '../utilidades';
 
 export const useUserStore = defineStore('users', {
   state: () => ({
