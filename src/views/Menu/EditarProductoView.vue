@@ -227,7 +227,7 @@ const validarFormulario = () => {
                         <label for="seleccionarImagen"  class="form-label">Seleccione una imagen para el
                             producto:</label>
                         <input class="form-control" type="file" id="seleccionarImagen" @change="handleFileUpload"
-                            accept="image/*">
+                        accept=".jpg, .jpeg, .png">
                     </div>
 
                 </div>
@@ -235,7 +235,7 @@ const validarFormulario = () => {
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon3">Nombre:</span>
                         <input type="text" class="form-control" id="txtCambiarNombreProducto" required
-                            placeholder="Ingrese el nombre" aria-describedby="basic-addon3" v-model.trim="nombre">
+                            placeholder="Ingrese el nombre" aria-describedby="basic-addon3" v-model.trim="nombre" pattern="[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+">
                         <div class="invalid-feedback">
                             Por favor ingrese el nombre.
                         </div>
@@ -245,7 +245,7 @@ const validarFormulario = () => {
                     <div class="input-group mb-3" required id="txtCambiarDescripcionProducto">
                         <span class="input-group-text">Descripcion:</span>
                         <textarea class="form-control" aria-label="With textarea" v-model.trim="descripcion"
-                            required></textarea>
+                            required pattern="[a-zA-ZÑñáéíóúÁÉÍÓÚ\s]+"></textarea>
                         <div class="invalid-feedback">
                             Por favor ingrese la descripcion.
                         </div>
@@ -254,7 +254,7 @@ const validarFormulario = () => {
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon3">Precio ($):</span>
                         <input type="number" class="form-control" id="txtCambiarPrecioProducto" required
-                            placeholder="Ingrese el precio" min="0" aria-describedby="basic-addon3" v-model.number="precio">
+                            placeholder="Ingrese el precio" min="0" aria-describedby="basic-addon3" v-model.number="precio" pattern="^(0|[1-9][0-9]*|\.[1-9][0-9]*)$">
                         <div class="invalid-feedback">
                             Por favor ingrese el precio.
                         </div>
