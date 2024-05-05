@@ -136,13 +136,13 @@ Pdftest();
 <template>
     <!-- Modal -->
     <div class="modal fade text-black" :id="`ticketModal${modalId}`" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable" v-if="mostrarInfo">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5">Ticket órden: {{ ordenInfo.id }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
+                <div class="modal-body text-center" v-if="mostrarInfo">
                     <table class="table">
                         <thead>
                             <tr>
@@ -186,6 +186,11 @@ Pdftest();
                         :disabled="!puedeCompletar">Completar órden</button>
                     </p>
                 </div>
+                <div v-else>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <div class="modal-footer justify-content-between" v-if="ordenPendiente">
 
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="cancelarOrden">Cancelar
@@ -200,13 +205,6 @@ Pdftest();
                         <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Reemplazar lo que esta dentro de este div con un loading spinner  -->
-        <div v-else>
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Cargando...</span>
             </div>
         </div>
     </div>

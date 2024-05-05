@@ -204,82 +204,12 @@ const validarFormulario = () => {
 </script>
 
 <template>
-<<<<<<< HEAD
-<br>
-<h1>Editar informacion del producto:</h1>
-<br>
-<div class="container text-center">
-    
-  <div class="row">
-    <div class="col">
-                <!-- Muestra la imagen seleccionada -->
-        <div class="prevImagen">
-            <div class="border border-default">
-                <div class="imagePreviewWrapper" :style="{ 'background-image': `url(${foto})` }">
-                </div>
-            </div>
-            <div class="invalid-feedback">
-                Por favor elija una imagen.
-            </div>
-        </div>
-                <!-- Seleccionar imagen para -->
-        <div class="prevImagen">
-            <label for="seleccionarImagen" required class="form-label">Seleccione una imagen para el
-                producto:</label>
-            <input class="form-control" type="file" id="seleccionarImagen" @change="handleFileUpload">
-            <div class="invalid-feedback">
-                Por favor elija una imagen.
-            </div>
-        </div>
-
-    </div>
-    <div class="col">
-        <label for="basic-url" class="form-label"></label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon3">Nombre:</span>
-                <input type="text" class="form-control" id="txtCambiarNombreProducto" required placeholder="Ingrese el nombre" aria-describedby="basic-addon3">
-                <div class="invalid-feedback">
-                    Por favor ingrese el nombre.
-                </div>
-
-            </div>
-
-            <div class="input-group" required id="txtCambiarDescripcionProducto" >
-                <span class="input-group-text">Descripcion:</span>
-                <textarea class="form-control" aria-label="With textarea"></textarea>
-                <div class="invalid-feedback">
-                    Por favor ingrese la descripcion.
-                </div>
-            </div>
-
-            <label for="basic-url" class="form-label"></label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon3">Precio $</span>
-                <input type="number" class="form-control" min="0" id="txtCambiarPrecioProducto" required placeholder="Ingrese el precio" aria-describedby="basic-addon3">
-                <div class="invalid-feedback">
-                    Por favor ingrese el precio.
-                </div>
-            </div>
-
-            <select class="form-select" aria-label="Default select example" required id="elegirTipoProducto">
-                 <option selected disabled>Tipo de producto:</option>
-                 <option value="1">Postre</option>
-                 <option value="2">Bebida Caliente</option>
-                 <option value="3">Bebida Fria</option>
-                 <div class="invalid-feedback">
-                    Por favor elija una opcion.
-                </div>
-            </select>
-            <br>
-            <div class="container text-center">
-=======
     <br>
-    <h1>Editar informacion</h1>
+    <h1>Editar información del producto</h1>
     <br>
     <div class="container text-center" v-if="producto">
 
         <form :class="claseValidacion" @submit.prevent>
->>>>>>> c8f73713887e388061b1a48800f2a2837709d226
             <div class="row">
                 <div class="col">
                     <!-- Muestra la imagen seleccionada -->
