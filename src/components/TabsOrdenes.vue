@@ -83,7 +83,9 @@
 
     <!-- Reemplazar lo que esta dentro de este div con un loading spinner -->
     <div v-else>
-        Cargando...
+        <div class="spinner-border" role="status">
+         <span class="visually-hidden">Cargando...</span>
+        </div>
     </div>
     
 </template>

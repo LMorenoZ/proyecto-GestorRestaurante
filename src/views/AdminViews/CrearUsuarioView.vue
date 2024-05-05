@@ -160,7 +160,7 @@ const limpiarInputs = () => {
                         </div>    
 
                         <div class="input-group my-3">
-                            <label class="input-group-text" for="txtDuiUsuario">DUI:</label>
+                            <label class="input-group-text" for="txtDuiUsuario"><abbr title="Documento Unico de Identidad">DUI:</abbr></label>
                             <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="DUI del empleado" v-model.trim="dui">
                             <div class="invalid-feedback">
                                 Por favor escriba el DUI.
@@ -217,7 +217,7 @@ const limpiarInputs = () => {
                             data-bs-toggle="modal" data-bs-target="#modalCrearEmpleado">
                                 Crear Registro
                             </button> -->
-                            <button type="submit" id="btnCrearRegistro" class="btn  btn-outline-success"
+                            <button type="submit" id="btnCrearRegistro" class="btn  btn-outline-success" title="Click para crear registro"
                                 :disabled="desactivarBoton"
                                 @click="crearNuevoEmpleado"
                             >
