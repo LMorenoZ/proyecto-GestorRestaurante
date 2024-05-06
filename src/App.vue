@@ -53,8 +53,24 @@
   <Footer class="mt-auto mb-0" v-if="userStore.userData"></Footer>
 </template>
 
+
 <style>
-* {
-  /* font-family: 'Times New Roman', Times, serif */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+/* Tipografía principal: Playfair Display */
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
 }
+
+/* Tipografía secundaria: Lato */
+p, ul, ol {
+    font-family: 'Lato', sans-serif;
+}
+
+/* Posible tercera tipografía: Montserrat */
+.third-font-class, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
 </style>
