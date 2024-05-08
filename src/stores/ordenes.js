@@ -77,7 +77,7 @@ export const useOrdenesStore = defineStore('ordenesStore', {
       ordenNueva.fechaCreacion = Timestamp.now();
       ordenNueva.cronometro = false; // para llevar el tiempo hasta cuando esta retrasada
       try {
-        await addDoc(collection(db, 'orden'), ordenNueva);
+        const { id } = await addDoc(collection(db, 'orden'), ordenNueva);
         mensajesStore.crearMensaje({
           titulo: 'Órden añadida',
           texto: `Órden de mesa ${orden.mesaNum} aceptada y movida a etapa de preparación`,
@@ -85,7 +85,11 @@ export const useOrdenesStore = defineStore('ordenesStore', {
           id: 'mensajeOrdenCreada',
           autoEliminar: true,
         });
-        this.traerOrdenes();
+
+        // actualizar store
+        ordenNueva.id = id
+        this.ordenes.push(ordenNueva)
+        this.ordenes.sort((ordenA, ordenB) => ordenB.fechaCreacion - ordenA.fechaCreacion)
       } catch (error) {
         mensajesStore.crearError('ordenNoSeCrea', `No se pudo crear la órden`);
         console.log(error);
@@ -108,11 +112,12 @@ export const useOrdenesStore = defineStore('ordenesStore', {
           throw new Error('No existe el documento');
         }
 
+        // la fecha de finalizacion solo se debe crear cuando se completa la orden una unica vez
+        let dateFinalizacion = Timestamp.now()
         if (seCompletaPrimeraVez) {
-          // la fecha de finalizacion solo se debe crear cuando se completa la orden un unica vez
           await updateDoc(docRef, {
             estado: ordenModificada.estado,
-            fechaFinalizacion: Timestamp.now(),
+            fechaFinalizacion: dateFinalizacion,
             // cronometro: false,    // TODO: para programar que la orden se vaya a 'retrasadas'
           });
         } else {
@@ -122,8 +127,6 @@ export const useOrdenesStore = defineStore('ordenesStore', {
           });
         }
 
-        this.traerOrdenes();
-
         mensajesStore.crearMensaje({
           titulo: 'Órden actualizada',
           texto: `Órden de la mesa ${ordenModificada.mesaNum} movida a estado ${ordenModificada.estado}`,
@@ -131,6 +134,12 @@ export const useOrdenesStore = defineStore('ordenesStore', {
           id: `mensajeOrdenModificada${ordenModificada.id}`,
           autoEliminar: true,
         });
+
+        // actualizar store
+        ordenModificada.fechaFinalizacion = dateFinalizacion
+        const indiceModificar = this.ordenes.findIndex(orden => orden.id === ordenModificada.id)
+        this.ordenes[indiceModificar] = ordenModificada
+
       } catch (error) {
         mensajesStore.crearError(
           'noSePudoActualizarOrden',

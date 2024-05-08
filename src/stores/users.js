@@ -31,6 +31,7 @@ export const useUserStore = defineStore('users', {
   }),
   getters: {
     esAdmin(state) {
+      // TODO: cambiar el email del admin al real cuando este disponible
       return state.userData?.email === 'admin@test.com';
     },
   },
@@ -40,11 +41,7 @@ export const useUserStore = defineStore('users', {
       const mensajesStore = useMensajesStore();
 
       try {
-        const { user } = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        const { user } = await signInWithEmailAndPassword(auth, email, password);
 
         // obteniendo el rol del usuario, que se usara para las rutas protegidas
         await this.getRolUsuario(user);
@@ -53,7 +50,7 @@ export const useUserStore = defineStore('users', {
         this.userData = { email: user.email, uid: user.uid };
 
         // poniendo el estado logeado a activo en el objeto del usuario en la base de datos
-        this.cambiarEstado(user.uid, true)   // true: usuario logeado
+        this.cambiarEstado(user.uid, true); // true: usuario logeado
 
         mensajesStore.crearMensaje({
           titulo: 'Inició sesión',
@@ -87,14 +84,14 @@ export const useUserStore = defineStore('users', {
     async logoutUser() {
       const mensajesStore = useMensajesStore();
       try {
-        const idUsuario = this.userData.uid
+        const idUsuario = this.userData.uid;
 
         await signOut(auth);
         this.userData = null; // data del usuario
         this.userRol = null; // rol del usuario
 
-        // poniendo el estado logeado a activo en el objeto del usuario en la base de datos
-        this.cambiarEstado(idUsuario, false)   // false: deslogeado
+        // poniendo el estado logeado a false en el objeto del usuario en la base de datos
+        this.cambiarEstado(idUsuario, false); // false: deslogeado
 
         router.push('/');
       } catch (error) {
@@ -123,12 +120,8 @@ export const useUserStore = defineStore('users', {
     async createUser(email, password, objUsuario) {
       try {
         // creando el usuario en Authentication
-        const res = await createUserWithEmailAndPassword(
-          authCreacion,
-          email,
-          password
-        );
-        await await signOut(authCreacion); // termina sesion inmediatamente el usuario creado
+        const res = await createUserWithEmailAndPassword(authCreacion, email, password);
+        await await signOut(authCreacion); // termina sesion inmediatamente del usuario creado
 
         // creando el respectivo documento del usuario en la coleccion 'empleados' de firestore
         const nuevoEmpleado = {
@@ -147,9 +140,9 @@ export const useUserStore = defineStore('users', {
     async getEmpleados() {
       // lista de todos los empleados (no se incluye al admin)
       const mensajesStore = useMensajesStore();
-      if (this.listaEmpleados.length > 0) {
-        return;
-      } // si esta llena la lista, no se ejecuta de nuevo
+      // if (this.listaEmpleados.length > 0) {
+      //   return;
+      // } // si esta llena la lista, no se ejecuta de nuevo
       try {
         // no trae al usuario admin, porque no tiene el campo 'creation' en la coleccion de usuarios de la db
         const q = query(
@@ -157,6 +150,10 @@ export const useUserStore = defineStore('users', {
           orderBy('creation', 'desc')
         );
         const querySnapshot = await getDocs(q);
+
+        // limpiar el array
+        this.listaEmpleados.length = 0
+
         querySnapshot.forEach((empleado) => {
           this.listaEmpleados.push({ ...empleado.data(), uid: empleado.id });
         });
@@ -172,19 +169,12 @@ export const useUserStore = defineStore('users', {
       const mensajesStore = useMensajesStore();
       try {
         // Borrando el empleado como tal
-        const { user } = await signInWithEmailAndPassword(
-          authCreacion,
-          empleadoBorrar.email,
-          empleadoBorrar.password
-        );
+        await signInWithEmailAndPassword(authCreacion, empleadoBorrar.email, empleadoBorrar.password);
         const usuarioBorrar = await authCreacion.currentUser;
         await deleteUser(usuarioBorrar);
-
-        // Borrando al empleado de la coleccion en firestore
+        // borran el registro del usuario en la coleccion de firestore
         await deleteDoc(doc(db, 'empleado', empleadoBorrar.uid));
-        this.listaEmpleados = this.listaEmpleados.filter(
-          (empleado) => empleado.uid !== empleadoBorrar.uid
-        );
+
         mensajesStore.crearMensaje({
           titulo: 'Cuenta borrada',
           texto: `La cuenta del empleado ${empleadoBorrar.email} fue eliminada exitosamente`,
@@ -192,6 +182,9 @@ export const useUserStore = defineStore('users', {
           id: 'empladoEliminado',
           autoEliminar: true,
         });
+
+        // Borrando al empleado de la coleccion en firestore
+        this.listaEmpleados = this.listaEmpleados.filter(empleado => empleado.uid !== empleadoBorrar.uid);
       } catch (error) {
         mensajesStore.crearError(
           'noEliminaEmpleado',
@@ -200,18 +193,19 @@ export const useUserStore = defineStore('users', {
         console.log(error);
       }
     },
-    async cambiarEstado(id, nuevoEstado) { // nuevoEstado: true - logeado, false - noLogeado
+    async cambiarEstado(id, nuevoEstado) {
+      // nuevoEstado - true: logeado, false: no Logeado
       try {
         // se obtiene la referencia al usuario en la base de datos
-        const docRef = doc(db, "empleado", id);
+        const docRef = doc(db, 'empleado', id);
 
         // se actualiza unicamente el valor 'logeado' al valor especificado
         await updateDoc(docRef, {
-          logeado: nuevoEstado
-        })
+          logeado: nuevoEstado,
+        });
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    },
   },
 });

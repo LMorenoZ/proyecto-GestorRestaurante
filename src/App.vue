@@ -8,7 +8,6 @@
   import { useOrdenesStore } from './stores/ordenes';
   import { useUserStore } from './stores/users';
   import { useJornadaStore } from './stores/jornada';
-  import { useBodegaStore } from './stores/bodega';
   import { useHistorialStore } from './stores/historial';
   import { useProductosStore } from './stores/productos';
 
@@ -22,7 +21,6 @@
   const ordenesStore = useOrdenesStore();
   const userStore = useUserStore();
   const jornadaStore = useJornadaStore();
-  const bodegaStore = useBodegaStore();
   const historialStore = useHistorialStore();
   const productosStore = useProductosStore()
 
@@ -31,7 +29,6 @@
     mesasStore.traerMesas();
     ordenesStore.traerOrdenes();
     jornadaStore.estadoJornada();
-    bodegaStore.traerIngredientes();
     productosStore.traerProductos();
     productosStore.traerProductosTipos();
     

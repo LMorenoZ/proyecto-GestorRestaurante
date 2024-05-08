@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy } from "firebase/firestore/lite";
 import { db } from '../firebaseConfig';
 
-import { ordenarArrayPorNombre, printf } from '../utilidades.js'
+import { ordenarArrayPorNombre } from '../utilidades.js'
 
 import { useMensajesStore } from './mensajes';
 
@@ -18,11 +18,14 @@ export const useProductosStore = defineStore('productos', {
 
             const mensajesStore = useMensajesStore();
             
-            if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
+            // if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
             
             try {
                 const q = query(collection(db, 'menu'), orderBy('nombre', 'asc'));
                 const querySnapshot = await getDocs(q);
+
+                // limpiar el array 
+                this.productos.length = 0 
 
                 querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
             } catch (error) {
@@ -36,12 +39,15 @@ export const useProductosStore = defineStore('productos', {
             this.cargando = true
             const mensajesStore = useMensajesStore();
 
-            if (this.productosTipos.length > 0) return // no ejecuta la peticion porque los tipos ya estan cargadoos
+            // if (this.productosTipos.length > 0) return // no ejecuta la peticion porque los tipos ya estan cargados
 
             try {
                 const q = query(collection(db, 'tipoProducto'),  orderBy('nombre', 'asc'));
                 
                 const querySnapshot = await getDocs(q);
+
+                // limpiar el array de categorias
+                this.productosTipos.length = 0
 
                 querySnapshot.forEach(elem => this.productosTipos.push({...elem.data(), id: elem.id}));
             } catch (error) {
@@ -56,7 +62,7 @@ export const useProductosStore = defineStore('productos', {
 
             try {
                 const objProducto = {...payload, creation: Timestamp.now(),}
-                const res = await addDoc(collection(db, 'menu'), objProducto);
+                const { id } = await addDoc(collection(db, 'menu'), objProducto);
                 mensajesStore.crearMensaje({
                     titulo: 'Producto creado',
                     texto: `El producto ${payload.nombre} se creó exitosamente`,
@@ -66,7 +72,7 @@ export const useProductosStore = defineStore('productos', {
                 });
 
                 // Actualizar UI aniadiendo el nuevo elemento al array en el store
-                const productoCreado = {...payload, id: res.id}
+                const productoCreado = {...payload, id}
                 this.productos.push(productoCreado)
                 this.productos = ordenarArrayPorNombre(this.productos)
             } catch (error) {   
@@ -80,13 +86,11 @@ export const useProductosStore = defineStore('productos', {
                 const docRef = doc(db, 'menu', idProducto)
                 await updateDoc(docRef, informacionActualizar)
 
-                // Actualizar el array de productos con la nueva informacion
-                const productoRef = doc(db, "menu", idProducto);  // la nueva informacion se trae desde la base de datos
-                const docSnap = await getDoc(productoRef);
-
-                const indice = this.productos.findIndex(prod => prod.id === idProducto) // determinar el indice
-                this.productos.splice(indice, 1, {...docSnap.data(), id: idProducto})  // reemplazar el elemento viejo con el nuevo
-
+                // actualizar store
+                const indiceActualizar = this.productos.findIndex(prod => prod.id === idProducto)
+                const productoNoActualizado = this.productos[indiceActualizar]
+                const productoActualizado = {...productoNoActualizado, ...informacionActualizar}
+                this.productos[indiceActualizar] = productoActualizado
             } catch {
                 console.log(error)
             }
@@ -103,11 +107,10 @@ export const useProductosStore = defineStore('productos', {
         },
         async crearCategoria(categoriaObj) {
             try {
-                const res = await addDoc(collection(db, 'tipoProducto'), categoriaObj);
+                const { id } = await addDoc(collection(db, 'tipoProducto'), categoriaObj);
                 
                 // actualizar informacion en el UI:
-                this.productosTipos.push({...categoriaObj, id: res.id})
-
+                this.productosTipos.push({...categoriaObj, id})
                 this.productosTipos = ordenarArrayPorNombre(this.productosTipos)
             } catch (error) {
                 console.log(error);
@@ -116,7 +119,7 @@ export const useProductosStore = defineStore('productos', {
         },
         async eliminarCategoria(categoriaId) {
             try {
-                const res = await deleteDoc(doc(db, "tipoProducto", categoriaId));
+                await deleteDoc(doc(db, "tipoProducto", categoriaId));
 
                 // actualizando el store para actualizar las UI
                 this.productosTipos = this.productosTipos.filter(prod => prod.id !== categoriaId)

@@ -57,7 +57,7 @@ export const useHistorialStore = defineStore('historial', {
                 querySnapshot.forEach(jornada => {
                     let objHistorial = {
                         id: jornada.id, // se coloca el id
-                        ...jornada.data(), // todos los demas datos de la jornada
+                        ...jornada.data(), 
                         jornadaFecha: jornada.data().jornadaFecha.toDate()  // se reemplaza el timestamp de firebase por un tipo Date de js
                     };
                     historialTemp.push(objHistorial);

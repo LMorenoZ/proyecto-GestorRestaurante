@@ -28,25 +28,31 @@ export const useMesasStore = defineStore('mesasStore', {
                 mensajesStore.crearError('noTraeMesas', 'No se pudo traer las mesas');
                 console.log(error);
             }
+        }, ordenarMesas() {  // metodo para ordenar las mesas descendientemente segun su propiedad numerica 'mesaNum', que es el numero de la mesa
+            this.mesas.sort((mesaA, mesaB) => mesaA.mesaNum - mesaB.mesaNum)
         },
-        async traerMesa(id) {
-            const mensajesStore = useMensajesStore();
-            try {
-                const docRef = doc(db, 'mesa', id);
-                const docSnap = await getDoc(docRef);
-                return docSnap.data();
-            } catch (error) {
-                mensajesStore.crearError('noTraeMesa', 'No se pudo recuperar la información de esta mesa');
-                console.log(error);
-            }
-        },
+        // async traerMesa(id) {
+        //     const mensajesStore = useMensajesStore();
+        //     try {
+        //         const docRef = doc(db, 'mesa', id);
+        //         const docSnap = await getDoc(docRef);
+        //         return docSnap.data();
+        //     } catch (error) {
+        //         mensajesStore.crearError('noTraeMesa', 'No se pudo recuperar la información de esta mesa');
+        //         console.log(error);
+        //     }
+        // },
         async añadirMesa(nuevaMesa) {
             const mesaNueva = nuevaMesa;
             mesaNueva.estado = 'libre';
 
             try {
-                await addDoc(collection(db, 'mesa'), mesaNueva);
-                this.traerMesas();
+                const { id } = await addDoc(collection(db, 'mesa'), mesaNueva);
+
+                // actualizando el store
+                mesaNueva.id = id
+                this.mesas.push(mesaNueva)
+                this.ordenarMesas()
             } catch(error) {
                 console.log(error);
             }
@@ -64,7 +70,10 @@ export const useMesasStore = defineStore('mesasStore', {
                 await updateDoc(docRef, {
                     estado: mesaModificada.estado
                 });
-                this.traerMesas();
+
+                // actualizando el store
+                const indiceMesa = this.mesas.findIndex(mesa => mesa.id === mesaModificada.id)
+                this.mesas[indiceMesa].estado = mesaModificada.estado
             } catch (error) {
                 mensajesStore.crearError('noModMesa', 'No se pudo modificar la información de esta mesa');
                 console.log(error);
@@ -75,7 +84,10 @@ export const useMesasStore = defineStore('mesasStore', {
             try {
                 const docRef = doc(db, 'mesa', id); // referencia al documento
                 await deleteDoc(docRef);
-                this.traerMesas();
+
+                // actualizando store
+                const indiceMesa = this.mesas.findIndex(mesa => mesa.id === id) 
+                this.mesas.splice(indiceMesa, 1)
             } catch (error) {
                 mensajesStore.crearError('noBorrarMesa', 'No se pudo borrar la información de esta mesa');
                 console.log(error);
