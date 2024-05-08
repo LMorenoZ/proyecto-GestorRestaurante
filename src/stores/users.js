@@ -34,6 +34,9 @@ export const useUserStore = defineStore('users', {
       // TODO: cambiar el email del admin al real cuando este disponible
       return state.userData?.email === 'admin@test.com';
     },
+    userInfo(state) {
+      return (userId) => this.listaEmpleados.find(empleado => empleado.uid === userId)
+    }
   },
   actions: {
     // Acciones respecto a la administracion de usuarios: login, logout, etc..., en 'Authentication'
@@ -136,9 +139,8 @@ export const useUserStore = defineStore('users', {
         console.log(error);
       }
     },
-
+    // lista de todos los empleados (no se incluye al admin)
     async getEmpleados() {
-      // lista de todos los empleados (no se incluye al admin)
       const mensajesStore = useMensajesStore();
       // if (this.listaEmpleados.length > 0) {
       //   return;

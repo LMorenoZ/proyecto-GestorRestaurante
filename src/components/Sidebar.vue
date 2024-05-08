@@ -1,6 +1,8 @@
 <!-- Javascript del componente -->
 <script setup>
-
+    import { useUserStore } from '../stores/users';
+    const userStore = useUserStore()
+    userStore.getEmpleados()
 </script>
 
 

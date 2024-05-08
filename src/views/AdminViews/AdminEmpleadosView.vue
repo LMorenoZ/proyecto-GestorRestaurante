@@ -45,7 +45,6 @@
         puestoEmpleado.value = '';
         botonCrearDesactivado.value = false;
     }
-    userStore.getEmpleados();
 </script>
 
 <template>
