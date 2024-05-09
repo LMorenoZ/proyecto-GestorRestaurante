@@ -6,6 +6,7 @@
 
     // stores de pinia
     import { useUserStore } from '../../stores/users';
+    import { useJornadaStore } from '../../stores/jornada';
 
     // Se importan componentes
     import ModalConfirmacion from '../ModalConfirmacion.vue'
@@ -19,6 +20,7 @@
 
     // inicializando stores
     const userStore = useUserStore()
+    const jornadaStore = useJornadaStore()
 
     // valores reactivos
     const botonBorrarDesactivado = ref(false)
@@ -68,11 +70,12 @@
                     class="btn btn-danger btn-sm fs-4"  
                     data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
                     :disabled="botonBorrarDesactivado"
+                    v-if="!jornadaStore.jornadaActiva"
                   >
                     <i class="bi bi-x"></i>
                   </button>
                   <!--  TODO: Implementar edicion de los trabajadores -->
-                  <button class="btn btn-secondary btn-sm fs-4">
+                  <button class="btn btn-secondary btn-sm fs-4" v-if="!jornadaStore.jornadaActiva">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <router-link class="btn btn-info btn-sm fs-4" :to="`/administracion/perfil/${empleado.uid}`">

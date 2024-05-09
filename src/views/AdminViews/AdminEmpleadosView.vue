@@ -4,6 +4,7 @@
 
     import { useUserStore } from '../../stores/users';
     import { useMensajesStore } from '../../stores/mensajes';
+    import { useJornadaStore } from '../../stores/jornada';
 
     import { nombreUsuario, fechaFormateadaCorta } from '../../utilidades';
 
@@ -14,6 +15,7 @@
 
     const userStore = useUserStore();
     const mensajesStore = useMensajesStore();
+    const jornadaStore = useJornadaStore()
     const router = useRouter()
 
     // constantes reactivas 
@@ -49,7 +51,7 @@
 
 <template>
     <h1>Administracion de Empleados</h1>
-    <div class="vw-auto my-3 d-flex justify-content-center">
+    <div class="vw-auto my-3 d-flex justify-content-center" v-if="!jornadaStore.jornadaActiva">
         <!-- Boton que redirige a vista para crear nuevo empleado -->
         <button type="button" class="btn btn-primary mt-2" @click="router.push('crear_usuario')">Crear nuevo empleado</button>
     </div>

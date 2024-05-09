@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // stores
 import { useUserStore } from './stores/users';
+import { useJornadaStore } from './stores/jornada';
 
 // middlewares para realizar comprobaciones de sesion
 // simple comprobacion de sesion
@@ -37,12 +38,32 @@ const existeSesion = async (to, from, next) => {
 
 // solo podra entrar el admin
 const sesionAdmin = async (to, from, next) => {   
+    // const jornadaStore = useJornadaStore()
     const userStore = useUserStore();
+
     await userStore.currentUser();
     if (userStore.userRol === 'admin') {
+
+        // if (jornadaStore.jornadaActiva) {
+        //     next('/administracion');
+        // } else {
+        //     next();
+        // }
+
         next();
     } else {
         next('/');
+    }
+}
+
+// guardia que impide acceder a la vistas para editar o crear informacion cuando la jornada esta activa
+const jornadaActivaGuard = async (to, from, next) => {   
+    const jornadaStore = useJornadaStore()
+
+    if (!jornadaStore.jornadaActiva) {
+        next();
+    } else {
+        next('/administracion');
     }
 }
 
@@ -66,12 +87,13 @@ const routes = [
     {
         path: '/menu/nuevo',
         component: () => import('./views/Menu/ProductoCrearView.vue'),
-        beforeEnter: sesionAdmin
+        beforeEnter: [sesionAdmin, jornadaActivaGuard]
     },
     {
         path: '/menu/editar/:id',
         component: () => import('./views/Menu/EditarProductoView.vue'),
-        beforeEnter: sesionAdmin
+        // beforeEnter: sesionAdmin
+        beforeEnter: [sesionAdmin, jornadaActivaGuard]
     },
     {
         path: '/ordenes',
@@ -90,7 +112,8 @@ const routes = [
                 components: {seccionAdmin: () => import('./views/AdminViews/AdminInformesView.vue')}
             },
             { path: 'crear_usuario', 
-                components: {seccionAdmin: () => import('./views/AdminViews/CrearUsuarioView.vue')}
+                components: {seccionAdmin: () => import('./views/AdminViews/CrearUsuarioView.vue')},
+                beforeEnter: jornadaActivaGuard
             },
             { path: 'perfil/:id', 
                 components: {seccionAdmin: () => import('./views/AdminViews/UserProfileView.vue')}

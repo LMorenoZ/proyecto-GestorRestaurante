@@ -115,7 +115,7 @@ const modificarOrden = async (orden) => {
         <div class="card-footer mt-auto" v-if="!(ordenActual.estado === 'preparacion' || ordenActual.estado === 'tardada')">
           <p>Cambiar estado:</p>
   
-          <select class="form-select form-select-sm" v-model="estadoOrden">
+          <select :id="`select${orden.id}`" class="form-select form-select-sm" v-model="estadoOrden">
             <option disabled value="">Seleccione una</option>
             <option value="preparacion">En preparacion</option>
             <option value="tardada">Orden retrasada</option>

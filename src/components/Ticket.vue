@@ -176,8 +176,8 @@ Pdftest();
                         <hr>
                         <span>Cobrar</span> <br>
                         <div class="input-group my-2">
-                            <label class="input-group-text" for="clienteEntrega">Cliente entrega ($):</label> <br>
-                            <input class="form-control" type="number" id="clienteEntrega" min="0" step="0.01" v-model="clienteEntrega">
+                            <label class="input-group-text" :for="`clienteEntregaNum${modalId}`">Cliente entrega ($):</label> <br>
+                            <input class="form-control" type="number" :id="`clienteEntregaNum${modalId}`" min="0" step="0.01" v-model="clienteEntrega">
                         </div>
                         <button class="btn btn-success mt-2 " @click="calcularVuelto"
                             :disabled="!clienteEntrega || (ordenInfo.total > clienteEntrega)">Calcular vuelto</button> <br>

@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 // importando stores de pinia
 import { useProductosStore } from '../../stores/productos';
 import { useMensajesStore } from '../../stores/mensajes';
+import { useJornadaStore } from '../../stores/jornada';
 
 // importando componentes de ui
 import MenuItem from '../../components/Menu/MenuItem.vue';
@@ -15,6 +16,7 @@ import ModalConfirmacion from '../../components/ModalConfirmacion.vue'
 const router = useRouter()
 const productosStore = useProductosStore()
 const mensajesStore = useMensajesStore()
+const jornadaStore = useJornadaStore()
 
 // variables reactivas
 const modalRef = ref(null)
@@ -119,10 +121,10 @@ const borrarCategoria = async (categoria) => {
 <template>
     <h1>Lista de productos</h1>
     <!-- Boton para que redirige a vista para crear nuevo producto -->
-    <button class="btn btn-success" @click="router.push('/menu/nuevo')">Nuevo producto</button>
+    <button class="btn btn-success" @click="router.push('/menu/nuevo')" v-if="!jornadaStore.jornadaActiva">Nuevo producto</button>
 
     <!-- Boton para crear nueva categoria de productos -->
-    <button class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria">Crear nueva categoría</button>
+    <button class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria" v-if="!jornadaStore.jornadaActiva">Crear nueva categoría</button>
     
     <!-- Seleccion para elegir que producto, disponibles o no disponibles, se mostraran -->
     <div class="mt-2 d-flex justify-content-end">
@@ -182,11 +184,11 @@ const borrarCategoria = async (categoria) => {
 
                             </template>
                             <div v-else>
-                                <h4>No hay productos '{{ tipo.nombre }}'' que actualmente sean {{ mostrarDisponibles ? 'disponibles' : 'no disponibles' }}</h4>
+                                <h4 class="text-center text-secondary">No hay productos '{{ tipo.nombre }}'' que actualmente sean {{ mostrarDisponibles ? 'disponibles' : 'no disponibles' }}</h4>
                             </div>
                             
                         </div>
-                        <div class="d-flex justify-content-center mt-4">
+                        <div class="d-flex justify-content-center mt-4" v-if="!jornadaStore.jornadaActiva">
                             <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" :data-bs-target="`#categoriaBorrar${tipo.id}`">
                                 Borrar la categoría '{{tipo.nombre}}'
                             </button>

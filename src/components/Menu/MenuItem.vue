@@ -4,11 +4,13 @@ import { USDollar } from '../../utilidades';
 
 import { useProductosStore } from '../../stores/productos';
 import { useMensajesStore } from '../../stores/mensajes';
+import { useJornadaStore } from '../../stores/jornada';
 
 import ModalConfirmacion from '../ModalConfirmacion.vue';
 
 const productosStore = useProductosStore()
 const mensajestore = useMensajesStore()
+const jornadaStore = useJornadaStore()
 
 const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
 
@@ -35,12 +37,17 @@ const borrarProducto = async (idProducto) => {
     
       <div class="menu-card">
         <div class="menu-card__image">
-          <RouterLink :to="`menu/editar/${id}`" class="menu-card-link">
+
+          <RouterLink :to="`menu/editar/${id}`" class="menu-card-link" v-if="!jornadaStore.jornadaActiva">
             <div class="menu-card__image-wrapper">
               <img :src="foto" :alt="nombre" class="menu-card__image-item">
             </div>
-        </RouterLink>
-          <div class="menu-card__icon bg-danger" title="Borrar" data-bs-toggle="modal" :data-bs-target="`#borrarProductoModal${id}`">
+          </RouterLink>
+          <div class="menu-card__image-wrapper" v-else>
+            <img :src="foto" :alt="nombre" class="menu-card__image-item">
+          </div>
+
+          <div class="menu-card__icon bg-danger" title="Borrar" data-bs-toggle="modal" :data-bs-target="`#borrarProductoModal${id}`" v-if="!jornadaStore.jornadaActiva">
             <span class="badge btn text-bg-danger"><i class="bi bi-trash"></i></span>
           </div>
         </div> 
@@ -48,7 +55,7 @@ const borrarProducto = async (idProducto) => {
           <h3 class="menu-card__title">{{ nombre }}</h3>
           <p class="menu-card__price">{{ USDollar.format(precio) }}</p>
           <div class="d-flex justify-content-end">
-            <RouterLink :to="`menu/editar/${id}`" class="menu-card-link" title="Editar">
+            <RouterLink :to="`menu/editar/${id}`" class="menu-card-link" title="Editar" v-if="!jornadaStore.jornadaActiva">
               <div class="btn btn-success btn-sm ">
                 <i class="bi bi-pencil"></i>  
               </div >

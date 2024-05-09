@@ -173,7 +173,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtDireccionUsuario">Direccion:</label>
-                            <input type="text" class="form-control" id="txtDireccionUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Dirección del empleado" pattern="^[a-zA-Z0-9-#]+$" v-model.trim="direccion">
+                            <input type="text" class="form-control" id="txtDireccionUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Dirección del empleado" v-model.trim="direccion">
                             <div class="invalid-feedback">
                                 Por favor escriba la direccion.
                             </div>
