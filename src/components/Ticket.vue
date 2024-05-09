@@ -9,8 +9,8 @@ const props = defineProps(['ordenInfo', 'modalId', 'productos']);
 // para imprimir el ticket
 import pdfMake from "pdfmake/build/pdfmake.js";
 import pdfFonts from '../vfs_fonts';
-import { USDollar, encontrarProducto, printf } from "../utilidades";
-import { push } from 'firebase/database';
+import { USDollar, encontrarProducto } from "../utilidades";
+
 pdfMake.vfs = pdfFonts;
 
 // inicializando stores
@@ -24,8 +24,7 @@ const ordenProductos = props.ordenInfo.productos
 
 // array con los productos de la orden, pero estructurados para ser mostrados en el ticket
 const ordenProductosInfo = ref([])
-// computed(() => {
-// })
+
 ordenProductos.forEach(prod => {
     const productoInfo = encontrarProducto(productos, prod.idProducto)
     const prodTicket = { ...productoInfo, cantidad: prod.cantidad }
@@ -36,7 +35,7 @@ ordenProductos.forEach(prod => {
 const mostrarInfo = computed(() => (ordenProductos.length === ordenProductosInfo.value.length))
 
 
-const clienteEntrega = ref(0)   // dinero que el cliente entrega para pagar su orden
+const clienteEntrega = ref()   // dinero que el cliente entrega para pagar su orden
 const vuelto = ref(0)           // el vuelto a entregar al cliente
 const puedeCompletar = ref(false)   // bandera que indica si la orden puede ser completada o falta que el cliente pague
 
@@ -67,7 +66,7 @@ const exportPDF = () => {
 
 const buildTableBody = (data, columns) => {
     let body = [];
-    body.push([{ text: 'Producto', bold: true }, { text: 'Precio', bold: true }, { text: 'Cantidad', bold: true }]);
+    body.push([{ text: 'Producto', bold: true }, { text: 'Cantidad', bold: true }, { text: 'Precio unidad', bold: true }]);
     data.forEach(row => {
         let dataRow = [];
         columns.forEach(column => {
@@ -98,13 +97,13 @@ const Pdftest = () => {
 
     
     ordenProductosInfo.value.forEach(producto => {
-        externalDataRetrievedFromServer.push({Producto: producto.nombre, Precio: USDollar.format(producto.precio), Cantidad: producto.cantidad})
+        externalDataRetrievedFromServer.push({Producto: producto.nombre, Cantidad: producto.cantidad, Precio: USDollar.format(producto.precio)})
     })
 
     let dd = {
         content: [
             { text: `Ticket para la mesa ${props.ordenInfo.mesaNum}`, style: 'header' },
-            table(externalDataRetrievedFromServer, ['Producto', 'Precio', 'Cantidad'])
+            table(externalDataRetrievedFromServer, ['Producto', 'Cantidad', 'Precio'])
         ],
 
         styles: {
@@ -176,14 +175,21 @@ Pdftest();
                     <p class="fs-5" v-if="ordenPendiente">
                         <hr>
                         <span>Cobrar</span> <br>
-                        <span>Cliente entrega:</span> <br>
-                        <input class="form-control" type="number" v-model="clienteEntrega">
-                        <span class="fw-bold">Vuelto:</span> <br>
-                    <p>{{ USDollar.format(vuelto) || 'Ingrese cantidad' }}</p>
-                    <button class="btn btn-success mt-2" @click="calcularVuelto"
-                        :disabled="ordenInfo.total > clienteEntrega">Calcular vuelto</button> <br>
-                    <button type="button" class="btn btn-primary mt-2" data-bs-dismiss="modal" @click="completarOrden"
-                        :disabled="!puedeCompletar">Completar órden</button>
+                        <div class="input-group my-2">
+                            <label class="input-group-text" for="clienteEntrega">Cliente entrega ($):</label> <br>
+                            <input class="form-control" type="number" id="clienteEntrega" min="0" step="0.01" v-model="clienteEntrega">
+                        </div>
+                        <button class="btn btn-success mt-2 " @click="calcularVuelto"
+                            :disabled="!clienteEntrega || (ordenInfo.total > clienteEntrega)">Calcular vuelto</button> <br>
+
+                        <div class="mt-4" v-if="puedeCompletar">
+                            <span class="fw-bold">Vuelto a entregar:</span> <br>
+                            <p>{{ USDollar.format(vuelto) || 'Ingrese cantidad' }}</p>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="completarOrden"
+                          v-if="puedeCompletar">Completar órden</button>
+                        
                     </p>
                 </div>
                 <div v-else>
@@ -196,8 +202,8 @@ Pdftest();
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="cancelarOrden">Cancelar
                         orden</button>
                     <div>
+                        <button type="button" class="btn btn-warning" @click="exportPDF" v-if="puedeCompletar">Imprimir recibo</button>
                         <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-warning" @click="exportPDF">Imprimir recibo</button>
                     </div>
                 </div>
                 <div v-else>

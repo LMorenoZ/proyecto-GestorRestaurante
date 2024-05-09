@@ -8,9 +8,10 @@ import { useJornadaStore } from '../stores/jornada.js';
 import { useMesasStore } from '../stores/mesas.js';
 import { useProductosStore } from '../stores/productos.js';
 import { useUserStore } from '../stores/users.js';
+import { useMensajesStore } from '../stores/mensajes.js';
 
 // utilidades
-import { encontrarProducto, printf } from '../utilidades.js';
+import { encontrarProducto } from '../utilidades.js';
 
 // props y emits
 const props = defineProps(['modalId', 'mesaNum', 'mesaInfo']);
@@ -22,6 +23,7 @@ const jornadaStore = useJornadaStore();
 const mesasStore = useMesasStore();
 const productosStore = useProductosStore()
 const usersStore = useUserStore()
+const mensajesStore = useMensajesStore()
 //-----------------------------------------------------------
 
 const productos = productosStore.productos
@@ -29,7 +31,42 @@ const productos = productosStore.productos
 const cantidades = ref({});
 const formOrden = ref(null)  // informacion del formulario con la que se creara la orden
 
+const hayProductos = categoria => productos.some(prod => prod.tipo === categoria.nombre)
+
+// funcion para validar que al menos un input tenga un valor para poder hacer submit al formulario
+const formularioValido = () => {
+  for (const propiedad in cantidades.value) {
+    const valor = cantidades.value[propiedad];
+    if (valor > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+const puedeHacerSubmit = computed(() => {
+//   for (const propiedad in cantidades.value) {
+//     const valor = cantidades.value[propiedad];
+//     if (valor > 0) {
+//       return true;
+//     }
+//   }
+//   return false;
+    return formularioValido()
+})
+
 const crearOrden = () => {
+
+    // Validacion de que al menos un input tenga un valor valido, si se cumple no se puede crear una orden porque estan vacios los inputs
+    if(!formularioValido()) {
+        mensajesStore.crearMensaje({
+            titulo: 'Orden nula',
+            texto: 'Para crear la orden al menos se debe elegir un producto',
+            color: 'secondary',
+            id: 'ordenEsNular',
+            autoEliminar: true
+        })
+        return
+    }
 
     formOrden.value.requestSubmit   // se activa el evento 'submit' del formulario, pero sin recargar la pagina
 
@@ -69,9 +106,6 @@ const calcularTotalOrden = productos => {
 
 //Listar productos
 const tiposProductos = productosStore.productosTipos
-
-// mostrar el primer acordeon de los tipos de productos abiertos
-const monstrarAcordeon = indice => indice === 0 ? 'show' : ''  
 //-----------------------------------------------------------
 
 </script>
@@ -90,27 +124,30 @@ const monstrarAcordeon = indice => indice === 0 ? 'show' : ''
 
                     <!-- Acordion -->
                     <form ref="formOrden">
-                        <div class="accordion">
+                        <div class="accordion" id="accordionLaureles">
                             <div class="accordion-item" v-for="(tipo, index) in tiposProductos" :key="tipo.id">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        :data-bs-target="`#panel${tipo.id}`" aria-expanded="true"
-                                        :aria-controls="`panel${tipo.id}`">
-                                        {{ tipo.nombre }}
-                                    </button>
-                                </h2>
-                                <div :id="`panel${tipo.id}`" :class="`accordion-collapse collapse ${monstrarAcordeon(index)}`">
-                                    <div class="accordion-body">
-                                        <div class="mb-3" v-for="(producto, index) in productos" :key="index">
-                                            <template v-if="producto.tipo == tipo.nombre">
-                                                <label :for="`Id${producto.id}`" class="form-label">{{ producto.nombre
-                                                    }}</label>
-                                                <input type="number" class="form-control" :id="`Id${producto.id}`"
-                                                    :aria-describedby="producto.nombre" v-model="cantidades[producto.id]">
-                                            </template>
+                                <template v-if="hayProductos(tipo)">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed"  type="button" data-bs-toggle="collapse"
+                                            :data-bs-target="`#panel${tipo.id}`" aria-expanded="false"
+                                            :aria-controls="`panel${tipo.id}`">
+                                            {{ tipo.nombre }}
+                                        </button>
+                                    </h2>
+    
+                                    <div :id="`panel${tipo.id}`" class="accordion-collapse collapse"> 
+                                        <div class="accordion-body">
+                                            <div class="mb-3" v-for="(producto, index) in productos" :key="index">
+                                                <template v-if="producto.tipo == tipo.nombre">
+                                                    <label :for="`Id${producto.id}`" class="form-label">{{ producto.nombre 
+                                                        }}</label>
+                                                    <input type="number" class="form-control" :id="`Id${producto.id}`"
+                                                        :aria-describedby="producto.nombre" min="0" v-model="cantidades[producto.id]">
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </template>
                             </div>
                         </div>
                     </form>
@@ -118,8 +155,8 @@ const monstrarAcordeon = indice => indice === 0 ? 'show' : ''
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-dismiss="modal" @click="crearOrden">Ordenar</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal" @click="crearOrden" :disabled="!puedeHacerSubmit">Ordenar</button>
                 </div>
             </div>
         </div>

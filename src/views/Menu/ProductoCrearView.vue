@@ -1,10 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { ref as firebaseRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import { useProductosStore } from '../../stores/productos'
+import { useMensajesStore } from '../../stores/mensajes';
 
 import { storage } from '../../firebaseConfig';
 import { USDollar, uploadFile } from '../../utilidades';
@@ -13,6 +14,7 @@ const router = useRouter()
 
 // inicializar store de pinia
 const useProductos = useProductosStore()
+const mensajesStore = useMensajesStore()
 
 // traer los productos desde la db
 const productosTipos = useProductos.productosTipos
@@ -23,6 +25,9 @@ const descProd = ref(null)
 const precioProd = ref(null)
 const tipoProd = ref(null)
 const disponibilidadProd = ref(true)
+
+const creandoProducto = ref(false)
+const formularioNoValido = ref(false)
 
 // valores reactivos para subir la imagen
 const selectedFile = ref(null) // archivo de la imagen que subira a storage
@@ -43,8 +48,31 @@ const handleFileUpload = e => {
     }
 }
 
+// funcion que comprueba que todos los inputs no esten vacios para que habilitar al boton de creacion del producto
+const puedeCrear = computed(() => {
+    const puede = nombreProd.value && descProd.value && (precioProd.value >= 0.01) && tipoProd.value && selectedFile.value
+
+    return puede
+})
+
 // crear producto
 const crearProducto = async () => {
+
+    // validacion
+    if (!puedeCrear.value) {
+        mensajesStore.crearMensaje({
+            titulo: 'Producto nulo',
+            texto: 'Escriba toda la información para crear el producto',
+            color: 'secondary',
+            id: 'productoCrearNulo',
+            autoEliminar: true
+        })
+        formularioNoValido.value = true
+        return
+    }
+    formularioNoValido.value = false
+    creandoProducto.value = true
+
     // objeto del producto, pero sin el url de la imagen, que no se ha subido
     const producto = {
         nombre: nombreProd.value,
@@ -58,11 +86,22 @@ const crearProducto = async () => {
         // subir imagen, devuelve la url de la imgen si se subio correctamente
         const imgURL = await uploadFile(selectedFile.value, 'productos')
         producto.foto = imgURL
-        
+
         useProductos.crearProducto(producto)
 
+        // limpiar los inputs
+        nombreProd.value = null
+        descProd.value = null
+        precioProd.value = null
+        tipoProd.value = null
+        selectedFile.value = null
+        previewImage.value = null
+
     } catch (error) {
+        mensajesStore.crearError('falloCrearProducto', 'No se pudo crear el producto')
         console.log(error)
+    } finally {
+        creandoProducto.value = false
     }
 }
 
@@ -71,13 +110,14 @@ const crearProducto = async () => {
 <template>
     <div class="container text-left">
         <h1 class="text-center mb-4">Crear nuevo producto</h1>
-        <form @submit.prevent="crearProducto" class="was-validated">
+        <!-- <form @submit.prevent="crearProducto" class="was-validated"> -->
+        <form @submit.prevent="crearProducto" :class="{ 'was-validated': formularioNoValido }">
             <div class="row">
                 <div class="col-md-6 col-12">
                     <h4>Nombre del producto:</h4>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control i" id="nombreProducto" placeholder="" required
-                            v-model="nombreProd">
+                            v-model.trim="nombreProd">
                         <label for="nombreProducto">Ingrese el nombre</label>
                         <div class="invalid-feedback">
                             Por favor digite en el area de texto.
@@ -88,7 +128,7 @@ const crearProducto = async () => {
                     <h4>Descripcion del producto:</h4>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="descripcionProducto" placeholder="" required
-                            v-model="descProd">
+                            v-model.trim="descProd">
                         <label for="descripcionProducto">Ingrese la descripcion.</label>
                         <div class="invalid-feedback">
                             Por favor digite en el area de texto.
@@ -97,8 +137,9 @@ const crearProducto = async () => {
                     <h4>Precio del producto:</h4>
                     <div class="input-group mb-3">
                         <span class="input-group-text">$</span>
-                        <input type="text" class="form-control " id="precioProducto" placeholder="Ingrese la cantidad"
-                            aria-label="Dollar amount (with dot and two decimal places)" required v-model="precioProd">
+                        <input type="number" min="0.01" step="0.01" class="form-control " id="precioProducto"
+                            placeholder="Ingrese la cantidad"
+                            aria-label="Dollar amount (with dot and two decimal places)" v-model.trim="precioProd" required>
 
                         <div class="invalid-feedback">
                             Por favor digite en el area de texto.
@@ -107,7 +148,7 @@ const crearProducto = async () => {
 
                     <h4>Disponibilidad del producto:</h4>
                     <div class="input-group mb-3">
-                        <select class="form-select" v-model="disponibilidadProd">
+                        <select class="form-select" v-model="disponibilidadProd" required>
                             <option value="" disabled>Elija una opción</option>
                             <option :value="true" selected>Disponible</option>
                             <option :value="false">No disponible</option>
@@ -118,22 +159,17 @@ const crearProducto = async () => {
                         </div>
                     </div>
 
-                    <div class="col">
-
-                        <div class="form-floating">
-                            <h4>Tipo de producto:</h4>
-                            <select class="form-select" id="tipoProducto" aria-label="Floating label select" required
-                                v-model="tipoProd">
-                                <option value="" disabled selected>Elija una opcion</option>
-                                <template v-for="tipo in productosTipos" :key="tipo.id">
-                                    <option :value="tipo.nombre">{{ tipo.nombre }}</option>
-                                </template>
-                            </select>
-                            <div class="invalid-feedback">
-                                Por favor elija una opcion.
-                            </div>
-                        </div>
+                    <h4>Tipo de producto:</h4>
+                    <select class="form-select" id="tipoProducto" required v-model="tipoProd">
+                        <option value="" disabled>Elija una opcion</option>
+                        <template v-for="tipo in productosTipos" :key="tipo.id">
+                            <option :value="tipo.nombre">{{ tipo.nombre }}</option>
+                        </template>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor elija una opcion.
                     </div>
+
                 </div>
 
                 <div class="col-md-6 col-12">
@@ -155,10 +191,17 @@ const crearProducto = async () => {
 
                             <label for="seleccionarImagen" required class="form-label">Seleccione una imagen para el
                                 producto:</label>
-                            <input class="form-control" type="file" id="seleccionarImagen" accept="image/*" @change="handleFileUpload">
+                            <input class="form-control" type="file" id="seleccionarImagen" accept="image/*"
+                                @change="handleFileUpload">
                             <div class="d-grid gap-2">
                                 <span>Formatos probados: 'jpg', 'jpeg', 'png', 'webp', 'avif'</span>
-                                <button class="btn btn-primary mt-2" type="submit">Crear producto</button>
+                                <button class="btn btn-primary mt-2" type="submit" :disabled="!puedeCrear"
+                                    v-if="!creandoProducto">Crear
+                                    producto</button>
+                                <button class="btn btn-primary" type="button" disabled v-else>
+                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    <span role="status"> Creando...</span>
+                                </button>
                             </div>
                             <div class="invalid-feedback">
                                 Por favor elija una imagen.
@@ -171,7 +214,9 @@ const crearProducto = async () => {
                             <div class="row">
                                 <div class="col">
                                     <div class="d-grid gap-2">
-                                        <button type="button" class="btn btn-outline-info btn-lg" @click="router.push('/menu')">Volver a menú</button>
+                                        <button type="button" class="btn btn-outline-info btn-lg"
+                                            @click="router.push('/menu')">Volver a
+                                            menú</button>
                                     </div>
                                 </div>
                             </div>

@@ -32,6 +32,7 @@ const selectedFile = ref(null) // referencia al archivo de la imagen que se sele
 const previewImage = ref(null) // la imagen como tal para ser mostrada en el div, por defecto nulo
 const clasesFormulario = ref('') // clases de bootstrap para formulario, para validacion
 const desactivarBoton = ref(false)
+const creandoRegistro = ref(false)
 
 // funcion que muestra la imagen seleccionada en el div
 const handleFileUpload = e => {
@@ -49,6 +50,7 @@ const handleFileUpload = e => {
 
 // funcion para crear el usuario, recopila los valores y lo delega a la funcion correspondiente de userStore
 const crearNuevoEmpleado = async () => {
+    creandoRegistro.value = true
 
     if(!validacionInputs()) {
         clasesFormulario.value = 'was-validated'
@@ -59,6 +61,7 @@ const crearNuevoEmpleado = async () => {
             id: 'mensajeFeedbackCrearEmpleado',
             autoEliminar: true
         })
+        creandoRegistro.value = false
         return;
     }
     clasesFormulario.value = ''
@@ -103,6 +106,7 @@ const crearNuevoEmpleado = async () => {
         console.log(error)
     } finally {
         desactivarBoton.value = false;
+        creandoRegistro.value = false
     }
 
 }
@@ -161,7 +165,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="txtDuiUsuario"><abbr title="Documento Unico de Identidad">DUI:</abbr></label>
-                            <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="DUI del empleado" pattern="^\d{8}-\d$" maxlength="10" v-model.trim="dui">
+                            <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="XXXXXXXX-X" pattern="^\d{8}-\d$" maxlength="10" v-model.trim="dui">
                             <div class="invalid-feedback">
                                 Por favor escriba el DUI.
                             </div>
@@ -171,7 +175,7 @@ const limpiarInputs = () => {
                             <label class="input-group-text" for="txtDireccionUsuario">Direccion:</label>
                             <input type="text" class="form-control" id="txtDireccionUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Dirección del empleado" pattern="^[a-zA-Z0-9-#]+$" v-model.trim="direccion">
                             <div class="invalid-feedback">
-                                Por favor escriba el direccion.
+                                Por favor escriba la direccion.
                             </div>
                         </div>    
                         
@@ -185,7 +189,7 @@ const limpiarInputs = () => {
 
                         <div class="input-group my-3">
                             <label class="input-group-text" for="telUsuario">Teléfono de contacto:</label>
-                            <input type="text" class="form-control" id="telUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="Número de contacto" v-model.trim="tel">
+                            <input type="text" class="form-control" id="telUsuario" required aria-describedby="basic-addon3 basic-addon4" pattern="^\d{4}-\d{4}$" placeholder="XXXX-XXXX" maxlength="9" v-model.trim="tel">
                             <div class="invalid-feedback">
                                 Por favor escriba el teléfono.
                             </div>
@@ -213,22 +217,19 @@ const limpiarInputs = () => {
                         </div> 
 
                         <div class="d-flex justify-content-center ">
-                            <!-- <button type="submit" id="btnCrearRegistro" class="btn btn-outline-success"
-                            data-bs-toggle="modal" data-bs-target="#modalCrearEmpleado">
-                                Crear Registro
-                            </button> -->
                             <button type="submit" id="btnCrearRegistro" class="btn  btn-outline-success" title="Click para crear registro"
                                 :disabled="desactivarBoton"
                                 @click="crearNuevoEmpleado"
+                                v-if="!creandoRegistro"
                             >
                                 Crear Registro
                             </button>
+                            <button id="btnCrearRegistro" class="btn  btn-outline-success" v-else disabled>
+                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                <span role="status"> Creando...</span>
+                            </button>
                         </div>
-                    
-                        <div class="text-center mt-2" v-if="desactivarBoton">
-                            <p class="fw-bold">Creando usuario, por favor espere...</p>
-                        </div>
-                
+            
                     </div>
                 </div>
             </form>

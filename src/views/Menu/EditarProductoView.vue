@@ -49,6 +49,7 @@ const tipoProductoOption = ref(null) // para seleccionar automaticamente en el i
 const fotoActualizada = ref(false) // bandera para saber si el administrador cambio la imagen del producto
 const fotoOriginal = ref(null)  // valor de la foto original, se usa en caso de actualizar la imagen existente por otra nueva
 const bloquearBoton = ref(false)
+const editandoProducto = ref(false)
 const claseValidacion = ref('') // clases de bootstrap para mostrar mensajes de validacion
 
 // recuperando objeto con la informacion del producto, esta informacion debe cargarse antes de que se renderice el HTML del componente
@@ -103,12 +104,14 @@ const handleFileUpload = e => {
 
 // funcion para actualizar los datos del producto
 const actualizarProducto = async () => {
+    editandoProducto.value = true
     // se hace validacion del formulario, para que no senvien campos en blanco
     const validacionCorrecta = validarFormulario()
 
 
     if (!validacionCorrecta) {
         claseValidacion.value = 'was-validated'
+        editandoProducto.value = false
         return;
     } else {
         claseValidacion.value = ''
@@ -154,6 +157,7 @@ const actualizarProducto = async () => {
                 autoEliminar: true
             })
 
+            editandoProducto.value = false
             return
         } else {
             // se manda el objeto a actualizar al store de pinia donde se llama el proceso a firestore
@@ -181,6 +185,7 @@ const actualizarProducto = async () => {
         console.log(error)
     } finally {
         bloquearBoton.value = false
+        editandoProducto.value = false
     }
 }
 
@@ -197,7 +202,7 @@ const generateUpdateObject = administradorActualizaciones => {
 
 // validar el formulario
 const validarFormulario = () => {
-    return nombre.value && descripcion.value && precio.value
+    return nombre.value && descripcion.value && (precio.value >= 0.01)
 }
 
 
@@ -253,8 +258,8 @@ const validarFormulario = () => {
 
                     <div class="input-group mb-3">
                         <label class="input-group-text" for="elegirPrecio">Precio ($):</label>
-                        <input type="number" class="form-control" id="elegirPrecio" required
-                            placeholder="Ingrese el precio" min="0" aria-describedby="basic-addon3" v-model.number="precio">
+                        <input type="number" min="0.01" step="0.01" class="form-control" id="elegirPrecio" required
+                            placeholder="Ingrese el precio"  aria-describedby="basic-addon3" v-model.number="precio">
                         <div class="invalid-feedback">
                             Por favor ingrese el precio.
                         </div>
@@ -292,9 +297,14 @@ const validarFormulario = () => {
                         <div class="row">
                             <div class="col">
                                 <!-- Muestra el div hasta que se hallan traido los datos de la base de datos -->
-                                <button class="btn btn-outline-success" @click="actualizarProducto"
+                                <button class="btn btn-outline-success" @click="actualizarProducto" v-if="!editandoProducto"
                                     :disabled="bloquearBoton">Actualizar
                                     producto</button>
+                                <button class="btn btn-outline-success" v-else
+                                    disabled>
+                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    <span role="status"> Actualizando información...</span>
+                                </button>
                             </div>
                         </div>
                     </div>
