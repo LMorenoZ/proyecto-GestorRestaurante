@@ -167,7 +167,7 @@ const limpiarInputs = () => {
                             <label class="input-group-text" for="txtDuiUsuario"><abbr title="Documento Unico de Identidad">DUI:</abbr></label>
                             <input type="text" class="form-control" id="txtDuiUsuario" required aria-describedby="basic-addon3 basic-addon4" placeholder="XXXXXXXX-X" pattern="^\d{8}-\d$" maxlength="10" v-model.trim="dui">
                             <div class="invalid-feedback">
-                                Por favor escriba el DUI.
+                                Por favor escriba el DUI con el formato XXXXXXXX-X.
                             </div>
                         </div>   
 
@@ -191,7 +191,7 @@ const limpiarInputs = () => {
                             <label class="input-group-text" for="telUsuario">Teléfono de contacto:</label>
                             <input type="text" class="form-control" id="telUsuario" required aria-describedby="basic-addon3 basic-addon4" pattern="^\d{4}-\d{4}$" placeholder="XXXX-XXXX" maxlength="9" v-model.trim="tel">
                             <div class="invalid-feedback">
-                                Por favor escriba el teléfono.
+                                Por favor escriba el teléfono con el formato XXXX-XXXX.
                             </div>
                         </div>       
 

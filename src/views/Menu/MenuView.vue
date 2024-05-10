@@ -163,6 +163,7 @@ const borrarCategoria = async (categoria) => {
 
         <!-- Contenido de las tabs -->
         <div class="col-sm-12 col-md-8">
+            <h2 class="text-center mt-4" v-if="productosStore.productos.length === 0 && productosStore.listarTipoProductos.length === 0">No hay ninguna categoría de productos</h2>
             <div class="tab-content" id="v-pills-tabContent">
                 <template v-for="(tipo, index) in productosStore.listarTipoProductos" :key="tipo.id">
                     <div :class="`tab-pane ${esPrimerElemento(index, 'show active')}`" :id="`v-pills-${tipo.id}`" role="tabpanel"

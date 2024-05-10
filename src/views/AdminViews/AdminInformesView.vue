@@ -8,15 +8,19 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { useHistorialStore } from '../../stores/historial';
 import { useProductosStore } from '../../stores/productos';
 
-// utilidades
-import { encontrarProducto, reducirArray } from '../../utilidades';
+// para imprimir el informe
+import pdfMake from "pdfmake/build/pdfmake.js";
+import pdfFonts from '../../vfs_fonts';
 
-// componentes de ui
-import ResumenPeriodo from '../../components/Informes/ResumenPeriodo.vue';
+// utilidades
+import { encontrarProducto, reducirArray, USDollar, fechaFormateadaCorta} from '../../utilidades';
 
 // inicializando stores
 const historialStore = useHistorialStore();
 const productosStore = useProductosStore()
+
+// pdfmake y vfonts para dar tipografia al documento pdf
+pdfMake.vfs = pdfFonts;
 
 
 // variables reactivas
@@ -113,6 +117,7 @@ const nombreProductos = computed(() => {
 })
 // eje Y: la cantidad de los productos
 const productosVentasTop10 = computed(() => {
+    // return productosTop10.value.map(producto => producto.cantidad)
     return productosTop10.value.map(producto => producto.cantidad)
 })
 
@@ -120,11 +125,18 @@ const productosVentasTop10 = computed(() => {
 const chartOptionsTop10 = computed(() => {
     return {
         chart: {
-            id: 'productos-mas-vendidos'
+            id: 'productos-mas-vendidos',
+            // offsetY: 1
         },
         xaxis: {
             categories: nombreProductos.value
-        }
+        },
+        plotOptions: {
+            bar: {
+                    borderRadius: 5,
+            }
+        },
+        colors: ["#f48024"],
     }
 })
 
@@ -137,35 +149,126 @@ const seriesTop10 = computed(() => {
     ]
 })
 
+///***** Metodos para la generacion de informes  *****/
+const rangoFormateado = computed(() => {
+    if (date.value == null) { return; }
 
-//2) para la grafica de lineas de las ventas de un producto en el periodo
-// Identificar producto con sus ventas
-// const productoSeleccionadoInfo = computed(() => {
-//     return encontrarProducto(listaProductos.value, productoSeleccionado.value)
-// })
+    let rangoConFormato = '';
 
-// const chartOptionsProducto = computed(() => {
-//     return {
-//         chart: {
-//             id: 'productos-ventas'
-//         },
-//         xaxis: {
-//             categories: [1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004]
-//             // categories: nombreProductos.value
-//         }
-//     }
-// })
+    let desde = date.value[0];
+    let hasta = date.value[1];
 
-// const seriesProducto = computed(() => {
-//     return [
-//         {
-//             name: 'series-1',
-//             data: [30, 40, 35, 50, 49, 60, 70, 91]
-//             // data: productosVentasTop10.value
-//         },
-//     ]
-// })
+    if (hasta !== null) {  // en caso de que no se envie el segundo parametro de la fecha
+        rangoConFormato = 'del período ' + fechaFormateadaCorta(desde) + ' - ' + fechaFormateadaCorta(hasta);
+    } else {
+        rangoConFormato = 'del día ' + fechaFormateadaCorta(desde);
+    }
 
+
+    return rangoConFormato;
+});
+
+// codigo para generar el documento para imprimir
+const exportPDFInforme = () => {
+
+const buildTableBody = (data, columns, encabezado, footer) => {
+    let body = [];
+    body.push(encabezado);
+    data.forEach(row => {
+        let dataRow = [];
+        columns.forEach(column => {
+            dataRow.push(row[column].toString());
+        })
+        body.push(dataRow);
+    });
+    if (footer) {
+        // footer de la tabla
+        body.push(footer);
+    }
+    return body;
+}
+
+const table = (data, columns, encabezado, footer = null) => {
+    return {
+        layout: 'lightHorizontalLines', // optional
+        style: 'table',
+        table: {
+            headerRows: 1,
+            widths: ['*', '*'],
+            body: buildTableBody(data, columns, encabezado, footer)
+        }
+    };
+}
+
+const Pdftest = () => {
+    // datos de la tabla de productos vendidos:
+    let externalDataRetrievedFromServer = [];
+
+        totalResumen.value.productos.forEach(prod => {
+            const producto = encontrarProducto(productosStore.productos, prod.idProducto)
+            externalDataRetrievedFromServer.push({ Producto: producto.nombre, Ventas: prod.cantidad });
+        })
+        
+    let ordenesTabla = [];
+        ordenesTabla.push({ Resultado: 'Órdenes completadas', Orden: totalResumen.value.completadasTotales});
+        ordenesTabla.push({ Resultado: 'Órdenes canceladas', Orden: totalResumen.value.canceladasTotales});
+    // calculo de ordenes totales
+    let ordenesTotales = totalResumen.value.completadasTotales + totalResumen.value.canceladasTotales;
+
+    // array de la tabla de dinero
+    let tablaDinero = [];
+        tablaDinero.push({ Dinero: 'Ganancias', Total: USDollar.format(totalResumen.value.gananciasTotales) });
+        tablaDinero.push({ Dinero: 'Pérdidas', Total: USDollar.format(totalResumen.value.perdidasTotales) });
+    
+
+    let dd = {
+        content: [
+            { text: `Informe de ventas y actividades ${rangoFormateado.value}`, style: 'header' },
+            // tabla de ventas
+            table(externalDataRetrievedFromServer, 
+                ['Producto', 'Ventas'], 
+                [{ text: 'Producto', bold: true },  { text: 'Cantidad de ventas', bold: true }]
+            ),
+            // tabla de ordenes
+            table(ordenesTabla,  // cuerpo de la tabla
+                ['Resultado', 'Orden'],   // columnas de la tabla
+                [{ text: 'Tipo de órden', bold: true },  { text: 'Resultado', bold: true }],  // encabezado de la tabla
+                [{ text: 'Órdenes totales', bold: true },  { text: ordenesTotales, bold: true }],  // footer de la tabla
+            ),
+            // tabla de dinero
+            table(tablaDinero, 
+                ['Dinero', 'Total'],   // encabezado de la tabla
+                [{ text: 'Dinero', bold: true },  { text: 'Total', bold: true }],  // encabezado de la tabl
+            ),
+        ],
+
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 5, 0, 10]
+            },
+            table: {
+                margin: [0, 5, 0, 15]
+            }
+        }
+    }
+
+    // fuentes para la tipografia del pdf
+    pdfMake.fonts = {
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        }
+    };
+
+    pdfMake.createPdf(dd).open();
+}
+
+Pdftest();
+}
 </script>
 
 <template>
@@ -182,17 +285,16 @@ const seriesTop10 = computed(() => {
         
         <!-- Imprimir informes de ventas -->
         <div class="d-flex justify-content-center">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#resumenPeriodo" class="btn btn-primary">
-                Ver informe de ventas del período
-            </button>
-            <ResumenPeriodo id="resumenPeriodo" :rango="date" :totales="totalResumen" />
+            <button type="button" class="btn btn-primary" @click="exportPDFInforme">Imprimir</button>
         </div>
     
         <hr>
         <!-- Los 10 productos mas vendidos -->
         <div>
-            <h3>Los 10 productos más vendidos en el período</h3>
-            <div>
+            <h3>Los 10 productos más vendidos en el período (unidades)</h3>
+            <div>   
+                
+                <p v-show="false">{{ totalResumen.productos }}</p>
                 <apexchart width="600" type="bar" :options="chartOptionsTop10" :series="seriesTop10"></apexchart>
             </div>
         </div>

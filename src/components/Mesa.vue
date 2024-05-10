@@ -2,6 +2,9 @@
 // librerias
 import { ref, computed } from 'vue';
 
+// componentes de UI
+import ModalConfirmacion from './ModalConfirmacion.vue';
+
 // stores
 import { useMesasStore } from '../stores/mesas';
 import { useUserStore } from '../stores/users';
@@ -77,9 +80,10 @@ const colorEstado = computed(() => {  // cambia el color del estado de cada mesa
     <div class="card m-3 p-3" style="width: 18rem;">
         <div class="d-flex justify-content-between bg-primary-subtle">
             <p class="fw-bold bg-primary rounded-circle text-white py-2 px-3">{{ mesaInfo.mesaNum }}</p>
-            <div class="btn " v-if="puedeEliminar" @click="mesasStore.borrarMesa(mesaInfo.id)">
+            
+            <button type="button" class="btn" data-bs-toggle="modal" :data-bs-target="`#borrarMesa${mesaInfo.id}`" v-if="puedeEliminar">
                 <i class="bi bi-x fs-3 bg-danger rounded-circle px-1 text-light"></i>
-            </div>
+            </button>
         </div>
         <div class="card-body bg-primary-subtle">
             <img :src="mesaImg(mesaInfo)" :data-bs-toggle="mesaInfo.estado != 'ocupada' ? 'modal' : ''"
@@ -101,6 +105,17 @@ const colorEstado = computed(() => {  // cambia el color del estado de cada mesa
     <CrearOrden :modalId="`modal${mesaInfo.id}`" :mesaNum="mesaInfo.mesaNum" :mesaInfo="mesaInfo"
         @cambiarEstado="cambiarEstado">
     </CrearOrden>
+
+
+    <ModalConfirmacion 
+        :id="`borrarMesa${mesaInfo.id}`"
+        :titulo="`Borrar mesa ${mesaInfo.mesaNum}`"
+        :cuerpo="`Confirme si desea realmente eliminar la mesa numero ${mesaInfo.mesaNum}`"
+        color="danger"
+        textoBoton="Borrar mesa"
+        :param="mesaInfo.id"
+        @accion="mesasStore.borrarMesa"
+    />
 </template>
 
 <style>

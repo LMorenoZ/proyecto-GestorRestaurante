@@ -27,7 +27,8 @@ export const useUserStore = defineStore('users', {
   state: () => ({
     userData: null, // informacion del usuario de Authentication de Firebase
     userRol: null, // del objeto de informacion del usuario en la base de datos, solo para distinguir roles de usuarios
-    listaEmpleados: [], // lista de empleados que no son el admin
+    listaEmpleados: [], // lista de empleados que no son el admin,
+    trayendoEmpleados: false
   }),
   getters: {
     esAdmin(state) {
@@ -146,6 +147,7 @@ export const useUserStore = defineStore('users', {
       //   return;
       // } // si esta llena la lista, no se ejecuta de nuevo
       try {
+        this.trayendoEmpleados = true
         // no trae al usuario admin, porque no tiene el campo 'creation' en la coleccion de usuarios de la db
         const q = query(
           collection(db, 'empleado'),
@@ -165,6 +167,8 @@ export const useUserStore = defineStore('users', {
           'No se pueden mostrar los empleados'
         );
         console.log(error);
+      } finally {
+        this.trayendoEmpleados = false
       }
     },
     async deleteEmpleado(empleadoBorrar) {
