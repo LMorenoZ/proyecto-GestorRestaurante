@@ -143,9 +143,9 @@ export const useUserStore = defineStore('users', {
     // lista de todos los empleados (no se incluye al admin)
     async getEmpleados() {
       const mensajesStore = useMensajesStore();
-      // if (this.listaEmpleados.length > 0) {
-      //   return;
-      // } // si esta llena la lista, no se ejecuta de nuevo
+      if (this.listaEmpleados.length > 0) {
+        return;
+      } // si esta llena la lista, no se ejecuta de nuevo
       try {
         this.trayendoEmpleados = true
         // no trae al usuario admin, porque no tiene el campo 'creation' en la coleccion de usuarios de la db
@@ -213,5 +213,19 @@ export const useUserStore = defineStore('users', {
         console.log(error);
       }
     },
+    async actualizarUsuario(informacionActualizar, uid) {
+      try {
+        const docRef = doc(db, 'empleado', uid) 
+        await updateDoc(docRef, informacionActualizar)
+
+        // actualizar store
+        const indiceActualizar = this.listaEmpleados.findIndex(usuario => usuario.uid === uid)
+        const usuarioNoActualizado = this.listaEmpleados[indiceActualizar]
+        const usuarioActualizado = {...usuarioNoActualizado, ...informacionActualizar}
+        this.listaEmpleados[indiceActualizar] = usuarioActualizado
+      } catch (error) {
+        throw error
+      }
+    }
   },
 });

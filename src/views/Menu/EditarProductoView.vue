@@ -123,7 +123,7 @@ const actualizarProducto = async () => {
     try {
         // Primer paso consiste en comprobar si se ha cambiado la foto, y si es el caso, eliminarla y subir la nueva
         if (fotoActualizada.value) {
-            // crear referencia a la foto existene del producto en base a su URI en Storage para eliminarla
+            // crear referencia a la foto existente del producto en base a su URI en Storage para eliminarla
             const refFotoVieja = firebaseRef(storage, fotoOriginal.value)
 
             // se elimina la foto existente

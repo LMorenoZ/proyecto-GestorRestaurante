@@ -91,8 +91,8 @@ export const useProductosStore = defineStore('productos', {
                 const productoNoActualizado = this.productos[indiceActualizar]
                 const productoActualizado = {...productoNoActualizado, ...informacionActualizar}
                 this.productos[indiceActualizar] = productoActualizado
-            } catch {
-                console.log(error)
+            } catch (error) {
+                throw error
             }
         },
         async eliminarProducto(idProducto) {

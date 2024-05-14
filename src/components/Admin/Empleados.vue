@@ -33,6 +33,15 @@
         await userStore.deleteEmpleado(empleado);
         botonBorrarDesactivado.value = false;
     };
+
+    const puedeUtilizarBoton = (estadoEmpleado, accion) => {
+      let mensaje = null;
+      if (estadoEmpleado) {
+        mensaje = `Solo puede ${accion} empleados que no estén activos en este momento`
+      }
+
+      return mensaje
+    }
 </script>
 
 <!-- HTML del componente -->
@@ -66,18 +75,22 @@
               <td :style="{ color: empleado.logeado ? 'green' : 'red' }">{{ empleado.logeado ? 'Activo' : 'No activo' }}</td>
               <td>
                 <div class="btn-group" role="group">
-                  <button 
-                    class="btn btn-danger btn-sm fs-4"  
-                    data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
-                    :disabled="botonBorrarDesactivado"
-                    v-if="!jornadaStore.jornadaActiva"
-                  >
-                    <i class="bi bi-x"></i>
-                  </button>
-                  <!--  TODO: Implementar edicion de los trabajadores -->
-                  <button class="btn btn-secondary btn-sm fs-4" v-if="!jornadaStore.jornadaActiva">
-                    <i class="bi bi-pencil"></i>
-                  </button>
+                  <div :title="puedeUtilizarBoton(empleado.logeado, 'borrar')">
+                    <button 
+                      class="btn btn-danger btn-sm fs-4"  :class="{'disabled': empleado.logeado}"
+                      data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
+                      
+                      :disabled="botonBorrarDesactivado"
+                      v-if="!jornadaStore.jornadaActiva"
+                    >
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                  <div :title="puedeUtilizarBoton(empleado.logeado, 'editar')">
+                    <router-link class="btn btn-primary btn-sm fs-4" :class="{'disabled': empleado.logeado}"  :to="`/administracion/editar/${empleado.uid}`" >
+                      <i class="bi bi-pencil"></i>
+                    </router-link>
+                  </div>
                   <router-link class="btn btn-info btn-sm fs-4" :to="`/administracion/perfil/${empleado.uid}`">
                     <i class="bi bi-eye"></i>
                   </router-link>

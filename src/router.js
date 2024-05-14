@@ -67,7 +67,6 @@ const jornadaActivaGuard = async (to, from, next) => {
     }
 }
 
-
 const routes = [
     {
         path: '/',
@@ -117,6 +116,10 @@ const routes = [
             },
             { path: 'perfil/:id', 
                 components: {seccionAdmin: () => import('./views/AdminViews/UserProfileView.vue')}
+            },
+            { path: 'editar/:id', 
+                components: {seccionAdmin: () => import('./views/AdminViews/EditarUsuarioView.vue')},
+                beforeEnter: jornadaActivaGuard
             }
         ],
         beforeEnter: sesionAdmin

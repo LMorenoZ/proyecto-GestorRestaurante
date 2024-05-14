@@ -111,7 +111,7 @@ const crearNuevoEmpleado = async () => {
 
 }
 
-// formula que devuele un booleano dependiendo si todos los inputs estan rellenados o no
+// funcion que devuele un booleano dependiendo si todos los inputs estan rellenados o no
 const validacionInputs = () => {
     const formularioValidado = nombre.value && apellido.value && selectedFile.value && email.value && direccion.value && dui.value && tel.value && puesto.value && password.value && password.value.length >= 6
 
