@@ -5,6 +5,9 @@ import { USDollar } from '../../utilidades';
 import { useProductosStore } from '../../stores/productos';
 import { useMensajesStore } from '../../stores/mensajes';
 import { useJornadaStore } from '../../stores/jornada';
+import { storage } from '../../firebaseConfig';
+
+import { deleteObject, ref as firebaseRef } from 'firebase/storage';
 
 import ModalConfirmacion from '../ModalConfirmacion.vue';
 
@@ -14,9 +17,16 @@ const jornadaStore = useJornadaStore()
 
 const props = defineProps(['id', 'nombre', 'foto', 'desc', 'precio', 'tipo'])
 
-const borrarProducto = async (idProducto) => {
+const borrarProducto = async (productoBorrar) => {
   try {
-    await productosStore.eliminarProducto(idProducto)
+    // Borrar la foto de storage
+    const refFotoProducto = firebaseRef(storage, productoBorrar.foto)
+
+    // se elimina la foto existente
+    await deleteObject(refFotoProducto)
+
+    // borrar el producto de la coleccion de firestore
+    await productosStore.eliminarProducto(productoBorrar.id)
 
     mensajestore.crearMensaje({
       titulo: 'Producto eliminado',
@@ -70,7 +80,7 @@ const borrarProducto = async (idProducto) => {
         :cuerpo="`Está seguro que desea borrar el producto ${nombre} ¡Esta acción no se puede deshacer!`"
         color="danger"
         textoBoton="Borrar producto"
-        :param="id"
+        :param="{id, foto}"
         @accion="borrarProducto"
       />
   </template>

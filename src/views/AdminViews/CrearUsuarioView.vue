@@ -93,16 +93,16 @@ const crearNuevoEmpleado = async () => {
             texto: `El usuario para el empleado ${nombre.value} ${apellido.value} ha sido creado exitosamente. Comunicar la contraseña ${password.value}`,
             color: 'success',
             id: 'NuevoEmpleadoCreado',
-            autoEliminar: true
+            autoEliminar: false
         })
 
         // resetear el formulario
         limpiarInputs()
     } catch (error) {
-        mensajesStore.crearError({
-            id: 'ErrorCrearEmpleado',
-            texto: 'No se creó el empleado. El email ya existe o'
-        })
+        mensajesStore.crearError(
+            'ErrorCrearEmpleado',
+            'No se creó el empleado. El email ya existe o'
+        )
         console.log(error)
     } finally {
         desactivarBoton.value = false;
@@ -139,7 +139,7 @@ const limpiarInputs = () => {
         <h3 class="text-center my-4" >Crear nuevo usuario empleado:</h3>
 
         <div class="row align-items-start">
-            <form :class="clasesFormulario" @submit.prevent>
+            <form :class="clasesFormulario" @submit.prevent="crearNuevoEmpleado">
                 <div class="row">
                     <div class="col-sm-12 col-md-6">
                         <div class="imagePreviewWrapper border" :style="{ 'background-image': `url(${previewImage})` }"></div>
@@ -219,7 +219,6 @@ const limpiarInputs = () => {
                         <div class="d-flex justify-content-center ">
                             <button type="submit" id="btnCrearRegistro" class="btn  btn-outline-success" title="Click para crear registro"
                                 :disabled="desactivarBoton"
-                                @click="crearNuevoEmpleado"
                                 v-if="!creandoRegistro"
                             >
                                 Crear Registro

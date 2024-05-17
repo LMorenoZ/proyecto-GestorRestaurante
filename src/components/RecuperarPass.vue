@@ -18,7 +18,8 @@ const irALogin = () => {
 // TODO: Implementar mensajes para cada caso
 const enviarCorreo = async () => {
     try {
-        const resultado = await sendPasswordResetEmail(auth, email.value)
+        await sendPasswordResetEmail(auth, email.value)
+
         mensaje.value = 'Se ha enviado un correo electrónico con instrucciones para recuperar su contraseña.';
         email.value = '';
         error.value = '';

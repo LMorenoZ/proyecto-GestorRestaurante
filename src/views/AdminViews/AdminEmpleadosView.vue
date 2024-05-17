@@ -3,7 +3,6 @@
     import { useRouter } from 'vue-router';
 
     import { useUserStore } from '../../stores/users';
-    import { useMensajesStore } from '../../stores/mensajes';
     import { useJornadaStore } from '../../stores/jornada';
 
     // componentes de ui
@@ -11,7 +10,6 @@
     
 
     const userStore = useUserStore();
-    const mensajesStore = useMensajesStore();
     const jornadaStore = useJornadaStore()
     const router = useRouter()
 
@@ -38,7 +36,7 @@
         <Empleados :listaEmpleados="userStore.listaEmpleados" :botonBorrar="botonBorrarDesactivado" />
     </template>
     <div class="mt-4"  v-else="userStore.listaEmpleados.length === 0 ">
-        <h3 class="fs-3">No hay empleados todavía...</h3>
+        <h3 class="fs-3 text-center">No hay empleados todavía...</h3>
     </div>
     
 </template>

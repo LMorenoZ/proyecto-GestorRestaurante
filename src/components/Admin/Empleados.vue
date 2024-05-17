@@ -3,10 +3,13 @@
     // importaciones de vue
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
-
-    // stores de pinia
+    
+    // importaciones de stores y demas
     import { useUserStore } from '../../stores/users';
     import { useJornadaStore } from '../../stores/jornada';
+    import { useMensajesStore } from '../../stores/mensajes';
+    import { storage } from '../../firebaseConfig';
+    import { deleteObject, ref as firebaseRef } from 'firebase/storage';
 
     // Se importan componentes
     import ModalConfirmacion from '../ModalConfirmacion.vue'
@@ -14,23 +17,48 @@
     // props    que vienen de la vista padre 'AdminEmpleadosView.vue'
     const props = defineProps(['listaEmpleados'])
 
-
     // inicializando importaciones
     const router = useRouter()
 
     // inicializando stores
     const userStore = useUserStore()
     const jornadaStore = useJornadaStore()
+    const mensajesStore = useMensajesStore()
 
     // valores reactivos
     const botonBorrarDesactivado = ref(false)
 
     // funciones de utilidades
-    import { nombreUsuario } from '../../utilidades'
 
-    const borrarEmpleado = async (empleado) => {
+    const deshabilitarEmpleado = async (empleado) => {
         botonBorrarDesactivado.value = true;
-        await userStore.deleteEmpleado(empleado);
+
+        try {
+          // primer paso: borrar la foto Storage
+          const refFotoUsuario = firebaseRef(storage, empleado.foto)
+
+          // se elimina la foto de perfil
+          await deleteObject(refFotoUsuario)
+
+          // segundo paso: eliminar el registro del usuario de la coleccion de firestore
+          await userStore.deactivateEmpleado(empleado);
+          // const urlExterna = 'https://console.firebase.google.com/project/db-sistema-gestor/authentication/users'
+          // window.open(urlExterna, '_blank');
+          mensajesStore.crearMensaje({
+            titulo: 'Cuenta deshabilitada',
+            texto: `La cuenta del empleado ${empleado.email} fue deshabilitada exitosamente`,
+            color: 'secondary',
+            id: 'empladoEliminado',
+            autoEliminar: true,
+          });
+        } catch (error) {
+          mensajesStore.crearError(
+            'noEliminaEmpleado',
+            `No se pudo eliminar el empleado ${empleado.email}`
+          );
+          console.log(error);
+        }
+        
         botonBorrarDesactivado.value = false;
     };
 
@@ -77,13 +105,13 @@
                 <div class="btn-group" role="group">
                   <div :title="puedeUtilizarBoton(empleado.logeado, 'borrar')">
                     <button 
-                      class="btn btn-danger btn-sm fs-4"  :class="{'disabled': empleado.logeado}"
+                      class="btn btn-warning btn-sm fs-4"  :class="{'disabled': empleado.logeado}"
                       data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
                       
                       :disabled="botonBorrarDesactivado"
                       v-if="!jornadaStore.jornadaActiva"
                     >
-                      <i class="bi bi-x"></i>
+                      <i class="bi bi-ban"></i>
                     </button>
                   </div>
                   <div :title="puedeUtilizarBoton(empleado.logeado, 'editar')">
@@ -97,11 +125,11 @@
                 </div>
                 <ModalConfirmacion
                   :id="`modalBorrarEmpleado${empleado.uid}`"
-                  :titulo="`Borrar a ${nombreUsuario(empleado.email)}`"
-                  :cuerpo="`¿Está seguro que quiere eliminar al empleado ${nombreUsuario(empleado.email)}? Esta opción no se puede deshacer.`"
-                  texto-boton="Eliminar empleado"
-                  color="danger"
-                  @accion="borrarEmpleado"
+                  :titulo="`Deshabilitar al usuario ${empleado.email}`"
+                  :cuerpo="`¿Está seguro que desea deshabilitar al empleado ${empleado.nombre} ${empleado.apellido}? Esta opción no se puede deshacer`"
+                  texto-boton="Deshabilitar empleado"
+                  color="warning"
+                  @accion="deshabilitarEmpleado"
                   :param="empleado"
                 />
               </td>

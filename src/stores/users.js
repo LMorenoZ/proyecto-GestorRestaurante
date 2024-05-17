@@ -131,13 +131,14 @@ export const useUserStore = defineStore('users', {
         const nuevoEmpleado = {
           ...objUsuario,
           logeado: false,
+          uid: res.user.uid,
           creation: Timestamp.now(),
         };
 
         await setDoc(doc(db, 'empleado', res.user.uid), nuevoEmpleado);
         this.listaEmpleados.unshift(nuevoEmpleado);
       } catch (error) {
-        console.log(error);
+        throw error
       }
     },
     // lista de todos los empleados (no se incluye al admin)
@@ -171,32 +172,18 @@ export const useUserStore = defineStore('users', {
         this.trayendoEmpleados = false
       }
     },
-    async deleteEmpleado(empleadoBorrar) {
-      const mensajesStore = useMensajesStore();
+    async deactivateEmpleado (empleadoBorrar) {
       try {
-        // Borrando el empleado como tal
-        await signInWithEmailAndPassword(authCreacion, empleadoBorrar.email, empleadoBorrar.password);
-        const usuarioBorrar = await authCreacion.currentUser;
-        await deleteUser(usuarioBorrar);
-        // borran el registro del usuario en la coleccion de firestore
+        // Borrando el empleado de la coleccion de firestore
         await deleteDoc(doc(db, 'empleado', empleadoBorrar.uid));
 
-        mensajesStore.crearMensaje({
-          titulo: 'Cuenta borrada',
-          texto: `La cuenta del empleado ${empleadoBorrar.email} fue eliminada exitosamente`,
-          color: 'secondary',
-          id: 'empladoEliminado',
-          autoEliminar: true,
-        });
+        // aniadiendo el usuario a la lista de usuarios deshabilitados para que no pueda ingresar sesion
+        await addDoc(collection(db, 'usuariosDeshabilitados'), empleadoBorrar)
 
         // Borrando al empleado de la coleccion en firestore
         this.listaEmpleados = this.listaEmpleados.filter(empleado => empleado.uid !== empleadoBorrar.uid);
       } catch (error) {
-        mensajesStore.crearError(
-          'noEliminaEmpleado',
-          `No se pudo eliminar el empleado ${empleadoBorrar.email}`
-        );
-        console.log(error);
+          throw error
       }
     },
     async cambiarEstado(id, nuevoEstado) {

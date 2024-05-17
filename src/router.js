@@ -120,7 +120,7 @@ const routes = [
             { path: 'editar/:id', 
                 components: {seccionAdmin: () => import('./views/AdminViews/EditarUsuarioView.vue')},
                 beforeEnter: jornadaActivaGuard
-            }
+            },
         ],
         beforeEnter: sesionAdmin
     },
