@@ -130,3 +130,10 @@ export const ordenarArrayPorNombre = arrayObjetos => {
     // Devuelve el array ordenado
     return arrayOrdenado;
   }
+
+  // mensaje de "title" que aparece cuando el administrador coloca el mouse sobre un elemento cuando una condicion esta activa
+  export const titleElemento = (mensaje, condicion) => {
+    if (condicion) {
+      return mensaje
+    }
+  }

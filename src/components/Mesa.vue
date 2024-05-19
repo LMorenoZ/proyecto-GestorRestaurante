@@ -8,6 +8,9 @@ import ModalConfirmacion from './ModalConfirmacion.vue';
 // stores
 import { useMesasStore } from '../stores/mesas';
 import { useUserStore } from '../stores/users';
+import { useJornadaStore } from '../stores/jornada';
+
+import { titleElemento } from '../utilidades';
 
 // componentes de interfaz
 import CrearOrden from '../components/CrearOrden.vue';
@@ -15,6 +18,7 @@ import CrearOrden from '../components/CrearOrden.vue';
 // inicializando stores
 const mesasStore = useMesasStore();
 const userStore = useUserStore();
+const jornadaStore = useJornadaStore()
 
 // definiendo los props del componente
 const props = defineProps(['mesaInfo']);
@@ -57,11 +61,6 @@ const mesaImg = mesaEstado => {   // cambia la imagen de la mesa segun el estado
     return imagen;
 };
 
-const puedeEliminar = computed(() => {  // determina si se cumplen las condiciones para que el usuario elimine las mesas
-    let res = (userStore.userData?.email === 'admin@test.com') && (props.mesaInfo.estado !== 'ocupada');
-    return res;
-});
-
 const cambiarColorEstado = () => {
     let color = "";
     if (estadoMesa.value == 'libre') { color = 'text-primary fw-bolder';} 
@@ -80,10 +79,11 @@ const colorEstado = computed(() => {  // cambia el color del estado de cada mesa
     <div class="card m-3 p-3" style="width: 18rem;">
         <div class="d-flex justify-content-between bg-primary-subtle">
             <p class="fw-bold bg-primary rounded-circle text-white py-2 px-3">{{ mesaInfo.mesaNum }}</p>
-            
-            <button type="button" class="btn" data-bs-toggle="modal" :data-bs-target="`#borrarMesa${mesaInfo.id}`" v-if="puedeEliminar">
-                <i class="bi bi-x fs-3 bg-danger rounded-circle px-1 text-light"></i>
-            </button>
+            <div :title="titleElemento('No puede eliminar la mesa con la jornada activa', jornadaStore.jornadaActiva)">
+                <button type="button" class="btn" style="border: none;" data-bs-toggle="modal" :data-bs-target="`#borrarMesa${mesaInfo.id}`" v-if="userStore.userRol === 'admin'" :disabled="jornadaStore.jornadaActiva">
+                    <i class="bi bi-x fs-3 bg-danger rounded-circle px-1 text-light"></i>
+                </button>
+            </div>
         </div>
         <div class="card-body bg-primary-subtle">
             <img :src="mesaImg(mesaInfo)" :data-bs-toggle="mesaInfo.estado != 'ocupada' ? 'modal' : ''"

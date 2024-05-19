@@ -13,6 +13,7 @@
 
     // Se importan componentes
     import ModalConfirmacion from '../ModalConfirmacion.vue'
+    import { titleElemento } from '../../utilidades';
 
     // props    que vienen de la vista padre 'AdminEmpleadosView.vue'
     const props = defineProps(['listaEmpleados'])
@@ -61,15 +62,6 @@
         
         botonBorrarDesactivado.value = false;
     };
-
-    const puedeUtilizarBoton = (estadoEmpleado, accion) => {
-      let mensaje = null;
-      if (estadoEmpleado) {
-        mensaje = `Solo puede ${accion} empleados que no estén activos en este momento`
-      }
-
-      return mensaje
-    }
 </script>
 
 <!-- HTML del componente -->
@@ -103,19 +95,17 @@
               <td :style="{ color: empleado.logeado ? 'green' : 'red' }">{{ empleado.logeado ? 'Activo' : 'No activo' }}</td>
               <td>
                 <div class="btn-group" role="group">
-                  <div :title="puedeUtilizarBoton(empleado.logeado, 'borrar')">
+                  <div :title="titleElemento('Solo puede borrar empleados que no estén activos en este momento y cuando no hay jornada activa', empleado.logeado ||  jornadaStore.jornadaActiva)">
                     <button 
                       class="btn btn-warning btn-sm fs-4"  :class="{'disabled': empleado.logeado}"
                       data-bs-toggle="modal" :data-bs-target="`#modalBorrarEmpleado${empleado.uid}`"
-                      
-                      :disabled="botonBorrarDesactivado"
-                      v-if="!jornadaStore.jornadaActiva"
+                      :disabled="botonBorrarDesactivado || jornadaStore.jornadaActiva"
                     >
                       <i class="bi bi-ban"></i>
                     </button>
                   </div>
-                  <div :title="puedeUtilizarBoton(empleado.logeado, 'editar')">
-                    <router-link class="btn btn-primary btn-sm fs-4" :class="{'disabled': empleado.logeado}"  :to="`/administracion/editar/${empleado.uid}`" >
+                  <div :title="titleElemento('Solo puede editar empleados que no estén activos en este momento y cuando no hay jornada activa', empleado.logeado ||  jornadaStore.jornadaActiva)">
+                    <router-link class="btn btn-primary btn-sm fs-4" :class="{'disabled': empleado.logeado || jornadaStore.jornadaActiva}"  :to="`/administracion/editar/${empleado.uid}`" >
                       <i class="bi bi-pencil"></i>
                     </router-link>
                   </div>

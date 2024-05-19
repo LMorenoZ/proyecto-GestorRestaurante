@@ -11,6 +11,7 @@ import { useJornadaStore } from '../../stores/jornada';
 // importando componentes de ui
 import MenuItem from '../../components/Menu/MenuItem.vue';
 import ModalConfirmacion from '../../components/ModalConfirmacion.vue'
+import { titleElemento } from '../../utilidades';
 
 // Incializando importaciones
 const router = useRouter()
@@ -116,15 +117,23 @@ const borrarCategoria = async (categoria) => {
         console.log(error)
     } 
 }
+
 </script>
 
 <template>
     <h1>Lista de productos</h1>
     <!-- Boton para que redirige a vista para crear nuevo producto -->
-    <button class="btn btn-success" @click="router.push('/menu/nuevo')" v-if="!jornadaStore.jornadaActiva">Nuevo producto</button>
+    <div class="d-flex justify-content-center mt-4">
+        <div class="m-2" :title="titleElemento('No puede crear nuevos productos con la jornada activa', jornadaStore.jornadaActiva)">
+            <button class="btn btn-success" @click="router.push('/menu/nuevo')" :disabled="jornadaStore.jornadaActiva">Nuevo producto</button>
+        </div>
 
-    <!-- Boton para crear nueva categoria de productos -->
-    <button class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria" v-if="!jornadaStore.jornadaActiva">Crear nueva categoría</button>
+        <!-- Boton para crear nueva categoria de productos -->
+        <div class="m-2" :title="titleElemento('No puede crear nuevas categorías de productos con la jornada activa', jornadaStore.jornadaActiva)">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria" :disabled="jornadaStore.jornadaActiva"  >Crear nueva categoría</button>
+
+        </div>
+    </div>
     
     <!-- Seleccion para elegir que producto, disponibles o no disponibles, se mostraran -->
     <div class="mt-2 d-flex justify-content-end">
@@ -189,8 +198,8 @@ const borrarCategoria = async (categoria) => {
                             </div>
                             
                         </div>
-                        <div class="d-flex justify-content-center mt-4" v-if="!jornadaStore.jornadaActiva">
-                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" :data-bs-target="`#categoriaBorrar${tipo.id}`">
+                        <div class="d-flex justify-content-center mt-4" :title="titleElemento('No puede borrar categorías de productos con la jornada activa', jornadaStore.jornadaActiva)">
+                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" :data-bs-target="`#categoriaBorrar${tipo.id}`" :disabled="jornadaStore.jornadaActiva">
                                 Borrar la categoría '{{tipo.nombre}}'
                             </button>
                         </div>

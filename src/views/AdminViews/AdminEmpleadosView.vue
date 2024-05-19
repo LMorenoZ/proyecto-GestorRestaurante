@@ -7,6 +7,8 @@
 
     // componentes de ui
     import Empleados from '../../components/Admin/Empleados.vue';
+
+    import { titleElemento } from '../../utilidades';
     
 
     const userStore = useUserStore();
@@ -15,13 +17,14 @@
 
     // constantes reactivas 
     const botonBorrarDesactivado = ref(false);
+
 </script>
 
 <template>
     <h1>Administracion de Empleados</h1>
-    <div class="vw-auto my-3 d-flex justify-content-center" v-if="!jornadaStore.jornadaActiva">
+    <div class="vw-auto my-3 d-flex justify-content-center" :title="titleElemento('No puede crear un empleado con la jornada activa', jornadaStore.jornadaActiva)">
         <!-- Boton que redirige a vista para crear nuevo empleado -->
-        <button type="button" class="btn btn-primary mt-2" @click="router.push('crear_usuario')">Crear nuevo empleado</button>
+        <button type="button" class="btn btn-primary mt-2" @click="router.push('crear_usuario')"  :disabled="jornadaStore.jornadaActiva">Crear nuevo empleado</button>
     </div>
 
     <!-- Lista de empleados -->
