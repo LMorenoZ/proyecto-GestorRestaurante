@@ -24,7 +24,7 @@ const nombreProd = ref(null)
 const descProd = ref(null)
 const precioProd = ref(null)
 const tipoProd = ref(null)
-const disponibilidadProd = ref(true)
+const disponibilidadProd = ref(true)  // 0: desechado  -  1: no disponible  -    2: disponible
 
 const creandoProducto = ref(false)
 const formularioNoValido = ref(false)
@@ -150,8 +150,8 @@ const crearProducto = async () => {
                     <div class="input-group mb-3">
                         <select class="form-select" v-model="disponibilidadProd" required>
                             <option value="" disabled>Elija una opción</option>
-                            <option :value="true" selected>Disponible</option>
-                            <option :value="false">No disponible</option>
+                            <option :value="2" selected>Disponible</option>
+                            <option :value="1">No disponible</option>
                         </select>
 
                         <div class="invalid-feedback">

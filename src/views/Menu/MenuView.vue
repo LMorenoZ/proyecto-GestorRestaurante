@@ -22,7 +22,7 @@ const jornadaStore = useJornadaStore()
 // variables reactivas
 const modalRef = ref(null)
 const productos = ref(productosStore.productos) 
-const mostrarDisponibles = ref(true)
+const mostrarDisponibles = ref(2)   // 2: disponible  -   1: no disponible
 const nombreTipoProductos = computed(() => {
     const listaNombre = []
 
@@ -138,12 +138,12 @@ const borrarCategoria = async (categoria) => {
     <!-- Seleccion para elegir que producto, disponibles o no disponibles, se mostraran -->
     <div class="mt-2 d-flex justify-content-end">
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineDisponibles" :value="true" v-model="mostrarDisponibles" checked>
-            <label class="form-check-label" :class="{ 'fw-bold': mostrarDisponibles }" for="inlineDisponibles">Productos disponibles</label>
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineDisponibles" :value="2" v-model="mostrarDisponibles" checked>
+            <label class="form-check-label" :class="{ 'fw-bold': mostrarDisponibles === 2 }" for="inlineDisponibles">Productos disponibles</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineNoDisponibles" :value="false" v-model="mostrarDisponibles">
-            <label class="form-check-label" :class="{ 'fw-bold': !mostrarDisponibles}" for="inlineNoDisponibles">Productos no disponibles</label>
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineNoDisponibles" :value="1" v-model="mostrarDisponibles">
+            <label class="form-check-label" :class="{ 'fw-bold': mostrarDisponibles === 1}" for="inlineNoDisponibles">Productos no disponibles</label>
         </div>
     </div>
 
@@ -178,11 +178,11 @@ const borrarCategoria = async (categoria) => {
                     <div :class="`tab-pane ${esPrimerElemento(index, 'show active')}`" :id="`v-pills-${tipo.id}`" role="tabpanel"
                         :aria-labelledby="`v-pills-${tipo.id}-tab`" :tabindex="`${index + 1}`">
                         <div class="d-flex flex-wrap">
-                            
+                    
                             <template v-if="hayProductos(productosStore.productos, tipo, mostrarDisponibles)">
 
                                 <template v-for="producto in productosStore.productos" :key="producto.id">
-                                    <template v-if="(producto.tipo === tipo.nombre) && (producto.disponible === mostrarDisponibles)">
+                                    <template v-if="(producto.tipo === tipo.nombre) && (producto.disponible == mostrarDisponibles)">
 
                                         
                                         <MenuItem :id="producto.id" :nombre="producto.nombre" :desc="producto.desc"
@@ -194,7 +194,7 @@ const borrarCategoria = async (categoria) => {
 
                             </template>
                             <div v-else>
-                                <h4 class="text-center text-secondary">No hay productos '{{ tipo.nombre }}'' que actualmente sean {{ mostrarDisponibles ? 'disponibles' : 'no disponibles' }}</h4>
+                                <h4 class="text-center text-secondary">No hay productos '{{ tipo.nombre }}'' que actualmente sean {{ mostrarDisponibles === 2 ? 'disponibles' : 'no disponibles' }}</h4>
                             </div>
                             
                         </div>

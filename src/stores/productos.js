@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy } from "firebase/firestore/lite";
+import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy, where } from "firebase/firestore/lite";
 import { db } from '../firebaseConfig';
 
 import { ordenarArrayPorNombre } from '../utilidades.js'
@@ -21,13 +21,15 @@ export const useProductosStore = defineStore('productos', {
             // if (this.productos.length > 0) return  // no ejecuta el codigo si ya se ha llamado previamente
             
             try {
-                const q = query(collection(db, 'menu'), orderBy('nombre', 'asc'));
+                // const q = query(collection(db, 'menu'),  orderBy('nombre', 'asc'));
+                const q = query(collection(db, 'menu'), where('disponible', 'in', [1, 2]));
                 const querySnapshot = await getDocs(q);
 
                 // limpiar el array 
                 this.productos.length = 0 
 
                 querySnapshot.forEach(elem => this.productos.push({...elem.data(), id: elem.id}));
+                this.productos = ordenarArrayPorNombre(this.productos)
             } catch (error) {
                 mensajesStore.crearError('noTraerMenu', 'No se pudo recuperar la información del menú');
                 console.log(error);
@@ -97,7 +99,10 @@ export const useProductosStore = defineStore('productos', {
         },
         async eliminarProducto(idProducto) {
             try {
-                await deleteDoc(doc(db, 'menu', idProducto));
+                // await deleteDoc(doc(db, 'menu', idProducto));
+                // Se desecha el producto pero no se borra de la base de datos, para seguir utilizandolo para crear informes
+                const docRef = doc(db, 'menu', idProducto)
+                await updateDoc(docRef, {disponible: 0})
 
                 // actualizar el UI eliminando el elemento de este store
                 this.productos = this.productos.filter(prod => prod.id !== idProducto)

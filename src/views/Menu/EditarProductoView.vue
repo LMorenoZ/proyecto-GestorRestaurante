@@ -32,7 +32,7 @@ const tiposProductos = productosStore.listarTipoProductos
 const nombre = ref(null)
 const descripcion = ref(null)
 const precio = ref(null)
-const disponibilidad = ref(null)
+const disponibilidad = ref(null)  // 0: desechado  -  1: no disponible  -    2: disponible
 const tipo = ref(null)
 const foto = ref(null)  // url de la imagen en Storage
 
@@ -269,8 +269,8 @@ const validarFormulario = () => {
                         <label class="input-group-text" for="elegirDisponibilidad">Disponibilidad:</label>
                         <select class="form-select" id="elegirDisponibilidad" v-model="disponibilidad" required>
                             <option value="" disabled>Elija una opción</option>
-                            <option :value="true" :selected="disponibilidad">Disponible</option>
-                            <option :value="false" :selected="!disponibilidad">No disponible</option>
+                            <option :value="2" :selected="disponibilidad === 2">Disponible</option>
+                            <option :value="1" :selected="disponibilidad === 1">No disponible</option>
                         </select>
     
                         <div class="invalid-feedback">

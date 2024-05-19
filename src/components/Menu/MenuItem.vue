@@ -25,7 +25,7 @@ const borrarProducto = async (productoBorrar) => {
     // se elimina la foto existente
     await deleteObject(refFotoProducto)
 
-    // borrar el producto de la coleccion de firestore
+    // poner el producto en estado deschado (0)
     await productosStore.eliminarProducto(productoBorrar.id)
 
     mensajestore.crearMensaje({
@@ -57,7 +57,7 @@ const borrarProducto = async (productoBorrar) => {
             <img :src="foto" :alt="nombre" class="menu-card__image-item">
           </div>
 
-          <div class="menu-card__icon bg-danger" title="Borrar" data-bs-toggle="modal" :data-bs-target="`#borrarProductoModal${id}`" v-if="!jornadaStore.jornadaActiva">
+          <div class="menu-card__icon bg-danger" title="Desechar" data-bs-toggle="modal" :data-bs-target="`#borrarProductoModal${id}`" v-if="!jornadaStore.jornadaActiva">
             <span class="badge btn text-bg-danger"><i class="bi bi-trash"></i></span>
           </div>
         </div> 
@@ -76,10 +76,10 @@ const borrarProducto = async (productoBorrar) => {
 
       <ModalConfirmacion 
         :id="`borrarProductoModal${id}`"
-        titulo="Borrar producto"
-        :cuerpo="`Está seguro que desea borrar el producto ${nombre} ¡Esta acción no se puede deshacer!`"
+        titulo="Desechar producto"
+        :cuerpo="`¿Está seguro que desea desechar el producto ${nombre}? ¡Esta acción no se puede deshacer!`"
         color="danger"
-        textoBoton="Borrar producto"
+        textoBoton="Desechar producto"
         :param="{id, foto}"
         @accion="borrarProducto"
       />
