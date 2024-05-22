@@ -13,6 +13,7 @@ import Alerta from './Alertas/Alerta.vue';
 
 // instancias de stores
 const userStore = useUserStore();
+const mensajesStore = useMensajesStore()
 //-------------------------------------------------
 
 // variables reactvias
@@ -21,6 +22,8 @@ const pass = ref('123456');
 
 // variable reactiva para mostrar el alert de erro de iniciar sesion
 let hayError = ref(false);
+const errorTitulo = ref()
+const errorMensaje = ref()
 
 // variable normal para saber si el alert de error ha sido cerrado
 const borrarError = () => {
@@ -30,6 +33,13 @@ const borrarError = () => {
 // metodos
 const ingresar = async (correo, contra) => {
   try {
+    // lo primero es comprobar que el usuario no este deshabilitado
+    // si la funcion arroja positivo, significa que el usuario esta en la lista de deshabilitados y no debera poder ingrasar sesion
+    const usuarioBaneado = await userStore.comprobarStatusEmpleado(correo);
+    if(usuarioBaneado) {
+      throw new Error('Usuario deshabilitado')
+    }
+
     await userStore.loginUser(correo, contra);
     // redirecciona al usuario a la vista mas apropiada para su rol
     if (userStore.userRol === 'Mesero') {
@@ -41,12 +51,21 @@ const ingresar = async (correo, contra) => {
     }
   } catch (error) {
     hayError.value = true;
+
+    if(error.message === 'Usuario deshabilitado') {
+      errorTitulo.value = 'Usuario deshabilitado'
+      errorMensaje.value = 'El usuario al que está intentando acceder ha sido deshabilitado por el administrador'
+    } else {
+      errorTitulo.value = 'Error al intentar iniciar sesión'
+      errorMensaje.value = 'Credenciales erróneas o algún un problema en el servidor'
+    }
     console.log(error);
   }
 };
 
 // importar imagen del formulario de login
 import LaurelesLogo from '../assets/LogoMD.jpg'
+import { useMensajesStore } from '../stores/mensajes';
 
 // emits que vienen de la vista Home
 const emit = defineEmits(['cambiarFormulario'])
@@ -67,8 +86,8 @@ const recuperarPass = () => {
             <Alerta
               @click="borrarError"
               v-if="hayError"
-              titulo="Error al intentar iniciar sesión"
-              texto="Credenciales erróneas o algún un problema en el servidor"
+              :titulo="errorTitulo"
+              :texto="errorMensaje"
               color="danger"
             />
 

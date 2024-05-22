@@ -28,6 +28,7 @@ export const useUserStore = defineStore('users', {
     userData: null, // informacion del usuario de Authentication de Firebase
     userRol: null, // del objeto de informacion del usuario en la base de datos, solo para distinguir roles de usuarios
     listaEmpleados: [], // lista de empleados que no son el admin,
+    listaEmpleadosDeshabilitados: [],
     trayendoEmpleados: false
   }),
   getters: {
@@ -172,6 +173,18 @@ export const useUserStore = defineStore('users', {
         this.trayendoEmpleados = false
       }
     },
+    async getEmpleadosDeshabilitados() {
+      try {
+        const q = query(collection(db, 'usuariosDeshabilitados'));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((empleado) => {
+          this.listaEmpleadosDeshabilitados.push({ ...empleado.data(), uid: empleado.id });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async deactivateEmpleado (empleadoBorrar) {
       try {
         // Borrando el empleado de la coleccion de firestore
@@ -213,6 +226,8 @@ export const useUserStore = defineStore('users', {
       } catch (error) {
         throw error
       }
-    }
+    },
+    // simple combrobacion de que el usuario que quiere iniciar sesion no esta deshabilitado por haber el administrador borrado su cuenta
+    async comprobarStatusEmpleado(correoUsuario) { return this.listaEmpleadosDeshabilitados.some(usuario => usuario.email === correoUsuario) }
   },
 });
