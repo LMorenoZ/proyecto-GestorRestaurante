@@ -2,7 +2,7 @@
 import { computed, onBeforeMount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '../../firebaseConfig';
-import { doc, getDoc } from "firebase/firestore/lite";
+import { doc, getDoc } from "firebase/firestore";
 import { useUserStore } from '../../stores/users';
 import { useMensajesStore } from '../../stores/mensajes';
 import { fechaFormateada } from '../../utilidades';

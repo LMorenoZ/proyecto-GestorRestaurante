@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc, where } from 'firebase/firestore/lite';
+import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc, where } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useMensajesStore } from "./mensajes";
 

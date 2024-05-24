@@ -11,9 +11,11 @@ import {
   getDoc,
   updateDoc,
   setDoc,
-} from 'firebase/firestore/lite';
+  onSnapshot
+} from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useMensajesStore } from './mensajes';
+
 
 export const useOrdenesStore = defineStore('ordenesStore', {
   state: () => ({
@@ -51,15 +53,26 @@ export const useOrdenesStore = defineStore('ordenesStore', {
       this.cargando = true;
       const mensajesStore = useMensajesStore();
       try {
-        const q = query(
-          collection(db, 'orden'),
-          orderBy('fechaCreacion', 'desc')
-        );
-        const querySnapshot = await getDocs(q);
+        // const q = query(
+        //   collection(db, 'orden'),
+        //   orderBy('fechaCreacion', 'desc')
+        // );
+        // const querySnapshot = await getDocs(q);
 
-        this.ordenes = []; // se borran todas las ordenes
-        await querySnapshot.forEach((orden) => {
-          this.ordenes.push({ ...orden.data(), id: orden.id });
+        // this.ordenes = []; // se borran todas las ordenes
+        // await querySnapshot.forEach((orden) => {
+        //   this.ordenes.push({ ...orden.data(), id: orden.id });
+        // });
+
+        // const q = query(collection(db, 'orden'), orderBy('fechaCreacion', 'desc'));
+
+        // onSnapshot(q, querySnapshot => {
+        onSnapshot(collection(db, 'orden'), querySnapshot => {
+          const ordenesSnapshot = []
+          querySnapshot.forEach(orden => {
+            ordenesSnapshot.push({...orden.data(), id: orden.id});
+          });
+          this.ordenes = ordenesSnapshot
         });
       } catch (error) {
         mensajesStore.crearError(

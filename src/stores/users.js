@@ -19,7 +19,7 @@ import {
   getDoc,
   updateDoc,
   setDoc,
-} from 'firebase/firestore/lite';
+} from 'firebase/firestore';
 import router from '../router';
 import { useMensajesStore } from './mensajes';
 

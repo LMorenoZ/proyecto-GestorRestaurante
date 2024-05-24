@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy, where } from "firebase/firestore/lite";
+import { collection, getDocs, getDoc, query, updateDoc, doc, addDoc, deleteDoc, Timestamp, orderBy, where } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
 import { ordenarArrayPorNombre } from '../utilidades.js'
