@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useMensajesStore } from './mensajes';
 
@@ -17,12 +17,22 @@ export const useMesasStore = defineStore('mesasStore', {
         async traerMesas() {
             const mensajesStore = useMensajesStore();
             try {
-                const q = query(collection(db, 'mesa'), orderBy("mesaNum", "asc"));
-                const querySnapshot = await getDocs(q);
+                // const q = query(collection(db, 'mesa'), orderBy("mesaNum", "asc"));
+                // const querySnapshot = await getDocs(q);
             
-                this.mesas = []; // elimina el contenido del array para no duplicar datos
-                querySnapshot.forEach(mesa => {
-                    this.mesas.push({...mesa.data(), id: mesa.id});
+                // this.mesas = []; // elimina el contenido del array para no duplicar datos
+                // querySnapshot.forEach(mesa => {
+                //     this.mesas.push({...mesa.data(), id: mesa.id});
+                // });
+                const q = query(collection(db, 'mesa'), orderBy("mesaNum", "asc"))
+
+                onSnapshot(q, querySnapshot => {
+                    const mesasSnapshot = []
+                    querySnapshot.forEach(mesa => {
+                      mesasSnapshot.push({...mesa.data(), id: mesa.id});
+                    });
+                    this.mesas = mesasSnapshot
+                    this.ordenarMesas()
                 });
             } catch (error) {
                 mensajesStore.crearError('noTraeMesas', 'No se pudo traer las mesas');
@@ -50,9 +60,9 @@ export const useMesasStore = defineStore('mesasStore', {
                 const { id } = await addDoc(collection(db, 'mesa'), mesaNueva);
 
                 // actualizando el store
-                mesaNueva.id = id
-                this.mesas.push(mesaNueva)
-                this.ordenarMesas()
+                // mesaNueva.id = id
+                // this.mesas.push(mesaNueva)
+                // this.ordenarMesas()
             } catch(error) {
                 console.log(error);
             }

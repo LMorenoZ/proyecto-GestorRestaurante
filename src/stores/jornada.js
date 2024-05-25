@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { Timestamp, query, collection, doc, getDocs, addDoc, orderBy, deleteDoc, getDoc, updateDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useOrdenesStore } from './ordenes';
 import { useMensajesStore } from './mensajes';
@@ -39,10 +39,13 @@ export const useJornadaStore = defineStore('jornada', {
         }, 
         async estadoJornada() {
             const mensajesStore = useMensajesStore();
-            try {
-                const docRef = doc(db, "jornada", "estadoId");
-                const docSnap = await getDoc(docRef);
-                this.jornadaActiva = docSnap.data().jornadaActiva;
+            try {                
+                const q = doc(db, "jornada", "estadoId");
+
+                onSnapshot(q, documentSnapshot=> {
+                    this.jornadaActiva = documentSnapshot.data().jornadaActiva
+                    }
+                )
             } catch (error) {
                 mensajesStore.crearError('noComprobacionJornada', 'No se pudo comprobar el estado de la jornada');
                 console.log(error);

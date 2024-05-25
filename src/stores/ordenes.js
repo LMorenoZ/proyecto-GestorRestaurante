@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useMensajesStore } from './mensajes';
+import { printf } from '../utilidades';
 
 
 export const useOrdenesStore = defineStore('ordenesStore', {
@@ -53,27 +54,18 @@ export const useOrdenesStore = defineStore('ordenesStore', {
       this.cargando = true;
       const mensajesStore = useMensajesStore();
       try {
-        // const q = query(
-        //   collection(db, 'orden'),
-        //   orderBy('fechaCreacion', 'desc')
-        // );
-        // const querySnapshot = await getDocs(q);
-
-        // this.ordenes = []; // se borran todas las ordenes
-        // await querySnapshot.forEach((orden) => {
-        //   this.ordenes.push({ ...orden.data(), id: orden.id });
-        // });
-
-        // const q = query(collection(db, 'orden'), orderBy('fechaCreacion', 'desc'));
-
-        // onSnapshot(q, querySnapshot => {
-        onSnapshot(collection(db, 'orden'), querySnapshot => {
+        const q = query(collection(db, 'orden'), orderBy('fechaCreacion', 'desc'));
+        onSnapshot(q, querySnapshot => {
+     
           const ordenesSnapshot = []
+          
           querySnapshot.forEach(orden => {
             ordenesSnapshot.push({...orden.data(), id: orden.id});
           });
           this.ordenes = ordenesSnapshot
+          this.ordenes.sort((ordenA, ordenB) => ordenB.fechaCreacion - ordenA.fechaCreacion)
         });
+
       } catch (error) {
         mensajesStore.crearError(
           'noSePudoTraerOrdenes',
@@ -101,7 +93,7 @@ export const useOrdenesStore = defineStore('ordenesStore', {
 
         // actualizar store
         ordenNueva.id = id
-        this.ordenes.push(ordenNueva)
+        // this.ordenes.push(ordenNueva)
         this.ordenes.sort((ordenA, ordenB) => ordenB.fechaCreacion - ordenA.fechaCreacion)
       } catch (error) {
         mensajesStore.crearError('ordenNoSeCrea', `No se pudo crear la órden`);

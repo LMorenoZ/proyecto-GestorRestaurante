@@ -27,10 +27,12 @@ const horaActual = horaFormateada(new Date());
     <h1>Órdenes</h1>
 
     <!-- Botón para terminar jornada -->
-    <button class="btn btn-secondary col-sm-8 col-md-3 ml-auto" data-bs-toggle="modal" data-bs-target="#modalCerrarJornada"
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-info fs-5 col-sm-8 col-md-3 ml-auto" data-bs-toggle="modal" data-bs-target="#modalCerrarJornada"
         v-if="userStore.esAdmin && jornadaStore.jornadaValor">
         Terminar jornada
     </button>
+    </div>
     
 
     <ModalConfirmacion id="modalCerrarJornada" titulo="Cerrar jornada"

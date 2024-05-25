@@ -78,7 +78,6 @@ const crearOrden = () => {
     }
 
     for (const productoId in cantidades.value) {
-        // console.log(`${productoId}: ${cantidades.value[productoId]}`);
         if (cantidades.value[productoId] > 0) {
             ordenObjeto.productos.push({
                 idProducto: productoId,
