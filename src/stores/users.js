@@ -52,7 +52,7 @@ export const useUserStore = defineStore('users', {
         await this.getRolUsuario(user);
 
         // asignando la informacion del usuario logeado de Authentication
-        this.userData = { email: user.email, uid: user.uid };
+        this.userData = { ...this.userData, email: user.email, uid: user.uid };
 
         // poniendo el estado logeado a activo en el objeto del usuario en la base de datos
         this.cambiarEstado(user.uid, true); // true: usuario logeado
@@ -79,8 +79,10 @@ export const useUserStore = defineStore('users', {
       const docSnap = await getDoc(docRefUsuario);
 
       if (docSnap.exists()) {
-        const { puesto } = docSnap.data();
+        const { puesto, nombre } = docSnap.data();
+        this.userData = { nombre }
         this.userRol = puesto;
+        // console.log(this.userData)
       } else {
         console.log('Usuario no encontrado');
         throw new Error('Usuario no encontrado');
@@ -96,7 +98,9 @@ export const useUserStore = defineStore('users', {
         this.userRol = null; // rol del usuario
 
         // poniendo el estado logeado a false en el objeto del usuario en la base de datos
-        this.cambiarEstado(idUsuario, false); // false: deslogeado
+        if (!this.esAdmin) {
+          this.cambiarEstado(idUsuario, false); // false: deslogeado
+        }
 
         router.push('/');
       } catch (error) {
@@ -109,8 +113,8 @@ export const useUserStore = defineStore('users', {
       return new Promise((resolve, reject) => {
         unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
-            this.userData = { email: user.email, uid: user.uid };
             await this.getRolUsuario(user);
+            this.userData = { ...this.userData, email: user.email, uid: user.uid };
           } else {
             this.userData = null;
             this.userRol = null;

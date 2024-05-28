@@ -93,7 +93,6 @@ export const useOrdenesStore = defineStore('ordenesStore', {
 
         // actualizar store
         ordenNueva.id = id
-        // this.ordenes.push(ordenNueva)
         this.ordenes.sort((ordenA, ordenB) => ordenB.fechaCreacion - ordenA.fechaCreacion)
       } catch (error) {
         mensajesStore.crearError('ordenNoSeCrea', `No se pudo crear la órden`);

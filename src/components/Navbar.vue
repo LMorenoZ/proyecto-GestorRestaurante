@@ -35,7 +35,7 @@ const fechaHoy = computed(() => {
       </router-link>
 
       <!-- Username -->
-      <span class="nav-link text-light d-none d-lg-inline-block">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
+      <span class="nav-link text-light d-none d-lg-inline-block">Bienvenido {{ userStore.userData.nombre }}</span>
 
       <!-- Sidebar Toggle btn -->
       <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas"
@@ -52,7 +52,7 @@ const fechaHoy = computed(() => {
             <img :src="logoImg" alt="" width="30" height="24">
           </router-link>
 
-          <span class="nav-link text-dark">Bienvenido {{ nombreUsuario(userStore.userData.email) }}</span>
+          <span class="nav-link text-dark">Bienvenido {{ userStore.userData.nombre }}</span>
           <button type="button" class="btn-close btn-close-dark shadow-none" data-bs-dismiss="offcanvas"
             aria-label="Close"></button>
         </div>
