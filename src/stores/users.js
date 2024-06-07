@@ -19,6 +19,7 @@ import {
   getDoc,
   updateDoc,
   setDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import router from '../router';
 import { useMensajesStore } from './mensajes';
@@ -154,18 +155,17 @@ export const useUserStore = defineStore('users', {
       } // si esta llena la lista, no se ejecuta de nuevo
       try {
         this.trayendoEmpleados = true
+
         // no trae al usuario admin, porque no tiene el campo 'creation' en la coleccion de usuarios de la db
-        const q = query(
-          collection(db, 'empleado'),
-          orderBy('creation', 'desc')
-        );
-        const querySnapshot = await getDocs(q);
-
-        // limpiar el array
-        this.listaEmpleados.length = 0
-
-        querySnapshot.forEach((empleado) => {
-          this.listaEmpleados.push({ ...empleado.data(), uid: empleado.id });
+        const q = query(collection(db, 'empleado'), orderBy('creation', 'desc'));
+        onSnapshot(q, querySnapshot => {
+     
+          const empleadosSnapshot = []
+          
+          querySnapshot.forEach(empleado => {
+            empleadosSnapshot.push({...empleado.data(), uid: empleado.uid});
+          });
+          this.listaEmpleados = empleadosSnapshot
         });
       } catch (error) {
         mensajesStore.crearError(

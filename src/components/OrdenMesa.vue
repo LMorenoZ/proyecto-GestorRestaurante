@@ -4,9 +4,12 @@ import { ref, computed } from 'vue';
 
 // stores de pinia
 import { useOrdenesStore } from '../stores/ordenes.js';
+import { useUserStore } from '../stores/users.js';
+import { useJornadaStore } from '../stores/jornada.js';
 
 // importando componentes de ui
 import Ticket from './Ticket.vue';
+import ModalConfirmacion from './ModalConfirmacion.vue';
 
 //importando otros modulos
 import { USDollar, encontrarProducto, horaFormateada, printf } from '../utilidades';
@@ -16,6 +19,8 @@ const props = defineProps(['orden', 'mesaNum', 'productos']);
 
 // instanciando las stores
 const ordenesStore = useOrdenesStore();
+const userStore = useUserStore()
+const jornadaStore = useJornadaStore()
 //---------------------------------------------
 
 // variables reactivas
@@ -88,13 +93,17 @@ const modificarOrden = async (orden) => {
 </script>
 
 <template>
+  {{ userStore.userRol }}
     <transition name="fade">
       <div :class="`card m-3 bg-${colorOrden}`" style="width: 18rem;">
         <div class="card-header d-flex justify-content-between fw-bold" >
           <p>Órden mesa {{ orden.mesaNum }}</p>
           <div class="badge bg-scondary text-wrap text-black" style="width: 6rem;">
-            {{ estadoDescri }}
+            {{ estadoDescri }} 
           </div>
+          <button type="button" class="btn btn-sm" style="border: none;" data-bs-toggle="modal" :data-bs-target="`#borrarOrden${orden.id}`" v-if="userStore.userRol === 'admin' || userStore.userRol === 'Cajero'">
+              <i class="bi bi-x fs-3 bg-danger rounded-circle px-1 text-light"></i>
+          </button>
         </div>
         <ul class="list-group list-group-flush">
           <p class="fst-italic fw-bold text-end mt-1" style="font-size: 0.7rem;">Fecha: {{ horaFormateada(orden.fechaCreacion.toDate()) }}</p>
@@ -132,6 +141,16 @@ const modificarOrden = async (orden) => {
       </div>
     </transition>
     <Ticket :modalId="orden.id" :ordenInfo="ordenActual" :productos="productos"></Ticket>
+
+    <ModalConfirmacion 
+        :id="`borrarOrden${orden.id}`"
+        :titulo="`Confirmación para borrar orden`"
+        :cuerpo="`Confirme si desea realmente eliminar la orden con id ${orden.id}`"
+        color="danger"
+        textoBoton="Borrar orden"
+        :param="orden.id"
+        @accion="ordenesStore.eliminarOrden"
+    />
   </template>
   
   <style scoped>

@@ -147,11 +147,26 @@ export const useOrdenesStore = defineStore('ordenesStore', {
       } catch (error) {
         mensajesStore.crearError(
           'noSePudoActualizarOrden',
-          `La órden no se pudo actualizar`
+          `La orden no se pudo actualizar`
         );
         console.log(error);
       }
     },
+    async eliminarOrden(idOrden) {
+      const mensajesStore = useMensajesStore();
+      try {
+        await deleteDoc(doc(db, "orden", idOrden));
+
+        // actualizando el store para actualizar las UI
+        // this.ordenes = this.ordenes.filter(orden => orden.id !== idOrden) 
+      } catch (error) {
+        mensajesStore.crearError(
+          'noSePudoBorrarOrden',
+          `La orden no se pudo eliminar`
+        );
+        console.log(error);
+      }
+  },
     // async activarCronometro(orden, valor) {
     //   const mensajesStore = useMensajesStore();
 

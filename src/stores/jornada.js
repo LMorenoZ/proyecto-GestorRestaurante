@@ -44,7 +44,7 @@ export const useJornadaStore = defineStore('jornada', {
 
                 onSnapshot(q, documentSnapshot=> {
                     this.jornadaActiva = documentSnapshot.data().jornadaActiva
-                    }
+                }
                 )
             } catch (error) {
                 mensajesStore.crearError('noComprobacionJornada', 'No se pudo comprobar el estado de la jornada');
