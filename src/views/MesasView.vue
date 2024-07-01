@@ -19,7 +19,7 @@
     <button 
         class="btn btn-success ml-2 col-sm-10 col-md-2" 
         data-bs-toggle="modal" data-bs-target="#crearMesa" 
-        v-if="userStore.userData?.email === 'admin@test.com'"
+        v-if="userStore.userData?.email === 'escuelalaurelessv@gmail.com'"
     >
         Añadir mesa
     </button>

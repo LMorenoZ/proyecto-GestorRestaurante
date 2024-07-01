@@ -69,7 +69,7 @@ const fechaHoy = computed(() => {
               <router-link class="nav-link text-dark" active-class="active fw-bolder" to="/menu">Menú</router-link>
             </li>
             <li class="nav-item mx-2">
-              <router-link class="nav-link text-dark" to="/administracion" v-if="userStore.userData.email === 'admin@test.com'"
+              <router-link class="nav-link text-dark" to="/administracion" v-if="userStore.userData.email === 'escuelalaurelessv@gmail.com'"
                 active-class="active fw-bolder">Administración</router-link>
             </li>
           </ul>
@@ -78,27 +78,9 @@ const fechaHoy = computed(() => {
           <div class="d-flex justify-content-center flex-lg-row flex-column align-items-center gap-3 mt-4">
             
             <button class="btn text-white text-decoration-none rounded-4 ms-auto" style="background-color: #0069d9;"
-              data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+              @click="userStore.logoutUser()">
               Salir
             </button>
-            <!-- Modal para cerrar sesion -->
-            <div class="modal fade" style="" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalCerrarSesionLabel">Cerrar sesión</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <p>¿Está seguro que desea cerrar sesión?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" @click="userStore.logoutUser()" data-bs-dismiss="modal">Cerrar sesión</button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

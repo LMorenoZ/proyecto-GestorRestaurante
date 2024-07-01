@@ -34,8 +34,7 @@ export const useUserStore = defineStore('users', {
   }),
   getters: {
     esAdmin(state) {
-      // TODO: cambiar el email del admin al real cuando este disponible
-      return state.userData?.email === 'admin@test.com';
+      return state.userData?.email === 'escuelalaurelessv@gmail.com';
     },
     userInfo(state) {
       return (userId) => this.listaEmpleados.find(empleado => empleado.uid === userId)

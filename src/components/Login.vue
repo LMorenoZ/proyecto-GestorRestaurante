@@ -17,8 +17,8 @@ const mensajesStore = useMensajesStore()
 //-------------------------------------------------
 
 // variables reactvias
-const email = ref('admin@test.com');
-const pass = ref('123456');
+const email = ref('');
+const pass = ref('');
 
 // variable reactiva para mostrar el alert de erro de iniciar sesion
 let hayError = ref(false);
